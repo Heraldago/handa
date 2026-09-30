@@ -261,12 +261,14 @@ export default function BookingPage() {
           </div>
 
           <div className="flex items-center gap-3 font-mono text-xs sm:text-sm">
-            <Link
-              href="/admin"
-              className="border-2 border-black px-3 py-1.5 sm:px-4 sm:py-2 font-black uppercase hover:bg-black hover:text-white transition-colors cursor-pointer touch-manipulation"
+            <a
+              href="https://www.instagram.com/handa_mushi/"
+              target="_blank"
+              rel="noreferrer"
+              className="border-2 border-neutral-300 hover:border-black px-3 py-1.5 font-bold uppercase transition-colors"
             >
-              STAFF DESK →
-            </Link>
+              @handa_mushi ↗
+            </a>
           </div>
         </div>
       </header>

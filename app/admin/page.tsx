@@ -26,6 +26,35 @@ export default function AdminDashboardPage() {
   const [walkInNotes, setWalkInNotes] = useState<string>('');
   const [savingWalkIn, setSavingWalkIn] = useState<boolean>(false);
 
+  // Staff Security PIN Gate
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [pinInput, setPinInput] = useState<string>('');
+  const [pinError, setPinError] = useState<string>('');
+
+  useEffect(() => {
+    const isAuth = sessionStorage.getItem('handa_staff_auth') === 'true';
+    if (isAuth) {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
+  const handlePinSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (pinInput === '3232' || pinInput === 'handa') {
+      setIsAuthenticated(true);
+      sessionStorage.setItem('handa_staff_auth', 'true');
+      setPinError('');
+    } else {
+      setPinError('PIN errato. Riprova.');
+      setPinInput('');
+    }
+  };
+
+  const handleLogout = () => {
+    sessionStorage.removeItem('handa_staff_auth');
+    setIsAuthenticated(false);
+  };
+
   useEffect(() => {
     const today = new Date();
     const yyyy = today.getFullYear();
@@ -34,9 +63,9 @@ export default function AdminDashboardPage() {
     setSelectedDate(`${yyyy}-${mm}-${dd}`);
   }, []);
 
-  const loadData = async () => {
+  const loadData = async (showLoading = true) => {
     if (!selectedDate) return;
-    setLoading(true);
+    if (showLoading) setLoading(true);
     try {
       const res = await fetch(`/api/admin/bookings?date=${selectedDate}`);
       const data = await res.json();
@@ -49,13 +78,21 @@ export default function AdminDashboardPage() {
     } catch (err) {
       console.error(err);
     } finally {
-      setLoading(false);
+      if (showLoading) setLoading(false);
     }
   };
 
   useEffect(() => {
-    loadData();
-  }, [selectedDate]);
+    loadData(true);
+    if (!isAuthenticated) return;
+
+    // Live auto-refresh every 4 seconds for real-time bookings
+    const interval = setInterval(() => {
+      loadData(false);
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [selectedDate, isAuthenticated]);
 
   const handleUpdateStatus = async (bookingId: string, newStatus: BookingStatus) => {
     try {
@@ -205,6 +242,61 @@ export default function AdminDashboardPage() {
     .filter((b) => b.status === 'SEATED')
     .reduce((sum, b) => sum + b.guestCount, 0);
 
+  if (!isAuthenticated) {
+    return (
+      <main className="min-h-screen bg-white text-black font-mono flex items-center justify-center p-4 selection:bg-[#e60000] selection:text-white">
+        <div className="border-2 border-black max-w-sm w-full p-6 sm:p-8 animate-in fade-in duration-200">
+          <div className="mb-6">
+            <span className="text-xs font-black uppercase tracking-widest text-[#e60000] block mb-1">
+              ACCESSO RISERVATO
+            </span>
+            <h1 className="text-2xl font-black uppercase text-black">
+              STAFF DESK
+            </h1>
+            <p className="text-xs text-neutral-500 mt-1">
+              Inserisci il PIN del personale per accedere alla gestione dei tavoli.
+            </p>
+          </div>
+
+          <form onSubmit={handlePinSubmit} className="space-y-4">
+            <div>
+              <label className="text-xs font-bold text-neutral-600 block mb-1.5 uppercase">
+                PIN DI SICUREZZA
+              </label>
+              <input
+                type="password"
+                inputMode="numeric"
+                maxLength={8}
+                autoFocus
+                placeholder="••••"
+                value={pinInput}
+                onChange={(e) => setPinInput(e.target.value)}
+                className="w-full h-14 border-2 border-neutral-300 focus:border-black text-center text-3xl font-black tracking-widest outline-none transition-colors"
+              />
+            </div>
+
+            {pinError && (
+              <p className="text-xs font-bold text-[#e60000]">{pinError}</p>
+            )}
+
+            <button
+              type="submit"
+              className="w-full h-14 border-2 border-black bg-black text-white hover:bg-[#e60000] hover:border-[#e60000] font-black text-sm uppercase tracking-wider transition-colors cursor-pointer"
+            >
+              Sblocca Dashboard →
+            </button>
+          </form>
+
+          <div className="mt-6 pt-4 border-t border-neutral-200 text-center">
+            <Link href="/" className="text-xs text-neutral-400 hover:text-black font-bold uppercase underline">
+              ← Torna alla prenotazione
+            </Link>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-white text-black font-mono selection:bg-[#e60000] selection:text-white pb-20">
       {/* 1. TOP HEADER */}
@@ -217,7 +309,11 @@ export default function AdminDashboardPage() {
             <span className="border-2 border-black bg-black text-white text-xs px-2.5 py-1 font-black uppercase tracking-wider">
               STAFF DESK
             </span>
-            <span className="text-xs text-neutral-500 font-bold hidden sm:inline">
+            <div className="flex items-center gap-1.5 px-2.5 py-1 border-2 border-neutral-300 bg-neutral-50 text-[10px] font-black uppercase tracking-wider">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              LIVE
+            </div>
+            <span className="text-xs text-neutral-500 font-bold hidden md:inline">
               Padova • Via del Portello 32
             </span>
           </div>
@@ -236,6 +332,15 @@ export default function AdminDashboardPage() {
             >
               Vista Cliente →
             </Link>
+
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="h-11 px-3 text-neutral-400 hover:text-[#e60000] font-bold text-xs uppercase cursor-pointer"
+              title="Esci dalla sessione"
+            >
+              Esci 🔒
+            </button>
           </div>
         </div>
       </header>
