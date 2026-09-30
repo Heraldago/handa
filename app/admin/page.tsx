@@ -16,6 +16,7 @@ export default function AdminDashboardPage() {
 
   // Walk-in modal
   const [showWalkInModal, setShowWalkInModal] = useState<boolean>(false);
+  const [walkInDate, setWalkInDate] = useState<string>('');
   const [walkInShift, setWalkInShift] = useState<ShiftId>('dinner_1');
   const [walkInTime, setWalkInTime] = useState<string>('19:30');
   const [walkInArea, setWalkInArea] = useState<SeatingArea>('indoor');
@@ -25,6 +26,15 @@ export default function AdminDashboardPage() {
   const [walkInTable, setWalkInTable] = useState<string>('');
   const [walkInNotes, setWalkInNotes] = useState<string>('');
   const [savingWalkIn, setSavingWalkIn] = useState<boolean>(false);
+
+  const getRelativeIsoDate = (offsetDays: number): string => {
+    const d = new Date();
+    d.setDate(d.getDate() + offsetDays);
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  };
 
   // Staff Security PIN Gate
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
@@ -168,18 +178,19 @@ export default function AdminDashboardPage() {
     if (!walkInName.trim()) return;
 
     setSavingWalkIn(true);
+    const targetDate = walkInDate || selectedDate;
     try {
       const res = await fetch('/api/admin/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          date: selectedDate,
+          date: targetDate,
           shiftId: walkInShift,
           time: walkInTime,
           seatingArea: walkInArea,
           guestCount: walkInGuests,
           customerName: walkInName,
-          customerPhone: walkInPhone || 'Walk-In',
+          customerPhone: walkInPhone || 'Telefonata / Walk-In',
           tableNumber: walkInTable,
           notes: walkInNotes,
         }),
@@ -191,7 +202,11 @@ export default function AdminDashboardPage() {
         setWalkInPhone('');
         setWalkInTable('');
         setWalkInNotes('');
-        loadData();
+        if (targetDate !== selectedDate) {
+          setSelectedDate(targetDate);
+        } else {
+          loadData();
+        }
       }
     } catch (err) {
       console.error(err);
@@ -320,10 +335,14 @@ export default function AdminDashboardPage() {
 
           <div className="flex items-center gap-3">
             <button
-              onClick={() => setShowWalkInModal(true)}
-              className="h-11 px-5 border-2 border-black bg-black text-white hover:bg-[#e60000] hover:border-[#e60000] font-black text-sm uppercase tracking-wider transition-colors cursor-pointer"
+              onClick={() => {
+                setWalkInDate(selectedDate || new Date().toISOString().split('T')[0]);
+                setShowWalkInModal(true);
+              }}
+              className="h-11 px-4 sm:px-5 border-2 border-black bg-black text-white hover:bg-[#e60000] hover:border-[#e60000] font-black text-xs sm:text-sm uppercase tracking-wider transition-colors cursor-pointer flex items-center gap-2"
             >
-              + Walk-In Al Volo
+              <span>📞</span>
+              <span>+ Telefonata / Walk-In</span>
             </button>
 
             <Link
@@ -799,192 +818,342 @@ export default function AdminDashboardPage() {
         )}
       </div>
 
-      {/* WALK-IN MODAL */}
+      {/* TELEPHONE / WALK-IN MODAL (CONVERSATIONAL SEQUENCE) */}
       {showWalkInModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 backdrop-blur-xs font-mono">
-          <div className="bg-white border-2 border-black max-w-lg w-full p-6 sm:p-8 animate-in fade-in duration-150">
-            <div className="flex justify-between items-baseline mb-6 border-b-2 border-black pb-4">
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-3 sm:p-4 backdrop-blur-xs font-mono overflow-y-auto">
+          <div className="bg-white border-2 border-black max-w-xl w-full p-5 sm:p-7 animate-in fade-in duration-150 my-auto shadow-2xl">
+            {/* Modal Header */}
+            <div className="flex justify-between items-start mb-5 border-b-2 border-black pb-3">
               <div>
-                <span className="text-xs text-[#e60000] font-black uppercase tracking-widest block">
-                  CARTA E PENNA 2.0
+                <span className="text-[11px] text-[#e60000] font-black uppercase tracking-widest block">
+                  📞 PRESA RAPIDA AL TELEFONO & WALK-IN
                 </span>
-                <h3 className="text-2xl font-black uppercase text-black">
-                  + Registra Walk-In
+                <h3 className="text-xl sm:text-2xl font-black uppercase text-black leading-tight mt-0.5">
+                  + Nuova Prenotazione Tavolo
                 </h3>
+                <p className="text-[11px] text-neutral-500 font-medium mt-0.5">
+                  Segui l&apos;ordine vocale: Persone → Data → Orario → Sala/Dehors → Nome/Tel → Note
+                </p>
               </div>
               <button
                 type="button"
                 onClick={() => setShowWalkInModal(false)}
-                className="text-2xl font-black hover:text-[#e60000] cursor-pointer"
+                className="text-2xl font-black hover:text-[#e60000] cursor-pointer p-1"
               >
                 ✕
               </button>
             </div>
 
-            <form onSubmit={handleSaveWalkIn} className="space-y-4">
-              {/* Turno */}
-              <div className="grid grid-cols-3 gap-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setWalkInShift('lunch');
-                    setWalkInTime('13:00');
-                  }}
-                  className={`py-2 text-xs font-black uppercase border-2 ${
-                    walkInShift === 'lunch'
-                      ? 'border-black bg-black text-white'
-                      : 'border-neutral-300 bg-white text-black'
-                  }`}
-                >
-                  Pranzo
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setWalkInShift('dinner_1');
-                    setWalkInTime('19:30');
-                  }}
-                  className={`py-2 text-xs font-black uppercase border-2 ${
-                    walkInShift === 'dinner_1'
-                      ? 'border-black bg-black text-white'
-                      : 'border-neutral-300 bg-white text-black'
-                  }`}
-                >
-                  1° Cena
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setWalkInShift('dinner_2');
-                    setWalkInTime('21:30');
-                  }}
-                  className={`py-2 text-xs font-black uppercase border-2 ${
-                    walkInShift === 'dinner_2'
-                      ? 'border-black bg-black text-white'
-                      : 'border-neutral-300 bg-white text-black'
-                  }`}
-                >
-                  2° Cena
-                </button>
+            <form onSubmit={handleSaveWalkIn} className="space-y-4 sm:space-y-5">
+              {/* 1. QUANTE PERSONE? */}
+              <div>
+                <div className="flex justify-between items-baseline mb-1.5">
+                  <label className="text-xs sm:text-sm font-black uppercase tracking-wider text-black">
+                    1. Per quante persone?
+                  </label>
+                  <span className="text-[11px] text-neutral-500 font-bold">
+                    Selezionato: <strong className="text-black">{walkInGuests} PAX</strong>
+                  </span>
+                </div>
+                <div className="grid grid-cols-8 gap-1">
+                  {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
+                    <button
+                      key={n}
+                      type="button"
+                      onClick={() => setWalkInGuests(n)}
+                      className={`h-11 font-black text-base border-2 transition-colors cursor-pointer ${
+                        walkInGuests === n
+                          ? 'border-black bg-black text-white'
+                          : 'border-neutral-300 bg-white text-black hover:border-black'
+                      }`}
+                    >
+                      {n}
+                    </button>
+                  ))}
+                </div>
+                <div className="mt-1 flex items-center justify-end gap-2 text-xs">
+                  <span className="text-neutral-500 text-[11px]">Più di 8 persone?</span>
+                  <input
+                    type="number"
+                    min="1"
+                    max="50"
+                    placeholder="Altro n."
+                    value={walkInGuests > 8 ? walkInGuests : ''}
+                    onChange={(e) => {
+                      const v = parseInt(e.target.value, 10);
+                      if (!isNaN(v) && v > 0) setWalkInGuests(v);
+                    }}
+                    className="w-20 h-8 px-2 border-2 border-neutral-300 text-xs font-bold text-center focus:border-black focus:outline-none"
+                  />
+                </div>
               </div>
 
-              {/* Area & Persone */}
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-xs font-bold block mb-1">AREA TAVOLO</label>
-                  <div className="grid grid-cols-2 gap-1">
-                    <button
-                      type="button"
-                      onClick={() => setWalkInArea('indoor')}
-                      className={`h-11 text-xs font-black uppercase border-2 ${
-                        walkInArea === 'indoor'
-                          ? 'border-black bg-black text-white'
-                          : 'border-neutral-300 bg-white text-black'
-                      }`}
-                    >
-                      Sala (36)
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setWalkInArea('outdoor')}
-                      className={`h-11 text-xs font-black uppercase border-2 ${
-                        walkInArea === 'outdoor'
-                          ? 'border-black bg-black text-white'
-                          : 'border-neutral-300 bg-white text-black'
-                      }`}
-                    >
-                      Dehors (35)
-                    </button>
-                  </div>
+              {/* 2. PER QUALE DATA? */}
+              <div>
+                <div className="flex justify-between items-baseline mb-1.5">
+                  <label className="text-xs sm:text-sm font-black uppercase tracking-wider text-black">
+                    2. Per che data?
+                  </label>
+                  <span className="text-[11px] text-[#e60000] font-black uppercase">
+                    {walkInDate || selectedDate}
+                  </span>
+                </div>
+                <div className="grid grid-cols-4 gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setWalkInDate(getRelativeIsoDate(0))}
+                    className={`h-10 text-xs font-black uppercase border-2 transition-colors cursor-pointer ${
+                      (walkInDate || selectedDate) === getRelativeIsoDate(0)
+                        ? 'border-black bg-black text-white'
+                        : 'border-neutral-300 bg-white text-black hover:border-black'
+                    }`}
+                  >
+                    Oggi
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setWalkInDate(getRelativeIsoDate(1))}
+                    className={`h-10 text-xs font-black uppercase border-2 transition-colors cursor-pointer ${
+                      (walkInDate || selectedDate) === getRelativeIsoDate(1)
+                        ? 'border-black bg-black text-white'
+                        : 'border-neutral-300 bg-white text-black hover:border-black'
+                    }`}
+                  >
+                    Domani
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setWalkInDate(getRelativeIsoDate(2))}
+                    className={`h-10 text-xs font-black uppercase border-2 transition-colors cursor-pointer ${
+                      (walkInDate || selectedDate) === getRelativeIsoDate(2)
+                        ? 'border-black bg-black text-white'
+                        : 'border-neutral-300 bg-white text-black hover:border-black'
+                    }`}
+                  >
+                    Dopodomani
+                  </button>
+                  <input
+                    type="date"
+                    value={walkInDate || selectedDate}
+                    onChange={(e) => setWalkInDate(e.target.value)}
+                    className="h-10 px-2 border-2 border-neutral-300 focus:border-black text-[11px] font-bold uppercase cursor-pointer"
+                  />
+                </div>
+              </div>
+
+              {/* 3. TURNO & ORARIO DI ARRIVO */}
+              <div>
+                <div className="flex justify-between items-baseline mb-1.5">
+                  <label className="text-xs sm:text-sm font-black uppercase tracking-wider text-black">
+                    3. Turno & Orario di arrivo
+                  </label>
+                  <span className="text-[11px] text-neutral-600 font-bold">
+                    Orario: <strong className="text-[#e60000]">{walkInTime}</strong>
+                  </span>
                 </div>
 
-                <div>
-                  <label className="text-xs font-bold block mb-1">NUMERO PERSONE</label>
-                  <div className="grid grid-cols-5 gap-1">
-                    {[1, 2, 3, 4, 6].map((n) => (
+                {/* Turni Buttons */}
+                <div className="grid grid-cols-3 gap-1.5 mb-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setWalkInShift('lunch');
+                      setWalkInTime('13:00');
+                    }}
+                    className={`py-2 px-1 text-center border-2 transition-colors cursor-pointer flex flex-col items-center ${
+                      walkInShift === 'lunch'
+                        ? 'border-black bg-black text-white'
+                        : 'border-neutral-300 bg-white text-black hover:border-black'
+                    }`}
+                  >
+                    <span className="text-xs font-black uppercase">PRANZO</span>
+                    <span className="text-[10px] opacity-80">12:00 – 15:00</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setWalkInShift('dinner_1');
+                      setWalkInTime('19:30');
+                    }}
+                    className={`py-2 px-1 text-center border-2 transition-colors cursor-pointer flex flex-col items-center ${
+                      walkInShift === 'dinner_1'
+                        ? 'border-black bg-black text-white'
+                        : 'border-neutral-300 bg-white text-black hover:border-black'
+                    }`}
+                  >
+                    <span className="text-xs font-black uppercase">1° CENA</span>
+                    <span className="text-[10px] opacity-80">19:15 (esce 21:15)</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setWalkInShift('dinner_2');
+                      setWalkInTime('21:30');
+                    }}
+                    className={`py-2 px-1 text-center border-2 transition-colors cursor-pointer flex flex-col items-center ${
+                      walkInShift === 'dinner_2'
+                        ? 'border-black bg-black text-white'
+                        : 'border-neutral-300 bg-white text-black hover:border-black'
+                    }`}
+                  >
+                    <span className="text-xs font-black uppercase">2° CENA</span>
+                    <span className="text-[10px] opacity-80">21:30 – 23:00</span>
+                  </button>
+                </div>
+
+                {/* Quick Slot Chips */}
+                <div className="p-2 bg-neutral-100 border border-neutral-200">
+                  <div className="text-[10px] uppercase font-bold text-neutral-500 mb-1.5">
+                    Tocca per selezionare l&apos;orario concordato:
+                  </div>
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    {(walkInShift === 'lunch'
+                      ? ['12:15', '12:30', '12:45', '13:00', '13:15', '13:30', '13:45', '14:00']
+                      : walkInShift === 'dinner_1'
+                      ? ['19:15', '19:30', '19:45', '20:00']
+                      : ['21:30', '21:45', '22:00']
+                    ).map((slot) => (
                       <button
-                        key={n}
+                        key={slot}
                         type="button"
-                        onClick={() => setWalkInGuests(n)}
-                        className={`h-11 font-black text-sm border-2 ${
-                          walkInGuests === n
+                        onClick={() => setWalkInTime(slot)}
+                        className={`px-2.5 py-1 text-xs font-black border transition-colors cursor-pointer ${
+                          walkInTime === slot
                             ? 'border-black bg-black text-white'
-                            : 'border-neutral-300 bg-white text-black'
+                            : 'border-neutral-300 bg-white text-black hover:border-black'
                         }`}
                       >
-                        {n}
+                        {slot}
                       </button>
                     ))}
+                    <div className="flex items-center gap-1 ml-auto">
+                      <span className="text-[10px] text-neutral-400">Altro:</span>
+                      <input
+                        type="text"
+                        placeholder="HH:MM"
+                        value={walkInTime}
+                        onChange={(e) => setWalkInTime(e.target.value)}
+                        className="w-16 h-7 px-1.5 border border-neutral-300 bg-white text-xs font-bold text-center focus:border-black focus:outline-none"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Nome & Tavolo */}
-              <div className="grid grid-cols-2 gap-3">
+              {/* 4. PREFERENZA TAVOLO (SALA O DEHORS) */}
+              <div>
+                <label className="text-xs sm:text-sm font-black uppercase tracking-wider text-black block mb-1.5">
+                  4. Preferenza Tavolo (Dentro o Fuori?)
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setWalkInArea('indoor')}
+                    className={`p-3 text-left border-2 transition-colors cursor-pointer ${
+                      walkInArea === 'indoor'
+                        ? 'border-black bg-black text-white'
+                        : 'border-neutral-300 bg-white text-black hover:border-black'
+                    }`}
+                  >
+                    <div className="font-black text-sm">🏠 SALA INTERNA</div>
+                    <div className={`text-[10px] font-medium ${walkInArea === 'indoor' ? 'text-neutral-300' : 'text-neutral-500'}`}>
+                      36 posti coperti garantiti
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setWalkInArea('outdoor')}
+                    className={`p-3 text-left border-2 transition-colors cursor-pointer ${
+                      walkInArea === 'outdoor'
+                        ? 'border-black bg-black text-white'
+                        : 'border-neutral-300 bg-white text-black hover:border-black'
+                    }`}
+                  >
+                    <div className="font-black text-sm">🌿 DEHORS ESTERNO</div>
+                    <div className={`text-[10px] font-medium ${walkInArea === 'outdoor' ? 'text-neutral-300' : 'text-neutral-500'}`}>
+                      35 posti plateatico sul Portello
+                    </div>
+                  </button>
+                </div>
+              </div>
+
+              {/* 5. DATI CLIENTE (NOME & CELLULARE) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-bold block mb-1">NOME CLIENTE *</label>
+                  <label className="text-xs font-bold block mb-1 uppercase">
+                    5. NOME CLIENTE *
+                  </label>
                   <input
                     type="text"
                     required
-                    placeholder="Es. Luca"
+                    placeholder="Es. Luca Ferrari"
                     value={walkInName}
                     onChange={(e) => setWalkInName(e.target.value)}
-                    className="w-full h-11 px-3 border-2 border-neutral-300 focus:border-black focus:outline-none"
+                    className="w-full h-11 px-3 border-2 border-neutral-300 font-bold focus:border-black focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold block mb-1">TAVOLO ASSEGNATO</label>
-                  <input
-                    type="text"
-                    placeholder="Es. T3 o Bancone"
-                    value={walkInTable}
-                    onChange={(e) => setWalkInTable(e.target.value)}
-                    className="w-full h-11 px-3 border-2 border-neutral-300 focus:border-black focus:outline-none"
-                  />
-                </div>
-              </div>
-
-              {/* Telefono & Note */}
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-xs font-bold block mb-1">CELLULARE (OPZ.)</label>
+                  <label className="text-xs font-bold block mb-1 uppercase">
+                    CELLULARE / WHATSAPP
+                  </label>
                   <input
                     type="tel"
                     placeholder="340 0000000"
                     value={walkInPhone}
                     onChange={(e) => setWalkInPhone(e.target.value)}
-                    className="w-full h-11 px-3 border-2 border-neutral-300 focus:border-black focus:outline-none"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-xs font-bold block mb-1">NOTE RAPIDE</label>
-                  <input
-                    type="text"
-                    placeholder="Es. No glutine"
-                    value={walkInNotes}
-                    onChange={(e) => setWalkInNotes(e.target.value)}
-                    className="w-full h-11 px-3 border-2 border-neutral-300 focus:border-black focus:outline-none"
+                    className="w-full h-11 px-3 border-2 border-neutral-300 font-bold focus:border-black focus:outline-none"
                   />
                 </div>
               </div>
 
-              {/* Bottoni Azione */}
-              <div className="pt-4 flex gap-3">
+              {/* 6. NOTE RAPIDE & TAVOLO ASSEGNATO */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-bold block mb-1 uppercase">
+                    6. TAVOLO (OPZIONALE)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Es. T3, T5, Bancone..."
+                    value={walkInTable}
+                    onChange={(e) => setWalkInTable(e.target.value)}
+                    className="w-full h-11 px-3 border-2 border-neutral-300 text-xs font-bold focus:border-black focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold block mb-1 uppercase">
+                    NOTE / INTOLLERANZE
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Es. No glutine, seggiolone, cane..."
+                    value={walkInNotes}
+                    onChange={(e) => setWalkInNotes(e.target.value)}
+                    className="w-full h-11 px-3 border-2 border-neutral-300 text-xs font-bold focus:border-black focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="pt-2 flex gap-3">
                 <button
                   type="button"
                   onClick={() => setShowWalkInModal(false)}
-                  className="flex-1 h-12 border-2 border-neutral-300 hover:border-black font-bold uppercase text-xs cursor-pointer"
+                  className="flex-1 h-12 border-2 border-neutral-300 hover:border-black font-bold uppercase text-xs cursor-pointer transition-colors"
                 >
                   Annulla
                 </button>
                 <button
                   type="submit"
                   disabled={savingWalkIn}
-                  className="flex-1 h-12 border-2 border-black bg-black text-white hover:bg-[#e60000] hover:border-[#e60000] font-black uppercase text-xs cursor-pointer transition-colors"
+                  className="flex-[2] h-12 border-2 border-black bg-black text-white hover:bg-[#e60000] hover:border-[#e60000] font-black uppercase text-xs tracking-wider cursor-pointer transition-colors flex items-center justify-center"
                 >
-                  {savingWalkIn ? 'Salvataggio...' : 'Conferma e Siedi →'}
+                  {savingWalkIn ? 'Salvataggio...' : 'CONFERMA E SALVA NEL REGISTRO →'}
                 </button>
               </div>
             </form>

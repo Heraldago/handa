@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { translations, Language } from '@/lib/translations';
 
 interface Shift {
   id: string;
@@ -50,11 +51,12 @@ function getLocalIso(d: Date): string {
   return `${y}-${m}-${day}`;
 }
 
-function formatDisplayDate(iso: string): string {
+function formatDisplayDate(iso: string, lang: Language): string {
   if (!iso) return '';
   const [y, m, d] = iso.split('-').map(Number);
   const dateObj = new Date(y, m - 1, d);
-  const formatted = dateObj.toLocaleDateString('it-IT', {
+  const locale = lang === 'en' ? 'en-GB' : 'it-IT';
+  const formatted = dateObj.toLocaleDateString(locale, {
     weekday: 'long',
     day: 'numeric',
     month: 'long',
@@ -63,6 +65,9 @@ function formatDisplayDate(iso: string): string {
 }
 
 export default function BookingPage() {
+  const [lang, setLang] = useState<Language>('it');
+  const t = translations[lang];
+
   const [guestCount, setGuestCount] = useState<number>(2);
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [selectedShift, setSelectedShift] = useState<string>('dinner_2');
@@ -85,10 +90,23 @@ export default function BookingPage() {
 
   const dateInputRef = useRef<HTMLInputElement>(null);
 
-  // Set today on mount
+  // Load language preference and set today's date on mount
   useEffect(() => {
+    try {
+      const savedLang = localStorage.getItem('handa_lang') as Language;
+      if (savedLang === 'en' || savedLang === 'it') {
+        setLang(savedLang);
+      }
+    } catch {}
     setSelectedDate(getLocalIso(new Date()));
   }, []);
+
+  const handleLanguageSwitch = (newLang: Language) => {
+    setLang(newLang);
+    try {
+      localStorage.setItem('handa_lang', newLang);
+    } catch {}
+  };
 
   // Fetch availability when selectedDate changes
   useEffect(() => {
@@ -145,13 +163,6 @@ export default function BookingPage() {
     setSelectedDate(iso);
   };
 
-  const dietaryOptions = [
-    'Vegano',
-    'Senza glutine',
-    'No crostacei',
-    'No arachidi / sesamo',
-  ];
-
   const toggleDietary = (val: string) => {
     setSelectedDietary((prev) =>
       prev.includes(val) ? prev.filter((d) => d !== val) : [...prev, val]
@@ -163,12 +174,12 @@ export default function BookingPage() {
     setErrorMessage(null);
 
     if (!selectedDate || !selectedShift || !selectedSlot) {
-      setErrorMessage('Seleziona data, turno e orario di arrivo.');
+      setErrorMessage(t.errorSelectDateTime);
       return;
     }
 
     if (!name.trim() || !phone.trim()) {
-      setErrorMessage('Inserisci nome e numero di cellulare per bloccare il tavolo.');
+      setErrorMessage(t.errorContact);
       return;
     }
 
@@ -193,12 +204,12 @@ export default function BookingPage() {
 
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || 'Impossibile completare la prenotazione.');
+        throw new Error(data.error || t.errorGeneric);
       }
 
       setSuccessBooking(data.booking);
     } catch (err: any) {
-      setErrorMessage(err.message || 'Errore durante la prenotazione. Riprova.');
+      setErrorMessage(err.message || t.errorGeneric);
     } finally {
       setSubmitting(false);
     }
@@ -206,8 +217,15 @@ export default function BookingPage() {
 
   const getWhatsAppShareUrl = () => {
     if (!successBooking) return '#';
-    const areaText = successBooking.seatingArea === 'outdoor' ? 'Dehors esterno' : 'Sala interna';
-    const text = `🥢 Ho prenotato il tavolo da HANDĀ (Padova, Portello)!\n📅 Data: ${successBooking.date}\n⏰ Turno: ${successBooking.time} (${successBooking.shiftName})\n📍 Dove: ${areaText} • Via del Portello 32\n👥 Per: ${successBooking.guestCount} persone\nCodice prenotazione: #${successBooking.code}\n\nChi viene puntuale alza la mano 🙋`;
+    const text = t.whatsAppMessage({
+      customerName: successBooking.customerName,
+      date: successBooking.date,
+      time: successBooking.time,
+      shiftName: successBooking.shiftName,
+      guestCount: successBooking.guestCount,
+      seatingArea: successBooking.seatingArea,
+      code: successBooking.code,
+    });
     return `https://wa.me/?text=${encodeURIComponent(text)}`;
   };
 
@@ -222,24 +240,28 @@ export default function BookingPage() {
     const endH = String(Math.min(23, Number(startHour) + 2)).padStart(2, '0');
     const endDateStr = `${year}${month}${day}T${endH}${startMin}00`;
 
-    const title = encodeURIComponent(`Cena da HANDA - Cicchetteria Asiatica`);
+    const title = encodeURIComponent(t.calendarTitle);
     const details = encodeURIComponent(
-      `Prenotazione tavolo per ${successBooking.guestCount} persone. Codice #${successBooking.code}. Tolleranza 15 min. Telefono: 349 233 0492.`
+      t.calendarDetails({
+        guestCount: successBooking.guestCount,
+        code: successBooking.code,
+      })
     );
     const location = encodeURIComponent('Via del Portello, 32, 35131 Padova PD');
 
     return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${startDateStr}/${endDateStr}&details=${details}&location=${location}`;
   };
 
-  // Generate 7 upcoming days using safe local time
+  // Generate 7 upcoming days using safe local time & selected locale
   const quickDays = Array.from({ length: 7 }, (_, i) => {
     const d = new Date();
     d.setDate(d.getDate() + i);
     const iso = getLocalIso(d);
-    const weekday = d.toLocaleDateString('it-IT', { weekday: 'short' });
+    const locale = lang === 'en' ? 'en-GB' : 'it-IT';
+    const weekday = d.toLocaleDateString(locale, { weekday: 'short' });
     const dayNum = d.getDate();
-    const month = d.toLocaleDateString('it-IT', { month: 'short' });
-    const label = i === 0 ? 'OGGI' : i === 1 ? 'DOMANI' : weekday.toUpperCase();
+    const month = d.toLocaleDateString(locale, { month: 'short' });
+    const label = i === 0 ? t.today : i === 1 ? t.tomorrow : weekday.toUpperCase();
     return { iso, label, weekday, dayNum, month };
   });
 
@@ -256,18 +278,44 @@ export default function BookingPage() {
               HANDA<span className="text-[#e60000]">.</span>
             </span>
             <span className="text-xs sm:text-sm font-mono text-neutral-400 font-bold hidden sm:inline">
-              慕食 • PORTELLO
+              {t.brandSubtitle}
             </span>
           </div>
 
-          <div className="flex items-center gap-3 font-mono text-xs sm:text-sm">
+          <div className="flex items-center gap-2 sm:gap-3 font-mono text-xs sm:text-sm">
+            {/* Bilingual Switcher: IT | EN */}
+            <div className="inline-flex border-2 border-black overflow-hidden font-bold">
+              <button
+                type="button"
+                onClick={() => handleLanguageSwitch('it')}
+                className={`px-2.5 py-1 transition-colors cursor-pointer ${
+                  lang === 'it'
+                    ? 'bg-black text-white'
+                    : 'bg-white text-black hover:bg-neutral-100'
+                }`}
+              >
+                IT
+              </button>
+              <button
+                type="button"
+                onClick={() => handleLanguageSwitch('en')}
+                className={`px-2.5 py-1 border-l-2 border-black transition-colors cursor-pointer ${
+                  lang === 'en'
+                    ? 'bg-black text-white'
+                    : 'bg-white text-black hover:bg-neutral-100'
+                }`}
+              >
+                EN
+              </button>
+            </div>
+
             <a
               href="https://www.instagram.com/handa_mushi/"
               target="_blank"
               rel="noreferrer"
               className="border-2 border-neutral-300 hover:border-black px-3 py-1.5 font-bold uppercase transition-colors"
             >
-              @handa_mushi ↗
+              {t.instaLink}
             </a>
           </div>
         </div>
@@ -278,15 +326,15 @@ export default function BookingPage() {
         {/* Title */}
         <div className="mb-8 sm:mb-14">
           <span className="text-xs sm:text-sm font-mono font-black uppercase tracking-widest text-[#e60000] block mb-1 sm:mb-2">
-            PRENOTAZIONI TAVOLO ONLINE
+            {t.heroBadge}
           </span>
           <h1 className="text-4xl sm:text-7xl font-black tracking-tighter uppercase text-black leading-none">
-            BLOCCA IL TAVOLO<span className="text-[#e60000]">.</span>
+            {t.heroTitle}<span className="text-[#e60000]">.</span>
           </h1>
           <div className="text-xs sm:text-base text-neutral-600 mt-3 font-mono space-y-1">
-            <p>Lun–Sab 12:00–15:00 / 19:00–23:00 • Dom 19:00–23:00 (Solo Cena)</p>
+            <p>{t.heroHours}</p>
             <p className="text-neutral-400 text-xs sm:text-sm">
-              Non aver paura di sembrare strano perchè forse forse lo sei per davvero.
+              {t.heroTagline}
             </p>
           </div>
         </div>
@@ -297,15 +345,15 @@ export default function BookingPage() {
             <div className="border-b-2 border-black pb-5 flex justify-between items-baseline">
               <div>
                 <span className="text-xs sm:text-sm font-mono text-neutral-500 uppercase tracking-widest block font-bold">
-                  STATO PRENOTAZIONE
+                  {t.successStatus}
                 </span>
                 <span className="text-xl sm:text-2xl font-black text-[#e60000] font-mono mt-1 block">
-                  CONFERMATA
+                  {t.confirmed}
                 </span>
               </div>
               <div className="text-right">
                 <span className="text-xs sm:text-sm font-mono text-neutral-500 uppercase tracking-widest block font-bold">
-                  CODICE
+                  {t.code}
                 </span>
                 <span className="text-3xl sm:text-4xl font-mono font-black">
                   #{successBooking.code}
@@ -316,51 +364,51 @@ export default function BookingPage() {
             {/* Details Table */}
             <div className="space-y-3.5 font-mono text-sm sm:text-base">
               <div className="flex justify-between border-b-2 border-neutral-200 pb-2.5">
-                <span className="text-neutral-500 uppercase font-medium">NOME</span>
+                <span className="text-neutral-500 uppercase font-medium">{t.name}</span>
                 <strong className="text-black font-black text-base sm:text-lg">{successBooking.customerName}</strong>
               </div>
 
               <div className="flex justify-between border-b-2 border-neutral-200 pb-2.5">
-                <span className="text-neutral-500 uppercase font-medium">COPERTI</span>
+                <span className="text-neutral-500 uppercase font-medium">{t.covers}</span>
                 <strong className="text-black font-black text-base sm:text-lg">
-                  {successBooking.guestCount} {successBooking.guestCount === 1 ? 'PERSONA' : 'PERSONE'}
+                  {successBooking.guestCount} {successBooking.guestCount === 1 ? t.personSingle : t.personPlural}
                 </strong>
               </div>
 
               <div className="flex justify-between border-b-2 border-neutral-200 pb-2.5">
-                <span className="text-neutral-500 uppercase font-medium">AREA TAVOLO</span>
+                <span className="text-neutral-500 uppercase font-medium">{t.tableArea}</span>
                 <strong className="text-black font-black text-base sm:text-lg uppercase">
-                  {successBooking.seatingArea === 'outdoor' ? '🌿 Dehors Esterno' : '🏠 Sala Interna (Coperta)'}
+                  {successBooking.seatingArea === 'outdoor' ? t.outdoorSeating : t.indoorSeating}
                 </strong>
               </div>
 
               <div className="flex justify-between border-b-2 border-neutral-200 pb-2.5">
-                <span className="text-neutral-500 uppercase font-medium">DATA & ORA</span>
+                <span className="text-neutral-500 uppercase font-medium">{t.dateTime}</span>
                 <strong className="text-[#e60000] font-black text-base sm:text-lg">
-                  {successBooking.date} • ORE {successBooking.time}
+                  {successBooking.date} • {t.atHour} {successBooking.time}
                 </strong>
               </div>
 
               <div className="flex justify-between border-b-2 border-neutral-200 pb-2.5">
-                <span className="text-neutral-500 uppercase font-medium">SERVIZIO</span>
+                <span className="text-neutral-500 uppercase font-medium">{t.service}</span>
                 <span className="font-bold">{successBooking.shiftName}</span>
               </div>
 
               <div className="flex justify-between border-b-2 border-neutral-200 pb-2.5">
-                <span className="text-neutral-500 uppercase font-medium">INDIRIZZO</span>
-                <span className="font-bold">Via del Portello 32, Padova</span>
+                <span className="text-neutral-500 uppercase font-medium">{t.address}</span>
+                <span className="font-bold">{t.addressValue}</span>
               </div>
 
               {successBooking.dietary && successBooking.dietary.length > 0 && (
                 <div className="flex justify-between border-b-2 border-neutral-200 pb-2.5">
-                  <span className="text-neutral-500 uppercase font-medium">NOTE</span>
+                  <span className="text-neutral-500 uppercase font-medium">{t.notes}</span>
                   <span className="font-bold text-[#e60000]">{successBooking.dietary.join(', ')}</span>
                 </div>
               )}
             </div>
 
             <div className="text-xs sm:text-sm font-mono text-neutral-700 bg-neutral-100 p-3.5 border-l-4 border-black">
-              Tolleranza di <strong>15 minuti</strong> oltre l&apos;orario prescelto. In caso di ritardo o disdetta avvisaci al <strong>349 233 0492</strong>.
+              {t.toleranceNotice}
             </div>
 
             {/* Actions */}
@@ -371,7 +419,7 @@ export default function BookingPage() {
                 rel="noreferrer"
                 className="w-full h-14 sm:h-18 border-2 border-black bg-black hover:bg-[#e60000] hover:border-[#e60000] text-white font-black text-sm sm:text-lg flex items-center justify-center transition-colors uppercase tracking-wider cursor-pointer touch-manipulation"
               >
-                Invia riepilogo su WhatsApp agli amici
+                {t.shareWhatsApp}
               </a>
 
               <a
@@ -380,7 +428,7 @@ export default function BookingPage() {
                 rel="noreferrer"
                 className="w-full h-14 sm:h-18 border-2 border-black bg-white hover:bg-neutral-100 text-black font-black text-sm sm:text-lg flex items-center justify-center transition-colors uppercase tracking-wider cursor-pointer touch-manipulation"
               >
-                Aggiungi a Google Calendar
+                {t.addToGoogleCalendar}
               </a>
 
               <div className="pt-4 flex justify-between items-center text-xs sm:text-sm font-mono">
@@ -388,7 +436,7 @@ export default function BookingPage() {
                   href={`/prenotazione/${successBooking.code}`}
                   className="text-neutral-500 hover:text-black underline font-bold"
                 >
-                  Modifica o cancella prenotazione
+                  {t.modifyOrCancel}
                 </Link>
 
                 <button
@@ -396,29 +444,29 @@ export default function BookingPage() {
                   onClick={() => setSuccessBooking(null)}
                   className="border-2 border-neutral-300 hover:border-black px-3 py-1.5 font-bold cursor-pointer touch-manipulation"
                 >
-                  ← Nuova prenotazione
+                  {t.newBooking}
                 </button>
               </div>
             </div>
           </div>
         ) : (
-          /* BOOKING FORM */
+          /* BOOKING FORM - FOLLOWS NATURAL VERBAL CONVERSATION ORDER */
           <form onSubmit={handleBookingSubmit} className="space-y-9 sm:space-y-14">
-            {/* 1. COPERTI */}
+            {/* 1. NUMERO PERSONE ("Per quante persone?") */}
             <div>
               <div className="flex justify-between items-baseline mb-3">
                 <label className="text-base sm:text-lg font-mono font-black uppercase tracking-wider text-black">
-                  1. Numero persone
+                  {t.step1Title}
                 </label>
                 <span className="text-xs font-mono text-neutral-500">
-                  Tavoli 7+?{' '}
+                  {t.step1GroupNotice}{' '}
                   <a
                     href="https://wa.me/393492330492?text=Ciao%20Handa,%20vorremmo%20prenotare%20per%20un%20gruppo%20numeroso"
                     target="_blank"
                     rel="noreferrer"
                     className="text-[#e60000] font-black underline hover:text-red-700"
                   >
-                    WhatsApp
+                    {t.step1GroupAction}
                   </a>
                 </span>
               </div>
@@ -444,18 +492,18 @@ export default function BookingPage() {
               </div>
             </div>
 
-            {/* 2. SCEGLI DATA & ALTRA DATA CON CALENDARIO */}
+            {/* 2. SCEGLI DATA ("Per che giorno?") */}
             <div>
               <div className="flex justify-between items-baseline mb-3">
                 <label className="text-base sm:text-lg font-mono font-black uppercase tracking-wider text-black">
-                  2. Scegli data
+                  {t.step2Title}
                 </label>
                 <span className="text-xs font-mono text-neutral-500 font-bold uppercase">
-                  {selectedDate ? formatDisplayDate(selectedDate) : ''}
+                  {selectedDate ? formatDisplayDate(selectedDate, lang) : ''}
                 </span>
               </div>
 
-              {/* Quick Days (Swipeable horizontally on mobile, 7-col grid on desktop) */}
+              {/* Quick Days */}
               <div className="flex sm:grid sm:grid-cols-7 gap-2 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-none snap-x">
                 {quickDays.map((d) => {
                   const isSelected = selectedDate === d.iso;
@@ -484,27 +532,26 @@ export default function BookingPage() {
                 })}
               </div>
 
-              {/* PROMINENT "ALTRA DATA DAL CALENDARIO" BUTTON (Mobile-friendly native picker trigger) */}
+              {/* Native Calendar Picker Card */}
               <div className="mt-3 relative border-2 border-black bg-white hover:bg-neutral-50 transition-colors p-3.5 sm:p-4 flex items-center justify-between cursor-pointer touch-manipulation">
                 <div className="flex items-center gap-3 pointer-events-none">
                   <span className="text-2xl sm:text-3xl">📅</span>
                   <div>
                     <span className="text-[11px] sm:text-xs text-neutral-500 font-mono font-bold uppercase tracking-wider block">
-                      SELEZIONA UN&apos;ALTRA DATA DAL CALENDARIO
+                      {t.calendarPickerLabel}
                     </span>
                     <span className="text-sm sm:text-lg font-mono font-black text-black block mt-0.5">
-                      {selectedDate ? formatDisplayDate(selectedDate) : 'Scegli dal calendario...'}
+                      {selectedDate ? formatDisplayDate(selectedDate, lang) : t.calendarPickerPlaceholder}
                     </span>
                   </div>
                 </div>
 
                 <div className="pointer-events-none">
                   <span className="text-xs font-mono font-black uppercase px-3 py-1.5 border border-black bg-black text-white">
-                    APRI
+                    {t.calendarPickerOpen}
                   </span>
                 </div>
 
-                {/* Invisible native input covering the ENTIRE card: clicking anywhere triggers iOS/Android datepicker wheel */}
                 <input
                   ref={dateInputRef}
                   type="date"
@@ -520,75 +567,14 @@ export default function BookingPage() {
               </div>
             </div>
 
-            {/* 3. SCELTA AREA: SALA INTERNA (36) vs DEHORS ESTERNO (35) */}
+            {/* 3. TURNO & ORARIO DI ARRIVO ("A che ora?") */}
             <div>
               <div className="flex justify-between items-baseline mb-3">
                 <label className="text-base sm:text-lg font-mono font-black uppercase tracking-wider text-black">
-                  3. Preferenza Tavolo
+                  {t.step3Title}
                 </label>
                 <span className="text-xs sm:text-sm font-mono text-neutral-500">
-                  {availability?.isOutdoorActive ? '☀️ Dehors attivo' : '🌧️ Dehors chiuso per meteo'}
-                </span>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 font-mono">
-                {/* SALA INTERNA */}
-                <button
-                  type="button"
-                  onClick={() => setSeatingArea('indoor')}
-                  className={`p-4 sm:p-5 border-2 text-left transition-colors cursor-pointer touch-manipulation select-none active:scale-98 flex flex-col justify-between ${
-                    seatingArea === 'indoor'
-                      ? 'border-black bg-black text-white'
-                      : 'border-neutral-300 bg-white text-black hover:border-black'
-                  }`}
-                >
-                  <div className="flex justify-between items-baseline mb-1">
-                    <span className="font-black text-lg sm:text-2xl">🏠 SALA INTERNA</span>
-                    <span className={`text-[10px] sm:text-xs font-bold px-2 py-0.5 uppercase ${seatingArea === 'indoor' ? 'bg-white text-black' : 'bg-neutral-100 text-neutral-700'}`}>
-                      36 POSTI
-                    </span>
-                  </div>
-                  <p className={`text-xs sm:text-sm font-medium ${seatingArea === 'indoor' ? 'text-neutral-300' : 'text-neutral-600'}`}>
-                    Sempre garantito al coperto con qualsiasi meteo.
-                  </p>
-                </button>
-
-                {/* DEHORS ESTERNO */}
-                <button
-                  type="button"
-                  disabled={!availability?.isOutdoorActive}
-                  onClick={() => setSeatingArea('outdoor')}
-                  className={`p-4 sm:p-5 border-2 text-left transition-colors cursor-pointer touch-manipulation select-none active:scale-98 flex flex-col justify-between ${
-                    !availability?.isOutdoorActive
-                      ? 'opacity-40 border-dashed border-neutral-300 bg-neutral-100 cursor-not-allowed'
-                      : seatingArea === 'outdoor'
-                      ? 'border-black bg-black text-white'
-                      : 'border-neutral-300 bg-white text-black hover:border-black'
-                  }`}
-                >
-                  <div className="flex justify-between items-baseline mb-1">
-                    <span className="font-black text-lg sm:text-2xl">🌿 DEHORS ESTERNO</span>
-                    <span className={`text-[10px] sm:text-xs font-bold px-2 py-0.5 uppercase ${seatingArea === 'outdoor' ? 'bg-white text-black' : 'bg-neutral-100 text-neutral-700'}`}>
-                      35 POSTI
-                    </span>
-                  </div>
-                  <p className={`text-xs sm:text-sm font-medium ${seatingArea === 'outdoor' ? 'text-neutral-300' : 'text-neutral-600'}`}>
-                    {availability?.isOutdoorActive
-                      ? 'Plateatico all&apos;aperto sul Portello (soggetto al meteo).'
-                      : 'Chiuso per pioggia o clima autunnale/invernale.'}
-                  </p>
-                </button>
-              </div>
-            </div>
-
-            {/* 4. TURNO & ORARIO */}
-            <div>
-              <div className="flex justify-between items-baseline mb-3">
-                <label className="text-base sm:text-lg font-mono font-black uppercase tracking-wider text-black">
-                  4. Turno & Orario di arrivo
-                </label>
-                <span className="text-xs sm:text-sm font-mono text-neutral-500">
-                  {loadingAvail ? 'Controllo...' : 'Disponibilità live'}
+                  {loadingAvail ? t.checkingAvailability : t.liveAvailability}
                 </span>
               </div>
 
@@ -616,13 +602,13 @@ export default function BookingPage() {
                     >
                       <div>
                         <div className="flex justify-between items-baseline mb-1">
-                          <span className="font-black text-xl sm:text-2xl">PRANZO</span>
+                          <span className="font-black text-xl sm:text-2xl">{t.lunchTitle}</span>
                           <span className={`text-[10px] sm:text-xs font-black px-2 py-0.5 uppercase ${isSelected ? 'bg-white text-black' : 'bg-black text-white'}`}>
-                            {isAvailable ? '12–15' : 'CHIUSO'}
+                            {isAvailable ? t.lunchTime : t.statusClosed}
                           </span>
                         </div>
                         <p className={`text-xs sm:text-sm font-medium mt-1 leading-snug ${isSelected ? 'text-neutral-300' : 'text-neutral-600'}`}>
-                          {shift?.reason || 'Servizio dinamico, rapido & cicchetti (~45 min).'}
+                          {shift?.reason || t.lunchDesc}
                         </p>
                       </div>
                     </button>
@@ -651,13 +637,13 @@ export default function BookingPage() {
                     >
                       <div>
                         <div className="flex justify-between items-baseline mb-1">
-                          <span className="font-black text-xl sm:text-2xl">1° CENA</span>
+                          <span className="font-black text-xl sm:text-2xl">{t.dinner1Title}</span>
                           <span className={`text-[10px] sm:text-xs font-black px-2 py-0.5 uppercase ${isSelected ? 'bg-white text-black' : 'bg-black text-white'}`}>
-                            {isAvailable ? '19:15–20' : 'PIENO'}
+                            {isAvailable ? t.dinner1Time : t.statusFull}
                           </span>
                         </div>
                         <p className={`text-xs sm:text-sm font-medium mt-1 leading-snug ${isSelected ? 'text-neutral-300' : 'text-neutral-600'}`}>
-                          Tavolo da liberare categoricamente entro le 21:15/20.
+                          {t.dinner1Desc}
                         </p>
                       </div>
                     </button>
@@ -686,13 +672,13 @@ export default function BookingPage() {
                     >
                       <div>
                         <div className="flex justify-between items-baseline mb-1">
-                          <span className="font-black text-xl sm:text-2xl">2° CENA</span>
+                          <span className="font-black text-xl sm:text-2xl">{t.dinner2Title}</span>
                           <span className={`text-[10px] sm:text-xs font-black px-2 py-0.5 uppercase ${isSelected ? 'bg-white text-black' : 'bg-black text-white'}`}>
-                            {isAvailable ? '21:30+' : 'PIENO'}
+                            {isAvailable ? t.dinner2Time : t.statusFull}
                           </span>
                         </div>
                         <p className={`text-xs sm:text-sm font-medium mt-1 leading-snug ${isSelected ? 'text-neutral-300' : 'text-neutral-600'}`}>
-                          Dalle 21:30 fino a chiusura del locale (23:00).
+                          {t.dinner2Desc}
                         </p>
                       </div>
                     </button>
@@ -704,7 +690,7 @@ export default function BookingPage() {
               {activeShift && activeShift.available && (
                 <div className="p-3.5 sm:p-4 bg-neutral-50 border-2 border-neutral-200 font-mono">
                   <div className="text-xs sm:text-sm font-bold uppercase tracking-wide text-neutral-600 mb-2.5">
-                    Scegli orario esatto di arrivo ({activeShift.name}):
+                    {t.selectSlotPrompt} ({activeShift.name}):
                   </div>
 
                   <div className="flex flex-wrap gap-2">
@@ -729,33 +715,92 @@ export default function BookingPage() {
 
                   {activeShift.departureTime && (
                     <p className="text-xs text-[#e60000] font-bold mt-3">
-                      ⚠️ Nota bene: questo tavolo è prenotato per il 2° turno alle 21:30, andrà liberato alle {activeShift.departureTime}.
+                      {t.dinner1Notice} {activeShift.departureTime}.
                     </p>
                   )}
                   {activeShift.isDynamicLunch && (
                     <p className="text-xs text-neutral-500 font-medium mt-2">
-                      💡 Pranzo informale e veloce: permanenza media consigliata ~45 minuti per garantire i posti a tutti.
+                      {t.lunchNotice}
                     </p>
                   )}
                 </div>
               )}
             </div>
 
-            {/* 5. CONTATTI */}
+            {/* 4. PREFERENZA TAVOLO: SALA (36) vs DEHORS (35) ("Dentro o fuori?") */}
+            <div>
+              <div className="flex justify-between items-baseline mb-3">
+                <label className="text-base sm:text-lg font-mono font-black uppercase tracking-wider text-black">
+                  {t.step4Title}
+                </label>
+                <span className="text-xs sm:text-sm font-mono text-neutral-500">
+                  {availability?.isOutdoorActive ? t.outdoorActiveLabel : t.outdoorClosedLabel}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 font-mono">
+                {/* SALA INTERNA */}
+                <button
+                  type="button"
+                  onClick={() => setSeatingArea('indoor')}
+                  className={`p-4 sm:p-5 border-2 text-left transition-colors cursor-pointer touch-manipulation select-none active:scale-98 flex flex-col justify-between ${
+                    seatingArea === 'indoor'
+                      ? 'border-black bg-black text-white'
+                      : 'border-neutral-300 bg-white text-black hover:border-black'
+                  }`}
+                >
+                  <div className="flex justify-between items-baseline mb-1">
+                    <span className="font-black text-lg sm:text-2xl">{t.indoorTitle}</span>
+                    <span className={`text-[10px] sm:text-xs font-bold px-2 py-0.5 uppercase ${seatingArea === 'indoor' ? 'bg-white text-black' : 'bg-neutral-100 text-neutral-700'}`}>
+                      {t.indoorSeats}
+                    </span>
+                  </div>
+                  <p className={`text-xs sm:text-sm font-medium ${seatingArea === 'indoor' ? 'text-neutral-300' : 'text-neutral-600'}`}>
+                    {t.indoorDesc}
+                  </p>
+                </button>
+
+                {/* DEHORS ESTERNO */}
+                <button
+                  type="button"
+                  disabled={!availability?.isOutdoorActive}
+                  onClick={() => setSeatingArea('outdoor')}
+                  className={`p-4 sm:p-5 border-2 text-left transition-colors cursor-pointer touch-manipulation select-none active:scale-98 flex flex-col justify-between ${
+                    !availability?.isOutdoorActive
+                      ? 'opacity-40 border-dashed border-neutral-300 bg-neutral-100 cursor-not-allowed'
+                      : seatingArea === 'outdoor'
+                      ? 'border-black bg-black text-white'
+                      : 'border-neutral-300 bg-white text-black hover:border-black'
+                  }`}
+                >
+                  <div className="flex justify-between items-baseline mb-1">
+                    <span className="font-black text-lg sm:text-2xl">{t.outdoorTitle}</span>
+                    <span className={`text-[10px] sm:text-xs font-bold px-2 py-0.5 uppercase ${seatingArea === 'outdoor' ? 'bg-white text-black' : 'bg-neutral-100 text-neutral-700'}`}>
+                      {t.outdoorSeats}
+                    </span>
+                  </div>
+                  <p className={`text-xs sm:text-sm font-medium ${seatingArea === 'outdoor' ? 'text-neutral-300' : 'text-neutral-600'}`}>
+                    {availability?.isOutdoorActive ? t.outdoorDesc : t.outdoorDescClosed}
+                  </p>
+                </button>
+              </div>
+            </div>
+
+            {/* 5. DATI DI CONTATTO ("A che nome e numero?") */}
             <div className="space-y-4 font-mono">
               <label className="text-base sm:text-lg font-mono font-black uppercase tracking-wider text-black block">
-                5. Dati di contatto
+                {t.step5Title}
               </label>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <label className="text-xs sm:text-sm text-neutral-600 font-bold block mb-1.5">
-                    NOME E COGNOME *
+                    {t.nameLabel}
                   </label>
                   <input
                     type="text"
                     required
-                    placeholder="Marco Rossi"
+                    placeholder={t.namePlaceholder}
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     className="w-full h-13 sm:h-16 px-4 border-2 border-neutral-300 bg-white text-base sm:text-lg focus:border-black focus:outline-none transition-colors"
@@ -764,12 +809,12 @@ export default function BookingPage() {
 
                 <div>
                   <label className="text-xs sm:text-sm text-neutral-600 font-bold block mb-1.5">
-                    CELLULARE (WHATSAPP) *
+                    {t.phoneLabel}
                   </label>
                   <input
                     type="tel"
                     required
-                    placeholder="340 1234567"
+                    placeholder={t.phonePlaceholder}
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     className="w-full h-13 sm:h-16 px-4 border-2 border-neutral-300 bg-white text-base sm:text-lg focus:border-black focus:outline-none transition-colors"
@@ -779,11 +824,11 @@ export default function BookingPage() {
 
               <div>
                 <label className="text-xs sm:text-sm text-neutral-600 font-bold block mb-1.5">
-                  EMAIL (OPZIONALE)
+                  {t.emailLabel}
                 </label>
                 <input
                   type="email"
-                  placeholder="nome@email.com"
+                  placeholder={t.emailPlaceholder}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full h-13 sm:h-16 px-4 border-2 border-neutral-300 bg-white text-base sm:text-lg focus:border-black focus:outline-none transition-colors"
@@ -791,27 +836,27 @@ export default function BookingPage() {
               </div>
             </div>
 
-            {/* 6. NOTE & INTOLLERANZE */}
+            {/* 6. ESIGENZE ALIMENTARI & NOTE ("Allergie o note?") */}
             <div>
               <label className="text-base sm:text-lg font-mono font-black uppercase tracking-wider text-black block mb-3">
-                6. Esigenze alimentari o note
+                {t.step6Title}
               </label>
 
               <div className="flex flex-wrap gap-2 sm:gap-3 mb-3">
-                {dietaryOptions.map((opt) => {
-                  const isChecked = selectedDietary.includes(opt);
+                {t.dietaryOptions.map((opt) => {
+                  const isChecked = selectedDietary.includes(opt.label);
                   return (
                     <button
-                      key={opt}
+                      key={opt.key}
                       type="button"
-                      onClick={() => toggleDietary(opt)}
+                      onClick={() => toggleDietary(opt.label)}
                       className={`text-xs sm:text-base font-mono px-3.5 py-2 sm:px-5 sm:py-3 border-2 transition-colors cursor-pointer touch-manipulation select-none active:scale-95 font-bold ${
                         isChecked
                           ? 'border-black bg-black text-white'
                           : 'border-neutral-300 bg-white text-black hover:border-black'
                       }`}
                     >
-                      {opt}
+                      {opt.label}
                     </button>
                   );
                 })}
@@ -819,7 +864,7 @@ export default function BookingPage() {
 
               <input
                 type="text"
-                placeholder="Altre preferenze o note per il tavolo..."
+                placeholder={t.notesPlaceholder}
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 className="w-full h-13 sm:h-16 px-4 border-2 border-neutral-300 bg-white text-xs sm:text-base font-mono focus:border-black focus:outline-none transition-colors"
@@ -839,11 +884,11 @@ export default function BookingPage() {
                 disabled={submitting || availability?.isClosed}
                 className="w-full h-16 sm:h-22 bg-black hover:bg-[#e60000] border-2 border-black hover:border-[#e60000] disabled:opacity-30 text-white font-mono font-black text-base sm:text-2xl uppercase tracking-wider transition-colors cursor-pointer touch-manipulation select-none active:scale-98 flex items-center justify-center"
               >
-                {submitting ? 'CONFERMA IN CORSO...' : 'CONFERMA PRENOTAZIONE TAVOLO →'}
+                {submitting ? t.submittingButton : t.submitButton}
               </button>
 
               <p className="text-[11px] sm:text-sm font-mono text-neutral-500 text-center mt-3">
-                Tavolo garantito per 15 min oltre l&apos;orario • Cancellazione gratuita
+                {t.guaranteeText}
               </p>
             </div>
           </form>
@@ -856,7 +901,7 @@ export default function BookingPage() {
           <div>
             <strong className="text-black font-black text-sm sm:text-base">HANDA.</strong> — Via del Portello 32, 35131 Padova
             <div className="text-[11px] text-neutral-500 mt-0.5">
-              Mer–Mar 12:00–15:00 / 19:00–23:00 • Dom 19:00–23:00
+              {t.footerOpening}
             </div>
           </div>
 

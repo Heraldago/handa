@@ -3,6 +3,7 @@
 import { useEffect, useState, use } from 'react';
 import Link from 'next/link';
 import { Booking } from '@/lib/types';
+import { translations, Language } from '@/lib/translations';
 
 export default function BookingDetailPage({
   params,
@@ -10,10 +11,29 @@ export default function BookingDetailPage({
   params: Promise<{ code: string }>;
 }) {
   const { code } = use(params);
+  const [lang, setLang] = useState<Language>('it');
   const [booking, setBooking] = useState<Booking | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [cancelling, setCancelling] = useState(false);
+
+  useEffect(() => {
+    try {
+      const savedLang = localStorage.getItem('handa_lang') as Language;
+      if (savedLang === 'en' || savedLang === 'it') {
+        setLang(savedLang);
+      }
+    } catch {}
+  }, []);
+
+  const handleLanguageSwitch = (newLang: Language) => {
+    setLang(newLang);
+    try {
+      localStorage.setItem('handa_lang', newLang);
+    } catch {}
+  };
+
+  const t = translations[lang];
 
   useEffect(() => {
     async function loadBooking() {
@@ -21,12 +41,12 @@ export default function BookingDetailPage({
         const res = await fetch(`/api/bookings/${code}`);
         const data = await res.json();
         if (!res.ok) {
-          setError(data.error || 'Prenotazione non trovata');
+          setError(data.error || (lang === 'en' ? 'Booking not found' : 'Prenotazione non trovata'));
         } else {
           setBooking(data.booking);
         }
       } catch {
-        setError('Errore di connessione');
+        setError(lang === 'en' ? 'Connection error' : 'Errore di connessione');
       } finally {
         setLoading(false);
       }
@@ -35,10 +55,15 @@ export default function BookingDetailPage({
     if (code) {
       loadBooking();
     }
-  }, [code]);
+  }, [code, lang]);
 
   const handleCancelBooking = async () => {
-    if (!confirm('Vuoi annullare questa prenotazione? Il tavolo verrà liberato.')) {
+    const confirmMsg =
+      lang === 'en'
+        ? 'Are you sure you want to cancel this booking? The table will be released.'
+        : 'Vuoi annullare questa prenotazione? Il tavolo verrà liberato.';
+
+    if (!confirm(confirmMsg)) {
       return;
     }
 
@@ -51,14 +76,14 @@ export default function BookingDetailPage({
       });
       const data = await res.json();
       if (!res.ok) {
-        alert(data.error || 'Errore nella cancellazione');
+        alert(data.error || (lang === 'en' ? 'Cancellation error' : 'Errore nella cancellazione'));
       } else {
         if (booking) {
           setBooking({ ...booking, status: 'CANCELLED' });
         }
       }
     } catch {
-      alert('Errore di connessione');
+      alert(lang === 'en' ? 'Connection error' : 'Errore di connessione');
     } finally {
       setCancelling(false);
     }
@@ -66,25 +91,32 @@ export default function BookingDetailPage({
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#f8f8f9] text-black font-mono text-xs flex items-center justify-center">
-        Caricamento prenotazione...
+      <div className="min-h-screen bg-white text-black font-mono text-sm flex items-center justify-center">
+        {lang === 'en' ? 'Loading booking details...' : 'Caricamento prenotazione...'}
       </div>
     );
   }
 
   if (error || !booking) {
     return (
-      <div className="min-h-screen bg-[#f8f8f9] text-black font-mono text-xs flex items-center justify-center p-4">
-        <div className="max-w-sm w-full bg-white rounded-2xl border border-neutral-200 p-6 space-y-4 shadow-sm text-center">
-          <h1 className="font-bold text-sm text-black">PRENOTAZIONE NON TROVATA</h1>
-          <p className="text-neutral-500">
-            Nessuna prenotazione attiva con il codice #{code}.
+      <div className="min-h-screen bg-white text-black font-mono text-sm flex items-center justify-center p-4">
+        <div className="max-w-md w-full bg-white border-2 border-black p-6 sm:p-8 space-y-4 text-center">
+          <span className="text-xs font-black uppercase tracking-widest text-[#e60000] block">
+            404 NOT FOUND
+          </span>
+          <h1 className="font-black text-xl text-black uppercase">
+            {lang === 'en' ? 'RESERVATION NOT FOUND' : 'PRENOTAZIONE NON TROVATA'}
+          </h1>
+          <p className="text-neutral-600 text-xs sm:text-sm">
+            {lang === 'en'
+              ? `No active reservation found with code #${code}.`
+              : `Nessuna prenotazione attiva con il codice #${code}.`}
           </p>
           <Link
             href="/"
-            className="block w-full bg-black hover:bg-neutral-800 text-white text-center py-2.5 rounded-xl font-bold uppercase transition-colors"
+            className="block w-full h-12 border-2 border-black bg-black hover:bg-[#e60000] hover:border-[#e60000] text-white text-center font-black uppercase text-xs transition-colors flex items-center justify-center"
           >
-            Torna alla prenotazione
+            {lang === 'en' ? 'Return to Home / Booking' : 'Torna alla prenotazione'}
           </Link>
         </div>
       </div>
@@ -94,89 +126,143 @@ export default function BookingDetailPage({
   const isCancelled = booking.status === 'CANCELLED';
 
   return (
-    <div className="min-h-screen bg-[#f8f8f9] text-black font-mono text-xs p-4 sm:p-8">
-      <div className="max-w-md mx-auto space-y-4">
+    <main className="min-h-screen bg-white text-black font-mono selection:bg-[#e60000] selection:text-white flex flex-col justify-between">
+      {/* Header */}
+      <header className="px-4 py-4 sm:px-10 border-b-2 border-black sticky top-0 bg-white/95 backdrop-blur-xs z-30">
+        <div className="max-w-xl mx-auto flex items-center justify-between">
+          <Link href="/" className="font-black text-2xl tracking-tighter text-black">
+            HANDA<span className="text-[#e60000]">.</span>
+          </Link>
+
+          <div className="inline-flex border-2 border-black font-bold text-xs">
+            <button
+              type="button"
+              onClick={() => handleLanguageSwitch('it')}
+              className={`px-2.5 py-1 transition-colors cursor-pointer ${
+                lang === 'it' ? 'bg-black text-white' : 'bg-white text-black'
+              }`}
+            >
+              IT
+            </button>
+            <button
+              type="button"
+              onClick={() => handleLanguageSwitch('en')}
+              className={`px-2.5 py-1 border-l-2 border-black transition-colors cursor-pointer ${
+                lang === 'en' ? 'bg-black text-white' : 'bg-white text-black'
+              }`}
+            >
+              EN
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Details */}
+      <div className="max-w-xl w-full mx-auto px-4 py-8 sm:py-12 flex-1 space-y-6">
         <Link
           href="/"
-          className="inline-block text-neutral-500 hover:text-black font-medium underline uppercase"
+          className="inline-block text-xs font-bold text-neutral-500 hover:text-black uppercase underline"
         >
-          ← Torna alla home
+          {lang === 'en' ? '← Back to Home' : '← Torna alla home'}
         </Link>
 
-        <div className="bg-white rounded-2xl border border-neutral-200 p-6 space-y-6 shadow-sm">
-          <div className="border-b border-neutral-200 pb-4 flex justify-between items-start">
+        <div className="border-2 border-black p-6 sm:p-8 space-y-6 bg-white">
+          <div className="border-b-2 border-black pb-4 flex justify-between items-start">
             <div>
-              <span className="text-neutral-400 block text-[11px] uppercase tracking-wider">PRENOTAZIONE</span>
-              <span className="font-black text-xl text-black">#{booking.code}</span>
+              <span className="text-neutral-500 block text-xs uppercase tracking-widest font-bold">
+                {t.successStatus}
+              </span>
+              <span className="font-black text-2xl sm:text-3xl text-black">#{booking.code}</span>
             </div>
             <div>
               {isCancelled ? (
-                <span className="bg-red-50 text-[#e60000] border border-red-200 px-2.5 py-1 rounded-md font-bold">
-                  ANNULLATA
+                <span className="bg-red-50 text-[#e60000] border-2 border-[#e60000] px-3 py-1 font-black text-xs uppercase">
+                  {lang === 'en' ? 'CANCELLED' : 'ANNULLATA'}
                 </span>
               ) : (
-                <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-1 rounded-md font-bold">
-                  CONFERMATA
+                <span className="bg-black text-white px-3 py-1 font-black text-xs uppercase">
+                  {t.confirmed}
                 </span>
               )}
             </div>
           </div>
 
-          <div className="space-y-3 bg-neutral-50 rounded-xl p-4 border border-neutral-200">
+          <div className="space-y-3 text-xs sm:text-sm">
             <div className="flex justify-between border-b border-neutral-200 pb-2">
-              <span className="text-neutral-500 uppercase">Nome:</span>
-              <span className="font-bold text-black">{booking.customerName}</span>
-            </div>
-            <div className="flex justify-between border-b border-neutral-200 pb-2">
-              <span className="text-neutral-500 uppercase">Persone:</span>
-              <span className="font-bold text-black">{booking.guestCount}</span>
+              <span className="text-neutral-500 uppercase font-medium">{t.name}:</span>
+              <span className="font-black text-black">{booking.customerName}</span>
             </div>
             <div className="flex justify-between border-b border-neutral-200 pb-2">
-              <span className="text-neutral-500 uppercase">Data:</span>
-              <span className="font-bold text-black">{booking.date}</span>
+              <span className="text-neutral-500 uppercase font-medium">{t.covers}:</span>
+              <span className="font-black text-black">
+                {booking.guestCount} {booking.guestCount === 1 ? t.personSingle : t.personPlural}
+              </span>
             </div>
             <div className="flex justify-between border-b border-neutral-200 pb-2">
-              <span className="text-neutral-500 uppercase">Turno:</span>
-              <span className="font-bold text-black">{booking.time} ({booking.shiftName})</span>
+              <span className="text-neutral-500 uppercase font-medium">{t.tableArea}:</span>
+              <span className="font-black text-black uppercase">
+                {booking.seatingArea === 'outdoor' ? t.outdoorSeating : t.indoorSeating}
+              </span>
             </div>
-            <div className="flex justify-between pt-1">
-              <span className="text-neutral-500 uppercase">Indirizzo:</span>
-              <span className="text-black">Via del Portello 32, Padova</span>
+            <div className="flex justify-between border-b border-neutral-200 pb-2">
+              <span className="text-neutral-500 uppercase font-medium">{t.dateTime}:</span>
+              <span className="font-black text-[#e60000]">{booking.date} • {booking.time}</span>
             </div>
-            {booking.dietary.length > 0 && (
-              <div className="flex justify-between pt-2 border-t border-neutral-200">
-                <span className="text-neutral-500 uppercase">Note:</span>
-                <span className="font-bold text-black">{booking.dietary.join(', ')}</span>
+            <div className="flex justify-between border-b border-neutral-200 pb-2">
+              <span className="text-neutral-500 uppercase font-medium">{t.service}:</span>
+              <span className="font-bold text-black">{booking.shiftName}</span>
+            </div>
+            <div className="flex justify-between border-b border-neutral-200 pb-2">
+              <span className="text-neutral-500 uppercase font-medium">{t.address}:</span>
+              <span className="font-bold text-black">{t.addressValue}</span>
+            </div>
+            {booking.dietary && booking.dietary.length > 0 && (
+              <div className="flex justify-between border-b border-neutral-200 pb-2">
+                <span className="text-neutral-500 uppercase font-medium">{t.notes}:</span>
+                <span className="font-bold text-[#e60000]">{booking.dietary.join(', ')}</span>
               </div>
             )}
           </div>
 
           {!isCancelled ? (
-            <div className="space-y-2.5 pt-1">
+            <div className="space-y-3 pt-2">
               <a
-                href={`https://wa.me/393492330492?text=Ciao%20Handa,%20scrivo%20per%20la%20prenotazione%20${booking.code}`}
+                href={`https://wa.me/393492330492?text=${encodeURIComponent(
+                  lang === 'en'
+                    ? `Hello Handa, regarding booking #${booking.code} for ${booking.customerName}`
+                    : `Ciao Handa, scrivo per la prenotazione #${booking.code} a nome ${booking.customerName}`
+                )}`}
                 target="_blank"
                 rel="noreferrer"
-                className="block text-center w-full bg-[#25D366] hover:bg-[#20ba59] text-black font-bold py-3 rounded-xl uppercase transition-colors shadow-xs"
+                className="block text-center w-full h-12 border-2 border-black bg-white hover:bg-neutral-100 text-black font-black py-3 uppercase text-xs transition-colors flex items-center justify-center cursor-pointer"
               >
-                Scrivici su WhatsApp
+                {lang === 'en' ? 'Contact us on WhatsApp' : 'Contattaci su WhatsApp'}
               </a>
 
               <button
                 onClick={handleCancelBooking}
                 disabled={cancelling}
-                className="w-full bg-white hover:bg-red-50 text-red-600 border border-red-200 py-3 rounded-xl uppercase font-bold transition-colors cursor-pointer"
+                className="w-full h-12 bg-white hover:bg-[#e60000] hover:text-white hover:border-[#e60000] text-[#e60000] border-2 border-[#e60000] uppercase font-black text-xs transition-colors cursor-pointer flex items-center justify-center"
               >
-                {cancelling ? 'Annullamento...' : 'Annulla questa prenotazione'}
+                {cancelling
+                  ? (lang === 'en' ? 'Cancelling...' : 'Annullamento...')
+                  : (lang === 'en' ? 'Cancel this reservation' : 'Annulla questa prenotazione')}
               </button>
             </div>
           ) : (
-            <div className="p-3 bg-neutral-100 text-neutral-500 rounded-xl text-center">
-              Prenotazione annullata. Tavolo rimesso a disposizione.
+            <div className="p-4 bg-neutral-100 border-l-4 border-black text-xs font-bold text-neutral-600">
+              {lang === 'en'
+                ? 'Reservation cancelled. The table has been released.'
+                : 'Prenotazione annullata. Il tavolo è stato rimesso a disposizione.'}
             </div>
           )}
         </div>
       </div>
-    </div>
+
+      {/* Footer */}
+      <footer className="border-t-2 border-black py-6 px-4 text-center text-xs text-neutral-500 font-mono">
+        HANDA. • Via del Portello 32, Padova • 349 233 0492
+      </footer>
+    </main>
   );
 }
