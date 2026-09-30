@@ -1,0 +1,94 @@
+[
+  {
+    "id": "sample-1",
+    "code": "HND-8214",
+    "date": "2026-09-30",
+    "shiftId": "dinner_1",
+    "shiftName": "1° Turno",
+    "time": "20:00",
+    "guestCount": 2,
+    "customerName": "Marco Zanin",
+    "customerPhone": "+39 340 123 4567",
+    "customerEmail": "marco.zanin@email.com",
+    "dietary": [
+      "Vegano"
+    ],
+    "notes": "Primo appuntamento, tavolo carino se possibile!",
+    "status": "CONFIRMED",
+    "tableNumber": "T2",
+    "createdAt": "2026-09-30T14:03:16.309Z"
+  },
+  {
+    "id": "sample-2",
+    "code": "HND-3991",
+    "date": "2026-09-30",
+    "shiftId": "dinner_1",
+    "shiftName": "1° Turno",
+    "time": "20:00",
+    "guestCount": 4,
+    "customerName": "Giulia Berti",
+    "customerPhone": "+39 347 987 6543",
+    "customerEmail": "giulia.b@gmail.com",
+    "dietary": [
+      "Senza Glutine"
+    ],
+    "notes": "",
+    "status": "CONFIRMED",
+    "tableNumber": "T4",
+    "createdAt": "2026-09-30T14:03:16.309Z",
+    "updatedAt": "2026-09-30T18:11:11.598Z"
+  },
+  {
+    "id": "sample-3",
+    "code": "HND-4712",
+    "date": "2026-09-30",
+    "shiftId": "dinner_2",
+    "shiftName": "2° Turno",
+    "time": "21:30",
+    "guestCount": 3,
+    "customerName": "Alessandro Rossi",
+    "customerPhone": "+39 333 456 7890",
+    "customerEmail": "ale.rossi@studenti.unipd.it",
+    "dietary": [
+      "No Crostacei"
+    ],
+    "notes": "Vogliamo fare assaggio di bao e takoyaki",
+    "status": "CONFIRMED",
+    "tableNumber": "T1",
+    "createdAt": "2026-09-30T14:03:16.309Z"
+  },
+  {
+    "id": "sample-4",
+    "code": "HND-9012",
+    "date": "2026-09-30",
+    "shiftId": "dinner_2",
+    "shiftName": "2° Turno",
+    "time": "21:30",
+    "guestCount": 6,
+    "customerName": "Sofia Trevisan",
+    "customerPhone": "+39 348 765 4321",
+    "dietary": [],
+    "notes": "Festa di laurea piccola",
+    "status": "CONFIRMED",
+    "tableNumber": "T5",
+    "createdAt": "2026-09-30T14:03:16.309Z",
+    "updatedAt": "2026-09-30T17:38:54.495Z"
+  },
+  {
+    "date": "2026-09-30",
+    "shiftId": "dinner_2",
+    "shiftName": "2° Turno",
+    "time": "21:30",
+    "guestCount": 2,
+    "customerName": "Test Client",
+    "customerPhone": "+39 349 111 2233",
+    "dietary": [
+      "Vegano"
+    ],
+    "notes": "",
+    "id": "b_1790777021316_s60r6",
+    "code": "HND-5786",
+    "status": "CONFIRMED",
+    "createdAt": "2026-09-30T14:03:41.316Z"
+  }
+]
