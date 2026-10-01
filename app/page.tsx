@@ -507,19 +507,22 @@ export default function BookingPage() {
           <form onSubmit={handleBookingSubmit} className="space-y-7 sm:space-y-10">
             {/* 1. NUMERO PERSONE ("Per quante persone?") */}
             <div>
-              <div className="flex justify-between items-baseline mb-3">
+              <div className="flex flex-wrap sm:flex-nowrap justify-between items-center gap-2 mb-3">
                 <label className="text-base sm:text-lg font-black uppercase tracking-wider text-black">
                   {t.step1Title}
                 </label>
-                <span className="text-xs text-neutral-500 font-medium">
-                  {t.step1GroupNotice}{' '}
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-neutral-500 font-bold uppercase tracking-wider">
+                    {t.step1GroupNotice}
+                  </span>
                   <a
                     href="tel:+393492330492"
-                    className="text-[#e60000] font-black underline hover:text-red-700 inline-flex items-center gap-1"
+                    className="h-8 sm:h-9 px-3 border-2 border-black bg-white hover:bg-black hover:text-white text-black text-xs font-black uppercase tracking-wider transition-all duration-100 flex items-center gap-1.5 cursor-pointer touch-manipulation select-none active:scale-95 shadow-2xs"
                   >
-                    <span>📞</span> {t.step1GroupAction}
+                    <span className="text-xs">📞</span>
+                    <span>{t.step1GroupAction}</span>
                   </a>
-                </span>
+                </div>
               </div>
 
               <div className="grid grid-cols-6 gap-2" role="radiogroup" aria-label={t.step1Title}>
