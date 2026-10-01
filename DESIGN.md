@@ -7,9 +7,10 @@
 ## 1. Brand Identity & Design Principles
 
 * **Aesthetic Philosophy**: Minimalist Japanese Izakaya / Modern Brutalist. High-contrast, stark, confident, functional, and devoid of unnecessary ornamentation.
-* **Canvas & Surface**: Pure crisp white (`#ffffff`) as the primary canvas. Light neutral backgrounds (`#f5f5f5` / `bg-neutral-100`) for segmented trays and subtle containers.
+* **Canvas & Surface**: Warm natural washi paper canvas (`#faf8f5`) with procedural organic micro-grain and subtle paper creases (`.bg-paper-texture`). Zero-weight (350 bytes procedural CSS/SVG, 0 HTTP network requests). Cards and inputs sit on crisp white (`#ffffff`) planes with stark borders (`border-2 border-black`).
 * **Geometry**: Strict **zero border-radius** (`rounded-none`). Every card, button, input, badge, and modal is a sharp rectangular plane.
 * **Numbers & Numerals**: Standard geometric sans-serif (Inter / System Sans). **No slashed zeros, no monospaced tabular styling**.
+* **Communication Channel**: Direct voice phone call (`tel:+393492330492`) and native device sharing (`navigator.share` / clipboard copy) across customer flow and admin dashboard.
 
 ---
 
@@ -17,7 +18,8 @@
 
 | Token | Hex / Class | Semantic Meaning & Usage Rules |
 | :--- | :--- | :--- |
-| **Canvas** | `#ffffff` | Primary background canvas. Keeps the screen luminous and legible. |
+| **Canvas / Paper** | `#faf8f5` (`.bg-paper-texture`) | Warm washi paper canvas with organic micro-grain and light creases. |
+| **Surface / Cards** | `#ffffff` | Elevated component planes, inputs, and unselected card options. |
 | **Primary Ink** | `#000000` | Text, primary headings, stark borders, and primary CTA backgrounds. |
 | **Muted Ink** | `#525252` (`neutral-600`) | Secondary labels, descriptions, and helper text. |
 | **Subtle Ink** | `#a3a3a3` (`neutral-400`) | Placeholders, inactive hints, and subtle dividers. |

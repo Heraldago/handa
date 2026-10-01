@@ -291,9 +291,9 @@ export default function BookingPage() {
   const minDateIso = getLocalIso(new Date());
 
   return (
-    <main className="min-h-screen bg-white text-black font-sans flex flex-col justify-between selection:bg-[#e60000] selection:text-white max-w-full overflow-x-hidden">
+    <main className="min-h-screen bg-[#faf8f5] bg-paper-texture text-black font-sans flex flex-col justify-between selection:bg-[#e60000] selection:text-white max-w-full overflow-x-hidden">
       {/* Top Header */}
-      <header className="px-3 sm:px-10 py-2.5 sm:py-4 border-b-2 border-black sticky top-0 bg-white/95 backdrop-blur-xs z-30 max-w-full">
+      <header className="px-3 sm:px-10 py-2.5 sm:py-4 border-b-2 border-black sticky top-0 bg-[#faf8f5]/95 backdrop-blur-xs z-30 max-w-full">
         <div className="max-w-3xl mx-auto flex items-center justify-between gap-1.5 sm:gap-4">
           <div className="flex items-baseline gap-2 sm:gap-3 shrink-0">
             <span className="font-black text-2xl sm:text-4xl tracking-tighter text-black">

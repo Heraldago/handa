@@ -307,8 +307,8 @@ export default function AdminDashboardPage() {
 
   if (!isAuthenticated) {
     return (
-      <main className="min-h-screen bg-white text-black font-sans flex items-center justify-center p-4 selection:bg-[#e60000] selection:text-white">
-        <div className="border border-black max-w-sm w-full p-6 sm:p-8 animate-in fade-in duration-200">
+      <main className="min-h-screen bg-[#faf8f5] bg-paper-texture text-black font-sans flex items-center justify-center p-4 selection:bg-[#e60000] selection:text-white">
+        <div className="border-2 border-black bg-white max-w-sm w-full p-6 sm:p-8 animate-in fade-in duration-200 shadow-sm">
           <div className="mb-6">
             <span className="text-xs font-black uppercase tracking-widest text-[#e60000] block mb-1">
               ACCESSO RISERVATO
@@ -361,9 +361,9 @@ export default function AdminDashboardPage() {
   }
 
   return (
-    <main className="min-h-screen bg-white text-black font-sans selection:bg-[#e60000] selection:text-white pb-24 max-w-full overflow-x-hidden">
+    <main className="min-h-screen bg-[#faf8f5] bg-paper-texture text-black font-sans selection:bg-[#e60000] selection:text-white pb-24 max-w-full overflow-x-hidden">
       {/* 1. TOP HEADER (MOBILE ROBUST & UN-CRAMPED) */}
-      <header className="border-b border-black bg-white px-3 sm:px-8 py-2.5 sm:py-3 sticky top-0 z-40 max-w-full overflow-hidden">
+      <header className="border-b border-black bg-[#faf8f5]/95 backdrop-blur-xs px-3 sm:px-8 py-2.5 sm:py-3 sticky top-0 z-40 max-w-full overflow-hidden">
         <div className="max-w-6xl mx-auto flex items-center justify-between gap-2">
           {/* Left: Brand + Staff Desk Pill + Live Sync Indicator */}
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">

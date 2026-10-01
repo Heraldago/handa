@@ -126,9 +126,9 @@ export default function BookingDetailPage({
   const isCancelled = booking.status === 'CANCELLED';
 
   return (
-    <main className="min-h-screen bg-white text-black font-sans selection:bg-[#e60000] selection:text-white flex flex-col justify-between">
+    <main className="min-h-screen bg-[#faf8f5] bg-paper-texture text-black font-sans selection:bg-[#e60000] selection:text-white flex flex-col justify-between">
       {/* Header */}
-      <header className="px-4 py-4 sm:px-10 border-b-2 border-black sticky top-0 bg-white/95 backdrop-blur-xs z-30">
+      <header className="px-4 py-4 sm:px-10 border-b-2 border-black sticky top-0 bg-[#faf8f5]/95 backdrop-blur-xs z-30">
         <div className="max-w-xl mx-auto flex items-center justify-between">
           <Link href="/" className="font-black text-2xl tracking-tighter text-black">
             HANDA<span className="text-[#e60000]">.</span>
