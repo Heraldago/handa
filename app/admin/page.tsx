@@ -304,8 +304,8 @@ export default function AdminDashboardPage() {
 
   const shiftsList: { id: ShiftId; label: string; time: string; sub: string }[] = [
     { id: 'lunch', label: 'Pranzo', time: '12:00 – 15:00', sub: 'Dinamico' },
-    { id: 'dinner_1', label: '1° Cena', time: '19:15 – 20:00', sub: 'Esce 21:15' },
-    { id: 'dinner_2', label: '2° Cena', time: '21:30 – 23:00', sub: 'A chiusura' },
+    { id: 'dinner_1', label: '1° Turno Cena', time: '19:15 – 20:00', sub: 'Esce 21:15' },
+    { id: 'dinner_2', label: '2° Turno Cena', time: '21:30 – 23:00', sub: 'A chiusura' },
   ];
 
   if (!isAuthenticated) {
@@ -1251,7 +1251,7 @@ export default function AdminDashboardPage() {
                         : 'border-neutral-300 bg-white text-neutral-800 hover:border-black hover:text-black'
                     }`}
                   >
-                    <span className="text-xs sm:text-sm font-black uppercase">1° CENA</span>
+                    <span className="text-xs sm:text-sm font-black uppercase">1° TURNO CENA</span>
                     <span className={`text-[11px] ${walkInShift === 'dinner_1' ? 'text-neutral-300' : 'text-neutral-500'}`}>19:15 (esce 21:15)</span>
                   </button>
 
@@ -1267,7 +1267,7 @@ export default function AdminDashboardPage() {
                         : 'border-neutral-300 bg-white text-neutral-800 hover:border-black hover:text-black'
                     }`}
                   >
-                    <span className="text-xs sm:text-sm font-black uppercase">2° CENA</span>
+                    <span className="text-xs sm:text-sm font-black uppercase">2° TURNO CENA</span>
                     <span className={`text-[11px] ${walkInShift === 'dinner_2' ? 'text-neutral-300' : 'text-neutral-500'}`}>21:30 – 23:00</span>
                   </button>
                 </div>
@@ -1599,7 +1599,7 @@ export default function AdminDashboardPage() {
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
               <span className="text-neutral-500">Turno:</span>
               <span className="text-black font-black">
-                {activeTab === 'lunch' ? 'Pranzo' : activeTab === 'dinner_1' ? '1° Cena' : '2° Cena'}
+                {activeTab === 'lunch' ? 'Pranzo' : activeTab === 'dinner_1' ? '1° Turno Cena' : '2° Turno Cena'}
               </span>
             </div>
             <div className="h-4 w-px bg-neutral-300" />
@@ -1624,7 +1624,7 @@ export default function AdminDashboardPage() {
           {/* Mobile Glance */}
           <div className="sm:hidden flex flex-col">
             <span className="text-[10px] font-black uppercase tracking-widest text-neutral-500">
-              {activeTab === 'lunch' ? 'PRANZO' : activeTab === 'dinner_1' ? '1° CENA' : '2° CENA'}
+              {activeTab === 'lunch' ? 'PRANZO' : activeTab === 'dinner_1' ? '1° TURNO CENA' : '2° TURNO CENA'}
             </span>
             <span className="text-sm font-black text-black">
               {currentTabBookings.reduce((sum: number, b: Booking) => sum + b.guestCount, 0)} PAX ({currentTabBookings.length} tav.)

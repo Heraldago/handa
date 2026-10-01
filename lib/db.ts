@@ -35,7 +35,7 @@ const DEFAULT_SETTINGS: Settings = {
     },
     dinner_1: {
       id: 'dinner_1',
-      name: '1° Turno (Cena)',
+      name: '1° Turno Cena',
       category: 'dinner',
       timeRange: '19:15 – 21:15',
       availableSlots: ['19:15', '19:30', '19:45', '20:00'],
@@ -47,7 +47,7 @@ const DEFAULT_SETTINGS: Settings = {
     },
     dinner_2: {
       id: 'dinner_2',
-      name: '2° Turno (Cena)',
+      name: '2° Turno Cena',
       category: 'dinner',
       timeRange: '21:30 – 23:00',
       availableSlots: ['21:30', '21:45', '22:00'],
