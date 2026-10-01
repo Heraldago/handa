@@ -284,11 +284,13 @@ export default function BookingPage() {
 
           <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm">
             {/* Bilingual Switcher: IT | EN */}
-            <div className="inline-flex border-2 border-black overflow-hidden font-bold bg-neutral-100">
+            <div className="inline-flex border-2 border-black overflow-hidden font-bold bg-neutral-100" role="tablist" aria-label="Selettore lingua">
               <button
                 type="button"
+                role="tab"
+                aria-selected={lang === 'it'}
                 onClick={() => handleLanguageSwitch('it')}
-                className={`px-3 py-1 transition-colors cursor-pointer text-xs font-black ${
+                className={`px-3 py-1 transition-colors cursor-pointer text-xs font-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${
                   lang === 'it'
                     ? 'bg-black text-white shadow-xs'
                     : 'bg-transparent text-neutral-600 hover:text-black'
@@ -298,8 +300,10 @@ export default function BookingPage() {
               </button>
               <button
                 type="button"
+                role="tab"
+                aria-selected={lang === 'en'}
                 onClick={() => handleLanguageSwitch('en')}
-                className={`px-3 py-1 border-l-2 border-black transition-colors cursor-pointer text-xs font-black ${
+                className={`px-3 py-1 border-l-2 border-black transition-colors cursor-pointer text-xs font-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${
                   lang === 'en'
                     ? 'bg-black text-white shadow-xs'
                     : 'bg-transparent text-neutral-600 hover:text-black'
@@ -471,15 +475,17 @@ export default function BookingPage() {
                 </span>
               </div>
 
-              <div className="grid grid-cols-6 gap-2">
+              <div className="grid grid-cols-6 gap-2" role="radiogroup" aria-label={t.step1Title}>
                 {[1, 2, 3, 4, 5, 6].map((num) => {
                   const isSelected = guestCount === num;
                   return (
                     <button
                       key={num}
                       type="button"
+                      role="radio"
+                      aria-checked={isSelected}
                       onClick={() => setGuestCount(num)}
-                      className={`h-14 sm:h-20 border-2 text-xl sm:text-4xl font-black transition-all cursor-pointer touch-manipulation select-none active:scale-95 flex items-center justify-center ${
+                      className={`h-14 sm:h-20 border-2 text-xl sm:text-4xl font-black transition-all cursor-pointer touch-manipulation select-none active:scale-95 flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${
                         isSelected
                           ? 'border-black bg-black text-white shadow-sm'
                           : 'border-neutral-200 bg-white text-neutral-700 hover:border-black hover:text-black'
@@ -504,15 +510,17 @@ export default function BookingPage() {
               </div>
 
               {/* Quick Days */}
-              <div className="flex sm:grid sm:grid-cols-7 gap-2 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-none snap-x">
+              <div className="flex sm:grid sm:grid-cols-7 gap-2 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-none snap-x" role="radiogroup" aria-label={t.step2Title}>
                 {quickDays.map((d) => {
                   const isSelected = selectedDate === d.iso;
                   return (
                     <button
                       key={d.iso}
                       type="button"
+                      role="radio"
+                      aria-checked={isSelected}
                       onClick={() => handleSelectDate(d.iso)}
-                      className={`min-w-[76px] sm:min-w-0 flex-1 py-3 sm:py-5 px-1 border-2 flex flex-col items-center justify-center transition-all cursor-pointer touch-manipulation select-none active:scale-95 snap-start ${
+                      className={`min-w-[76px] sm:min-w-0 flex-1 py-3 sm:py-5 px-1 border-2 flex flex-col items-center justify-center transition-all cursor-pointer touch-manipulation select-none active:scale-95 snap-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${
                         isSelected
                           ? 'border-black bg-black text-white shadow-sm'
                           : 'border-neutral-200 bg-white text-neutral-700 hover:border-black hover:text-black'
@@ -579,7 +587,7 @@ export default function BookingPage() {
               </div>
 
               {/* 3 SHIFT TILES */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 mb-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 mb-3" role="radiogroup" aria-label={t.step3Title}>
                 {/* 1. PRANZO DINAMICO */}
                 {(() => {
                   const shift = availability?.shifts.find((s) => s.id === 'lunch');
@@ -590,9 +598,11 @@ export default function BookingPage() {
                     <button
                       key="lunch"
                       type="button"
+                      role="radio"
+                      aria-checked={isSelected}
                       disabled={!isAvailable}
                       onClick={() => handleSelectShift('lunch')}
-                      className={`p-4 sm:p-5 border-2 text-left transition-all cursor-pointer touch-manipulation select-none active:scale-98 flex flex-col justify-between ${
+                      className={`p-4 sm:p-5 border-2 text-left transition-all cursor-pointer touch-manipulation select-none active:scale-98 flex flex-col justify-between focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${
                         !isAvailable
                           ? 'opacity-35 border-dashed border-neutral-300 bg-neutral-100 cursor-not-allowed'
                           : isSelected
@@ -641,9 +651,11 @@ export default function BookingPage() {
                     <button
                       key="dinner_1"
                       type="button"
+                      role="radio"
+                      aria-checked={isSelected}
                       disabled={!isAvailable}
                       onClick={() => handleSelectShift('dinner_1')}
-                      className={`p-4 sm:p-5 border-2 text-left transition-all cursor-pointer touch-manipulation select-none active:scale-98 flex flex-col justify-between ${
+                      className={`p-4 sm:p-5 border-2 text-left transition-all cursor-pointer touch-manipulation select-none active:scale-98 flex flex-col justify-between focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${
                         !isAvailable
                           ? 'opacity-35 border-dashed border-neutral-300 bg-neutral-100 cursor-not-allowed'
                           : isSelected
@@ -692,9 +704,11 @@ export default function BookingPage() {
                     <button
                       key="dinner_2"
                       type="button"
+                      role="radio"
+                      aria-checked={isSelected}
                       disabled={!isAvailable}
                       onClick={() => handleSelectShift('dinner_2')}
-                      className={`p-4 sm:p-5 border-2 text-left transition-all cursor-pointer touch-manipulation select-none active:scale-98 flex flex-col justify-between ${
+                      className={`p-4 sm:p-5 border-2 text-left transition-all cursor-pointer touch-manipulation select-none active:scale-98 flex flex-col justify-between focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${
                         !isAvailable
                           ? 'opacity-35 border-dashed border-neutral-300 bg-neutral-100 cursor-not-allowed'
                           : isSelected
@@ -741,15 +755,17 @@ export default function BookingPage() {
                     {t.selectSlotPrompt} ({activeShift.name}):
                   </div>
 
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Orario di arrivo">
                     {activeShift.availableSlots.map((slot) => {
                       const isSlotSelected = selectedSlot === slot;
                       return (
                         <button
                           key={slot}
                           type="button"
+                          role="radio"
+                          aria-checked={isSlotSelected}
                           onClick={() => setSelectedSlot(slot)}
-                          className={`px-4 py-2.5 sm:py-3 border-2 text-base sm:text-lg font-black transition-all cursor-pointer touch-manipulation select-none active:scale-95 ${
+                          className={`px-4 py-2.5 sm:py-3 border-2 text-base sm:text-lg font-black transition-all cursor-pointer touch-manipulation select-none active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${
                             isSlotSelected
                               ? 'border-black bg-black text-white shadow-xs'
                               : 'border-neutral-200 bg-white text-neutral-700 hover:border-black hover:text-black'
@@ -786,12 +802,14 @@ export default function BookingPage() {
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5" role="radiogroup" aria-label={t.step4Title}>
                 {/* SALA INTERNA */}
                 <button
                   type="button"
+                  role="radio"
+                  aria-checked={seatingArea === 'indoor'}
                   onClick={() => setSeatingArea('indoor')}
-                  className={`p-4 sm:p-5 border-2 text-left transition-all cursor-pointer touch-manipulation select-none active:scale-98 flex flex-col justify-between ${
+                  className={`p-4 sm:p-5 border-2 text-left transition-all cursor-pointer touch-manipulation select-none active:scale-98 flex flex-col justify-between focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${
                     seatingArea === 'indoor'
                       ? 'border-2 border-black bg-white text-black shadow-md ring-1 ring-black'
                       : 'border-2 border-neutral-200 bg-white text-neutral-600 hover:border-black hover:text-black'
@@ -821,9 +839,11 @@ export default function BookingPage() {
                 {/* ESTERNO (PORTICO) */}
                 <button
                   type="button"
+                  role="radio"
+                  aria-checked={seatingArea === 'outdoor'}
                   disabled={!availability?.isOutdoorActive}
                   onClick={() => setSeatingArea('outdoor')}
-                  className={`p-4 sm:p-5 border-2 text-left transition-all cursor-pointer touch-manipulation select-none active:scale-98 flex flex-col justify-between ${
+                  className={`p-4 sm:p-5 border-2 text-left transition-all cursor-pointer touch-manipulation select-none active:scale-98 flex flex-col justify-between focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${
                     !availability?.isOutdoorActive
                       ? 'opacity-40 border-dashed border-neutral-300 bg-neutral-100 cursor-not-allowed'
                       : seatingArea === 'outdoor'

@@ -32,22 +32,28 @@
 
 ---
 
-## 3. Interactive States & Component Affordances
+## 3. Figma Button States & Hierarchy Framework
 
-### A. Primary Action CTAs vs Selection States
-To prevent the screen from turning into an oppressive black void, a strict distinction is enforced:
+Based on Figma's official State Architecture guidelines:
 
-* **Primary Action Buttons (CTAs)**:
-  * Examples: `[CONFERMA PRENOTAZIONE →]`, `[📞 + PRENOTA]`, `[✓ Siedi al Tavolo]`.
-  * Style: Solid black background (`bg-black text-white`), bold uppercase, hover transition to red or emerald (`hover:bg-[#e60000]` or `hover:bg-emerald-600`).
-* **Selection Cards (Large surfaces: Shifts, Seating Areas)**:
-  * **Selected**: Remains **luminous white** (`bg-white`), framed by heavy stark black border and subtle elevation (`border-2 border-black shadow-md ring-1 ring-black`). In the top-right corner, an explicit high-contrast badge is displayed: `[✓ SELEZIONATO]`.
-  * **Unselected**: Light border (`border-2 border-neutral-200 bg-white text-neutral-600 hover:border-black hover:text-black`), accompanied by an empty radio circle `○`.
-  * **Unavailable / Closed**: Muted dashed border (`border-dashed border-neutral-300 opacity-40 bg-neutral-100 cursor-not-allowed`) with a clear reason badge (e.g. `[CHIUSO METEO]`, `[COMPLETO]`).
-* **Compact Segmented Chips (Pax Numbers 1–6, Dates Oggi/Domani, Time Slots, Lang IT/EN)**:
-  * **Selected**: Inverted solid black (`border-2 border-black bg-black text-white shadow-xs font-black`). Because it is a small single chip (36–48px), it creates an instant focal point without darkening the page.
-  * **Unselected**: Clean white (`border-2 border-neutral-200 bg-white text-neutral-700 hover:border-black hover:text-black`).
-  * *Note*: Avoid dark gray / anthracite for active states, as it visually reads as "disabled/inactive".
+### A. Button Hierarchy (Styles)
+* **Primary CTA**: Solid black (`bg-black text-white`). Highest visual weight, reserved for key final actions (e.g. `[CONFERMA PRENOTAZIONE →]`, `[📞 + PRENOTA]`).
+* **Secondary / Card Options**: Crisp white canvas with stark borders (`bg-white border-2 border-neutral-200`). Used for choices, shifts, tables, and segmented steps.
+* **Tertiary / Ghost**: Borderless or subtle outline with neutral text, for secondary utility links.
+
+### B. The 9 Core Interactive States
+
+| State | Visual Behavior in HANDĀ | Accessibility / CSS Implementation |
+| :--- | :--- | :--- |
+| **1. Default (Idle)** | Clean border, neutral text, legible typography. | Base class |
+| **2. Hover** | Darker border (`hover:border-black`), subtle background tint. | Desktop `:hover` (no-op on touch) |
+| **3. Active (Pressed)** | Tactile micro-depression feedback (`active:scale-95` or `active:scale-98`). | Momentary `:active` state on tap/click |
+| **4. Focus-Visible** | High-contrast stark focus ring (`focus-visible:ring-2 focus-visible:ring-black`). | Keyboard navigation (WCAG 2.2) |
+| **5. Disabled** | Reduced opacity (`opacity-35`), dashed border, `cursor-not-allowed`. | `disabled` attribute & `aria-disabled="true"` |
+| **6. Selected / Toggled** | **Cards**: White background + heavy frame (`border-2 border-black shadow-md`) + explicit `[✓ SELEZIONATO]` badge.<br>**Chips/Pills**: Inverted solid black (`bg-black text-white`). | Persistent state with `aria-pressed="true"` / `aria-selected="true"` |
+| **7. Loading** | Button text replaced by spinner or "Conferma in corso...", disabled to prevent duplicate submissions. | `disabled={submitting}` & spinner animation |
+| **8. Success** | Instant closure confirmation screen (`Prenotazione Confermata ✓`). | Screen transition with green confirmation badge |
+| **9. Error** | Red alert banner (`bg-red-50 text-[#e60000] border-l-4 border-[#e60000]`) with recovery instructions. | Inline message, button resets to clickable state |
 
 ---
 
