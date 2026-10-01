@@ -39,8 +39,8 @@ button:focus-visible, input:focus-visible {
   background-color: #ffffff;
   background-image: repeating-linear-gradient(
     45deg,
-    rgba(0, 0, 0, 0.045),
-    rgba(0, 0, 0, 0.045) 4px,
+    rgba(0, 0, 0, 0.09),
+    rgba(0, 0, 0, 0.09) 4px,
     #ffffff 4px,
     #ffffff 8px
   );

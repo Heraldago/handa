@@ -621,16 +621,15 @@ export default function BookingPage() {
                             </span>
                           </div>
                           {!isAvailable ? (
-                            <span className="px-2 py-0.5 bg-neutral-100 text-neutral-500 text-[10px] sm:text-xs font-black uppercase tracking-wider">
+                            <span className="px-2 py-0.5 bg-neutral-100 text-neutral-500 text-[10px] sm:text-xs font-black uppercase tracking-wider shrink-0">
                               {t.statusClosed}
                             </span>
                           ) : isSelected ? (
-                            <span className="px-2 py-0.5 bg-black text-white text-[10px] sm:text-xs font-black uppercase tracking-wider flex items-center gap-1 shadow-xs">
-                              <span>✓</span>
-                              <span>SELEZIONATO</span>
+                            <span className="w-5 h-5 rounded-full bg-black text-white flex items-center justify-center text-xs font-black shrink-0 shadow-xs">
+                              ✓
                             </span>
                           ) : (
-                            <span className="w-5 h-5 rounded-full border-2 border-neutral-300 block" />
+                            <span className="w-5 h-5 rounded-full border-2 border-neutral-300 block shrink-0" />
                           )}
                         </div>
                         <p className="text-xs sm:text-sm font-medium mt-1 leading-snug text-neutral-600">
@@ -674,16 +673,15 @@ export default function BookingPage() {
                             </span>
                           </div>
                           {!isAvailable ? (
-                            <span className="px-2 py-0.5 bg-neutral-100 text-neutral-500 text-[10px] sm:text-xs font-black uppercase tracking-wider">
+                            <span className="px-2 py-0.5 bg-neutral-100 text-neutral-500 text-[10px] sm:text-xs font-black uppercase tracking-wider shrink-0">
                               {t.statusFull}
                             </span>
                           ) : isSelected ? (
-                            <span className="px-2 py-0.5 bg-black text-white text-[10px] sm:text-xs font-black uppercase tracking-wider flex items-center gap-1 shadow-xs">
-                              <span>✓</span>
-                              <span>SELEZIONATO</span>
+                            <span className="w-5 h-5 rounded-full bg-black text-white flex items-center justify-center text-xs font-black shrink-0 shadow-xs">
+                              ✓
                             </span>
                           ) : (
-                            <span className="w-5 h-5 rounded-full border-2 border-neutral-300 block" />
+                            <span className="w-5 h-5 rounded-full border-2 border-neutral-300 block shrink-0" />
                           )}
                         </div>
                         <p className="text-xs sm:text-sm font-medium mt-1 leading-snug text-neutral-600">
@@ -727,16 +725,15 @@ export default function BookingPage() {
                             </span>
                           </div>
                           {!isAvailable ? (
-                            <span className="px-2 py-0.5 bg-neutral-100 text-neutral-500 text-[10px] sm:text-xs font-black uppercase tracking-wider">
+                            <span className="px-2 py-0.5 bg-neutral-100 text-neutral-500 text-[10px] sm:text-xs font-black uppercase tracking-wider shrink-0">
                               {t.statusFull}
                             </span>
                           ) : isSelected ? (
-                            <span className="px-2 py-0.5 bg-black text-white text-[10px] sm:text-xs font-black uppercase tracking-wider flex items-center gap-1 shadow-xs">
-                              <span>✓</span>
-                              <span>SELEZIONATO</span>
+                            <span className="w-5 h-5 rounded-full bg-black text-white flex items-center justify-center text-xs font-black shrink-0 shadow-xs">
+                              ✓
                             </span>
                           ) : (
-                            <span className="w-5 h-5 rounded-full border-2 border-neutral-300 block" />
+                            <span className="w-5 h-5 rounded-full border-2 border-neutral-300 block shrink-0" />
                           )}
                         </div>
                         <p className="text-xs sm:text-sm font-medium mt-1 leading-snug text-neutral-600">
@@ -822,12 +819,11 @@ export default function BookingPage() {
                         <span className="text-xs sm:text-sm font-bold text-neutral-500">{t.indoorSeats}</span>
                       </div>
                       {seatingArea === 'indoor' ? (
-                        <span className="px-2 py-0.5 bg-black text-white text-[10px] sm:text-xs font-black uppercase tracking-wider flex items-center gap-1 shadow-xs">
-                          <span>✓</span>
-                          <span>SELEZIONATO</span>
+                        <span className="w-5 h-5 rounded-full bg-black text-white flex items-center justify-center text-xs font-black shrink-0 shadow-xs">
+                          ✓
                         </span>
                       ) : (
-                        <span className="w-5 h-5 rounded-full border-2 border-neutral-300 block" />
+                        <span className="w-5 h-5 rounded-full border-2 border-neutral-300 block shrink-0" />
                       )}
                     </div>
                     <p className="text-xs sm:text-sm font-medium text-neutral-600">
@@ -858,16 +854,15 @@ export default function BookingPage() {
                         <span className="text-xs sm:text-sm font-bold text-neutral-500">{t.outdoorSeats}</span>
                       </div>
                       {!availability?.isOutdoorActive ? (
-                        <span className="px-2 py-0.5 bg-red-100 text-[#e60000] border border-red-300 text-[10px] sm:text-xs font-black uppercase tracking-wider">
+                        <span className="px-2 py-0.5 bg-red-100 text-[#e60000] border border-red-300 text-[10px] sm:text-xs font-black uppercase tracking-wider shrink-0">
                           CHIUSO METEO
                         </span>
                       ) : seatingArea === 'outdoor' ? (
-                        <span className="px-2 py-0.5 bg-black text-white text-[10px] sm:text-xs font-black uppercase tracking-wider flex items-center gap-1 shadow-xs">
-                          <span>✓</span>
-                          <span>SELEZIONATO</span>
+                        <span className="w-5 h-5 rounded-full bg-black text-white flex items-center justify-center text-xs font-black shrink-0 shadow-xs">
+                          ✓
                         </span>
                       ) : (
-                        <span className="w-5 h-5 rounded-full border-2 border-neutral-300 block" />
+                        <span className="w-5 h-5 rounded-full border-2 border-neutral-300 block shrink-0" />
                       )}
                     </div>
                     <p className="text-xs sm:text-sm font-medium text-neutral-600">
