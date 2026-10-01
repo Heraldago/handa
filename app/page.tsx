@@ -283,33 +283,41 @@ export default function BookingPage() {
           </div>
 
           <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm">
-            {/* Bilingual Switcher: IT | EN */}
-            <div className="inline-flex border-2 border-black overflow-hidden font-bold bg-neutral-100" role="tablist" aria-label="Selettore lingua">
+            {/* Bilingual Switcher: IT | EN with Flags and High-Contrast Segmented States */}
+            <div
+              className="inline-flex border-2 border-black p-0.5 bg-neutral-200 gap-0.5 shrink-0"
+              role="tablist"
+              aria-label="Selettore lingua"
+            >
               <button
                 type="button"
                 role="tab"
                 aria-selected={lang === 'it'}
                 onClick={() => handleLanguageSwitch('it')}
-                className={`px-3 py-1 transition-colors cursor-pointer text-xs font-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${
+                className={`px-2 sm:px-2.5 py-1 flex items-center gap-1.5 text-xs transition-all cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${
                   lang === 'it'
-                    ? 'bg-noren-active text-black shadow-xs'
-                    : 'bg-transparent text-neutral-600 hover:text-black'
+                    ? 'bg-black text-white font-black shadow-xs'
+                    : 'bg-white text-neutral-500 font-bold hover:text-black hover:bg-neutral-50'
                 }`}
+                title="Italiano"
               >
-                IT
+                <span className="text-sm leading-none" aria-hidden="true">🇮🇹</span>
+                <span className="tracking-wider">IT</span>
               </button>
               <button
                 type="button"
                 role="tab"
                 aria-selected={lang === 'en'}
                 onClick={() => handleLanguageSwitch('en')}
-                className={`px-3 py-1 border-l-2 border-black transition-colors cursor-pointer text-xs font-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${
+                className={`px-2 sm:px-2.5 py-1 flex items-center gap-1.5 text-xs transition-all cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${
                   lang === 'en'
-                    ? 'bg-noren-active text-black shadow-xs'
-                    : 'bg-transparent text-neutral-600 hover:text-black'
+                    ? 'bg-black text-white font-black shadow-xs'
+                    : 'bg-white text-neutral-500 font-bold hover:text-black hover:bg-neutral-50'
                 }`}
+                title="English"
               >
-                EN
+                <span className="text-sm leading-none" aria-hidden="true">🇬🇧</span>
+                <span className="tracking-wider">EN</span>
               </button>
             </div>
 

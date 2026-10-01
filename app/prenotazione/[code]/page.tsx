@@ -134,24 +134,40 @@ export default function BookingDetailPage({
             HANDA<span className="text-[#e60000]">.</span>
           </Link>
 
-          <div className="inline-flex border-2 border-black font-bold text-xs">
+          <div
+            className="inline-flex border-2 border-black p-0.5 bg-neutral-200 gap-0.5 shrink-0"
+            role="tablist"
+            aria-label="Selettore lingua"
+          >
             <button
               type="button"
+              role="tab"
+              aria-selected={lang === 'it'}
               onClick={() => handleLanguageSwitch('it')}
-              className={`px-2.5 py-1 transition-colors cursor-pointer ${
-                lang === 'it' ? 'bg-black text-white' : 'bg-white text-black'
+              className={`px-2.5 py-1 flex items-center gap-1.5 text-xs transition-all cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${
+                lang === 'it'
+                  ? 'bg-black text-white font-black shadow-xs'
+                  : 'bg-white text-neutral-500 font-bold hover:text-black hover:bg-neutral-50'
               }`}
+              title="Italiano"
             >
-              IT
+              <span className="text-sm leading-none" aria-hidden="true">🇮🇹</span>
+              <span className="tracking-wider">IT</span>
             </button>
             <button
               type="button"
+              role="tab"
+              aria-selected={lang === 'en'}
               onClick={() => handleLanguageSwitch('en')}
-              className={`px-2.5 py-1 border-l-2 border-black transition-colors cursor-pointer ${
-                lang === 'en' ? 'bg-black text-white' : 'bg-white text-black'
+              className={`px-2.5 py-1 flex items-center gap-1.5 text-xs transition-all cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${
+                lang === 'en'
+                  ? 'bg-black text-white font-black shadow-xs'
+                  : 'bg-white text-neutral-500 font-bold hover:text-black hover:bg-neutral-50'
               }`}
+              title="English"
             >
-              EN
+              <span className="text-sm leading-none" aria-hidden="true">🇬🇧</span>
+              <span className="tracking-wider">EN</span>
             </button>
           </div>
         </div>
