@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
     if (chosenArea === 'indoor' && targetShift.remainingIndoor < guests) {
       if (avail.isOutdoorActive && targetShift.remainingOutdoor >= guests) {
         return NextResponse.json(
-          { error: `Sala interna piena per questo orario! È rimasto posto solo nel Dehors esterno.` },
+          { error: `Sala interna piena per questo orario! È rimasto posto solo all'esterno (sotto il portico).` },
           { status: 400 }
         );
       }
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
     if (chosenArea === 'outdoor') {
       if (!avail.isOutdoorActive) {
         return NextResponse.json(
-          { error: `Il Dehors esterno non è attivo per questa data per motivi meteo/stagionali.` },
+          { error: `I tavoli all'esterno non sono attivi per questa data per motivi meteo/stagionali.` },
           { status: 400 }
         );
       }

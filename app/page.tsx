@@ -269,7 +269,7 @@ export default function BookingPage() {
   const minDateIso = getLocalIso(new Date());
 
   return (
-    <main className="min-h-screen bg-white text-black flex flex-col justify-between selection:bg-[#e60000] selection:text-white">
+    <main className="min-h-screen bg-white text-black font-sans flex flex-col justify-between selection:bg-[#e60000] selection:text-white">
       {/* Top Header */}
       <header className="px-4 py-4 sm:px-10 border-b-2 border-black sticky top-0 bg-white/95 backdrop-blur-xs z-30">
         <div className="max-w-3xl mx-auto flex items-center justify-between">
@@ -277,12 +277,12 @@ export default function BookingPage() {
             <span className="font-black text-2xl sm:text-4xl tracking-tighter text-black">
               HANDA<span className="text-[#e60000]">.</span>
             </span>
-            <span className="text-xs sm:text-sm font-mono text-neutral-400 font-bold hidden sm:inline">
+            <span className="text-xs sm:text-sm text-neutral-400 font-bold hidden sm:inline tracking-wider">
               {t.brandSubtitle}
             </span>
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-3 font-mono text-xs sm:text-sm">
+          <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm">
             {/* Bilingual Switcher: IT | EN */}
             <div className="inline-flex border-2 border-black overflow-hidden font-bold">
               <button
@@ -325,14 +325,14 @@ export default function BookingPage() {
       <div className="max-w-3xl w-full mx-auto px-4 py-6 sm:py-16 flex-1">
         {/* Title */}
         <div className="mb-8 sm:mb-14">
-          <span className="text-xs sm:text-sm font-mono font-black uppercase tracking-widest text-[#e60000] block mb-1 sm:mb-2">
+          <span className="text-xs sm:text-sm font-black uppercase tracking-widest text-[#e60000] block mb-1 sm:mb-2">
             {t.heroBadge}
           </span>
           <h1 className="text-4xl sm:text-7xl font-black tracking-tighter uppercase text-black leading-none">
             {t.heroTitle}<span className="text-[#e60000]">.</span>
           </h1>
-          <div className="text-xs sm:text-base text-neutral-600 mt-3 font-mono space-y-1">
-            <p>{t.heroHours}</p>
+          <div className="text-xs sm:text-base text-neutral-600 mt-3 space-y-1">
+            <p className="font-semibold">{t.heroHours}</p>
             <p className="text-neutral-400 text-xs sm:text-sm">
               {t.heroTagline}
             </p>
@@ -344,25 +344,25 @@ export default function BookingPage() {
           <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-200">
             <div className="border-b-2 border-black pb-5 flex justify-between items-baseline">
               <div>
-                <span className="text-xs sm:text-sm font-mono text-neutral-500 uppercase tracking-widest block font-bold">
+                <span className="text-xs sm:text-sm text-neutral-500 uppercase tracking-widest block font-bold">
                   {t.successStatus}
                 </span>
-                <span className="text-xl sm:text-2xl font-black text-[#e60000] font-mono mt-1 block">
+                <span className="text-xl sm:text-2xl font-black text-[#e60000] mt-1 block">
                   {t.confirmed}
                 </span>
               </div>
               <div className="text-right">
-                <span className="text-xs sm:text-sm font-mono text-neutral-500 uppercase tracking-widest block font-bold">
+                <span className="text-xs sm:text-sm text-neutral-500 uppercase tracking-widest block font-bold">
                   {t.code}
                 </span>
-                <span className="text-3xl sm:text-4xl font-mono font-black">
+                <span className="text-3xl sm:text-4xl font-black">
                   #{successBooking.code}
                 </span>
               </div>
             </div>
 
             {/* Details Table */}
-            <div className="space-y-3.5 font-mono text-sm sm:text-base">
+            <div className="space-y-3.5 text-sm sm:text-base">
               <div className="flex justify-between border-b-2 border-neutral-200 pb-2.5">
                 <span className="text-neutral-500 uppercase font-medium">{t.name}</span>
                 <strong className="text-black font-black text-base sm:text-lg">{successBooking.customerName}</strong>
@@ -407,12 +407,12 @@ export default function BookingPage() {
               )}
             </div>
 
-            <div className="text-xs sm:text-sm font-mono text-neutral-700 bg-neutral-100 p-3.5 border-l-4 border-black">
+            <div className="text-xs sm:text-sm text-neutral-700 bg-neutral-100 p-3.5 border-l-4 border-black">
               {t.toleranceNotice}
             </div>
 
             {/* Actions */}
-            <div className="space-y-3 font-mono pt-3">
+            <div className="space-y-3 pt-3">
               <a
                 href={getWhatsAppShareUrl()}
                 target="_blank"
@@ -431,7 +431,7 @@ export default function BookingPage() {
                 {t.addToGoogleCalendar}
               </a>
 
-              <div className="pt-4 flex justify-between items-center text-xs sm:text-sm font-mono">
+              <div className="pt-4 flex justify-between items-center text-xs sm:text-sm">
                 <Link
                   href={`/prenotazione/${successBooking.code}`}
                   className="text-neutral-500 hover:text-black underline font-bold"
@@ -455,10 +455,10 @@ export default function BookingPage() {
             {/* 1. NUMERO PERSONE ("Per quante persone?") */}
             <div>
               <div className="flex justify-between items-baseline mb-3">
-                <label className="text-base sm:text-lg font-mono font-black uppercase tracking-wider text-black">
+                <label className="text-base sm:text-lg font-black uppercase tracking-wider text-black">
                   {t.step1Title}
                 </label>
-                <span className="text-xs font-mono text-neutral-500">
+                <span className="text-xs text-neutral-500 font-medium">
                   {t.step1GroupNotice}{' '}
                   <a
                     href="https://wa.me/393492330492?text=Ciao%20Handa,%20vorremmo%20prenotare%20per%20un%20gruppo%20numeroso"
@@ -479,7 +479,7 @@ export default function BookingPage() {
                       key={num}
                       type="button"
                       onClick={() => setGuestCount(num)}
-                      className={`h-14 sm:h-20 border-2 font-mono text-xl sm:text-4xl font-black transition-colors cursor-pointer touch-manipulation select-none active:scale-95 flex items-center justify-center ${
+                      className={`h-14 sm:h-20 border-2 text-xl sm:text-4xl font-black transition-colors cursor-pointer touch-manipulation select-none active:scale-95 flex items-center justify-center ${
                         isSelected
                           ? 'border-black bg-black text-white'
                           : 'border-neutral-300 bg-white text-black hover:border-black'
@@ -495,10 +495,10 @@ export default function BookingPage() {
             {/* 2. SCEGLI DATA ("Per che giorno?") */}
             <div>
               <div className="flex justify-between items-baseline mb-3">
-                <label className="text-base sm:text-lg font-mono font-black uppercase tracking-wider text-black">
+                <label className="text-base sm:text-lg font-black uppercase tracking-wider text-black">
                   {t.step2Title}
                 </label>
-                <span className="text-xs font-mono text-neutral-500 font-bold uppercase">
+                <span className="text-xs text-neutral-500 font-bold uppercase">
                   {selectedDate ? formatDisplayDate(selectedDate, lang) : ''}
                 </span>
               </div>
@@ -512,7 +512,7 @@ export default function BookingPage() {
                       key={d.iso}
                       type="button"
                       onClick={() => handleSelectDate(d.iso)}
-                      className={`min-w-[76px] sm:min-w-0 flex-1 py-3 sm:py-5 px-1 border-2 flex flex-col items-center justify-center transition-colors font-mono cursor-pointer touch-manipulation select-none active:scale-95 snap-start ${
+                      className={`min-w-[76px] sm:min-w-0 flex-1 py-3 sm:py-5 px-1 border-2 flex flex-col items-center justify-center transition-colors cursor-pointer touch-manipulation select-none active:scale-95 snap-start ${
                         isSelected
                           ? 'border-black bg-black text-white shadow-sm'
                           : 'border-neutral-300 bg-white text-black hover:border-black'
@@ -537,17 +537,17 @@ export default function BookingPage() {
                 <div className="flex items-center gap-3 pointer-events-none">
                   <span className="text-2xl sm:text-3xl">📅</span>
                   <div>
-                    <span className="text-[11px] sm:text-xs text-neutral-500 font-mono font-bold uppercase tracking-wider block">
+                    <span className="text-[11px] sm:text-xs text-neutral-500 font-bold uppercase tracking-wider block">
                       {t.calendarPickerLabel}
                     </span>
-                    <span className="text-sm sm:text-lg font-mono font-black text-black block mt-0.5">
+                    <span className="text-sm sm:text-lg font-black text-black block mt-0.5">
                       {selectedDate ? formatDisplayDate(selectedDate, lang) : t.calendarPickerPlaceholder}
                     </span>
                   </div>
                 </div>
 
                 <div className="pointer-events-none">
-                  <span className="text-xs font-mono font-black uppercase px-3 py-1.5 border border-black bg-black text-white">
+                  <span className="text-xs font-black uppercase px-3 py-1.5 border border-black bg-black text-white">
                     {t.calendarPickerOpen}
                   </span>
                 </div>
@@ -570,16 +570,16 @@ export default function BookingPage() {
             {/* 3. TURNO & ORARIO DI ARRIVO ("A che ora?") */}
             <div>
               <div className="flex justify-between items-baseline mb-3">
-                <label className="text-base sm:text-lg font-mono font-black uppercase tracking-wider text-black">
+                <label className="text-base sm:text-lg font-black uppercase tracking-wider text-black">
                   {t.step3Title}
                 </label>
-                <span className="text-xs sm:text-sm font-mono text-neutral-500">
+                <span className="text-xs sm:text-sm text-neutral-500 font-medium">
                   {loadingAvail ? t.checkingAvailability : t.liveAvailability}
                 </span>
               </div>
 
               {/* 3 SHIFT TILES */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 font-mono mb-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 mb-3">
                 {/* 1. PRANZO DINAMICO */}
                 {(() => {
                   const shift = availability?.shifts.find((s) => s.id === 'lunch');
@@ -688,7 +688,7 @@ export default function BookingPage() {
 
               {/* SPECIFIC TIME SLOT SELECTION */}
               {activeShift && activeShift.available && (
-                <div className="p-3.5 sm:p-4 bg-neutral-50 border-2 border-neutral-200 font-mono">
+                <div className="p-3.5 sm:p-4 bg-neutral-50 border-2 border-neutral-200">
                   <div className="text-xs sm:text-sm font-bold uppercase tracking-wide text-neutral-600 mb-2.5">
                     {t.selectSlotPrompt} ({activeShift.name}):
                   </div>
@@ -727,18 +727,18 @@ export default function BookingPage() {
               )}
             </div>
 
-            {/* 4. PREFERENZA TAVOLO: SALA (36) vs DEHORS (35) ("Dentro o fuori?") */}
+            {/* 4. PREFERENZA TAVOLO: SALA (36) vs ESTERNO (35) ("Dentro o fuori?") */}
             <div>
               <div className="flex justify-between items-baseline mb-3">
-                <label className="text-base sm:text-lg font-mono font-black uppercase tracking-wider text-black">
+                <label className="text-base sm:text-lg font-black uppercase tracking-wider text-black">
                   {t.step4Title}
                 </label>
-                <span className="text-xs sm:text-sm font-mono text-neutral-500">
+                <span className="text-xs sm:text-sm text-neutral-500 font-medium">
                   {availability?.isOutdoorActive ? t.outdoorActiveLabel : t.outdoorClosedLabel}
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 font-mono">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 {/* SALA INTERNA */}
                 <button
                   type="button"
@@ -760,7 +760,7 @@ export default function BookingPage() {
                   </p>
                 </button>
 
-                {/* DEHORS ESTERNO */}
+                {/* ESTERNO (PORTICO) */}
                 <button
                   type="button"
                   disabled={!availability?.isOutdoorActive}
@@ -787,8 +787,8 @@ export default function BookingPage() {
             </div>
 
             {/* 5. DATI DI CONTATTO ("A che nome e numero?") */}
-            <div className="space-y-4 font-mono">
-              <label className="text-base sm:text-lg font-mono font-black uppercase tracking-wider text-black block">
+            <div className="space-y-4">
+              <label className="text-base sm:text-lg font-black uppercase tracking-wider text-black block">
                 {t.step5Title}
               </label>
 
@@ -803,7 +803,7 @@ export default function BookingPage() {
                     placeholder={t.namePlaceholder}
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full h-13 sm:h-16 px-4 border-2 border-neutral-300 bg-white text-base sm:text-lg focus:border-black focus:outline-none transition-colors"
+                    className="w-full h-13 sm:h-16 px-4 border-2 border-neutral-300 bg-white text-base sm:text-lg font-medium focus:border-black focus:outline-none transition-colors"
                   />
                 </div>
 
@@ -817,7 +817,7 @@ export default function BookingPage() {
                     placeholder={t.phonePlaceholder}
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    className="w-full h-13 sm:h-16 px-4 border-2 border-neutral-300 bg-white text-base sm:text-lg focus:border-black focus:outline-none transition-colors"
+                    className="w-full h-13 sm:h-16 px-4 border-2 border-neutral-300 bg-white text-base sm:text-lg font-medium focus:border-black focus:outline-none transition-colors"
                   />
                 </div>
               </div>
@@ -831,14 +831,14 @@ export default function BookingPage() {
                   placeholder={t.emailPlaceholder}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full h-13 sm:h-16 px-4 border-2 border-neutral-300 bg-white text-base sm:text-lg focus:border-black focus:outline-none transition-colors"
+                  className="w-full h-13 sm:h-16 px-4 border-2 border-neutral-300 bg-white text-base sm:text-lg font-medium focus:border-black focus:outline-none transition-colors"
                 />
               </div>
             </div>
 
             {/* 6. ESIGENZE ALIMENTARI & NOTE ("Allergie o note?") */}
             <div>
-              <label className="text-base sm:text-lg font-mono font-black uppercase tracking-wider text-black block mb-3">
+              <label className="text-base sm:text-lg font-black uppercase tracking-wider text-black block mb-3">
                 {t.step6Title}
               </label>
 
@@ -850,7 +850,7 @@ export default function BookingPage() {
                       key={opt.key}
                       type="button"
                       onClick={() => toggleDietary(opt.label)}
-                      className={`text-xs sm:text-base font-mono px-3.5 py-2 sm:px-5 sm:py-3 border-2 transition-colors cursor-pointer touch-manipulation select-none active:scale-95 font-bold ${
+                      className={`text-xs sm:text-base px-3.5 py-2 sm:px-5 sm:py-3 border-2 transition-colors cursor-pointer touch-manipulation select-none active:scale-95 font-bold ${
                         isChecked
                           ? 'border-black bg-black text-white'
                           : 'border-neutral-300 bg-white text-black hover:border-black'
@@ -867,12 +867,12 @@ export default function BookingPage() {
                 placeholder={t.notesPlaceholder}
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                className="w-full h-13 sm:h-16 px-4 border-2 border-neutral-300 bg-white text-xs sm:text-base font-mono focus:border-black focus:outline-none transition-colors"
+                className="w-full h-13 sm:h-16 px-4 border-2 border-neutral-300 bg-white text-xs sm:text-base focus:border-black focus:outline-none transition-colors font-medium"
               />
             </div>
 
             {errorMessage && (
-              <div className="p-3.5 bg-red-50 text-[#e60000] text-xs sm:text-base font-mono font-bold border-l-4 border-[#e60000]">
+              <div className="p-3.5 bg-red-50 text-[#e60000] text-xs sm:text-base font-bold border-l-4 border-[#e60000]">
                 {errorMessage}
               </div>
             )}
@@ -882,12 +882,12 @@ export default function BookingPage() {
               <button
                 type="submit"
                 disabled={submitting || availability?.isClosed}
-                className="w-full h-16 sm:h-22 bg-black hover:bg-[#e60000] border-2 border-black hover:border-[#e60000] disabled:opacity-30 text-white font-mono font-black text-base sm:text-2xl uppercase tracking-wider transition-colors cursor-pointer touch-manipulation select-none active:scale-98 flex items-center justify-center"
+                className="w-full h-16 sm:h-22 bg-black hover:bg-[#e60000] border-2 border-black hover:border-[#e60000] disabled:opacity-30 text-white font-black text-base sm:text-2xl uppercase tracking-wider transition-colors cursor-pointer touch-manipulation select-none active:scale-98 flex items-center justify-center"
               >
                 {submitting ? t.submittingButton : t.submitButton}
               </button>
 
-              <p className="text-[11px] sm:text-sm font-mono text-neutral-500 text-center mt-3">
+              <p className="text-[11px] sm:text-sm text-neutral-500 text-center mt-3 font-medium">
                 {t.guaranteeText}
               </p>
             </div>
@@ -896,11 +896,11 @@ export default function BookingPage() {
       </div>
 
       {/* FOOTER */}
-      <footer className="border-t-2 border-black py-8 px-4 sm:px-10 text-xs sm:text-sm font-mono text-neutral-600">
+      <footer className="border-t-2 border-black py-8 px-4 sm:px-10 text-xs sm:text-sm text-neutral-600">
         <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
             <strong className="text-black font-black text-sm sm:text-base">HANDA.</strong> — Via del Portello 32, 35131 Padova
-            <div className="text-[11px] text-neutral-500 mt-0.5">
+            <div className="text-[11px] text-neutral-500 mt-0.5 font-medium">
               {t.footerOpening}
             </div>
           </div>

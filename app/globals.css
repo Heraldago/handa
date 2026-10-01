@@ -2,10 +2,10 @@
 
 @layer base {
   :root {
-    --background: #f8f8f9;
-    --foreground: #09090b;
+    --background: #ffffff;
+    --foreground: #000000;
     --card: #ffffff;
-    --border: #e4e4e7;
+    --border: #000000;
     --accent: #e60000;
   }
 }
@@ -16,6 +16,16 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   letter-spacing: -0.01em;
   -webkit-font-smoothing: antialiased;
+  font-variant-numeric: normal tabular-nums;
+  -webkit-font-feature-settings: "zero" 0;
+  font-feature-settings: "zero" 0;
+}
+
+/* Ensure numbers never render with a slashed zero across all elements */
+*, ::before, ::after {
+  font-variant-numeric: normal;
+  font-feature-settings: "zero" 0;
+  -webkit-font-feature-settings: "zero" 0;
 }
 
 /* Custom interactive controls focus */

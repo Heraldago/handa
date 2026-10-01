@@ -91,7 +91,7 @@ export default function BookingDetailPage({
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white text-black font-mono text-sm flex items-center justify-center">
+      <div className="min-h-screen bg-white text-black font-sans text-sm flex items-center justify-center">
         {lang === 'en' ? 'Loading booking details...' : 'Caricamento prenotazione...'}
       </div>
     );
@@ -99,7 +99,7 @@ export default function BookingDetailPage({
 
   if (error || !booking) {
     return (
-      <div className="min-h-screen bg-white text-black font-mono text-sm flex items-center justify-center p-4">
+      <div className="min-h-screen bg-white text-black font-sans text-sm flex items-center justify-center p-4">
         <div className="max-w-md w-full bg-white border-2 border-black p-6 sm:p-8 space-y-4 text-center">
           <span className="text-xs font-black uppercase tracking-widest text-[#e60000] block">
             404 NOT FOUND
@@ -126,7 +126,7 @@ export default function BookingDetailPage({
   const isCancelled = booking.status === 'CANCELLED';
 
   return (
-    <main className="min-h-screen bg-white text-black font-mono selection:bg-[#e60000] selection:text-white flex flex-col justify-between">
+    <main className="min-h-screen bg-white text-black font-sans selection:bg-[#e60000] selection:text-white flex flex-col justify-between">
       {/* Header */}
       <header className="px-4 py-4 sm:px-10 border-b-2 border-black sticky top-0 bg-white/95 backdrop-blur-xs z-30">
         <div className="max-w-xl mx-auto flex items-center justify-between">
@@ -260,7 +260,7 @@ export default function BookingDetailPage({
       </div>
 
       {/* Footer */}
-      <footer className="border-t-2 border-black py-6 px-4 text-center text-xs text-neutral-500 font-mono">
+      <footer className="border-t-2 border-black py-6 px-4 text-center text-xs text-neutral-500 font-sans">
         HANDA. • Via del Portello 32, Padova • 349 233 0492
       </footer>
     </main>

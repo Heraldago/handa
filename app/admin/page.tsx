@@ -259,7 +259,7 @@ export default function AdminDashboardPage() {
 
   if (!isAuthenticated) {
     return (
-      <main className="min-h-screen bg-white text-black font-mono flex items-center justify-center p-4 selection:bg-[#e60000] selection:text-white">
+      <main className="min-h-screen bg-white text-black font-sans flex items-center justify-center p-4 selection:bg-[#e60000] selection:text-white">
         <div className="border-2 border-black max-w-sm w-full p-6 sm:p-8 animate-in fade-in duration-200">
           <div className="mb-6">
             <span className="text-xs font-black uppercase tracking-widest text-[#e60000] block mb-1">
@@ -313,7 +313,7 @@ export default function AdminDashboardPage() {
   }
 
   return (
-    <main className="min-h-screen bg-white text-black font-mono selection:bg-[#e60000] selection:text-white pb-20">
+    <main className="min-h-screen bg-white text-black font-sans selection:bg-[#e60000] selection:text-white pb-20">
       {/* 1. TOP HEADER */}
       <header className="border-b-2 border-black px-4 sm:px-8 py-4">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -364,7 +364,7 @@ export default function AdminDashboardPage() {
         </div>
       </header>
 
-      {/* 2. COMMAND CONTROL BAR (DATE + WEATHER/DEHORS + GLOBAL COVERS) */}
+      {/* 2. COMMAND CONTROL BAR (DATE + WEATHER/OUTDOOR + GLOBAL COVERS) */}
       <section className="border-b-2 border-neutral-200 bg-neutral-50 px-4 sm:px-8 py-4">
         <div className="max-w-6xl mx-auto flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           {/* Date Selector */}
@@ -400,9 +400,9 @@ export default function AdminDashboardPage() {
             </button>
           </div>
 
-          {/* Weather / Dehors Toggle & Total Day Stats */}
+          {/* Weather / Outdoor Toggle & Total Day Stats */}
           <div className="flex flex-wrap items-center gap-3">
-            {/* Dehors weather control */}
+            {/* Outdoor weather control */}
             <button
               onClick={handleToggleOutdoor}
               className={`h-11 px-4 border-2 font-black text-xs uppercase tracking-wider flex items-center gap-2 transition-colors cursor-pointer ${
@@ -410,9 +410,9 @@ export default function AdminDashboardPage() {
                   ? 'border-black bg-white text-black hover:border-[#e60000] hover:text-[#e60000]'
                   : 'border-[#e60000] bg-red-50 text-[#e60000]'
               }`}
-              title="Clicca per aprire o chiudere il dehors in base al meteo di Padova"
+              title="Clicca per aprire o chiudere i tavoli esterni in base al meteo di Padova"
             >
-              <span>{stats?.isOutdoorActive ? '☀️ DEHORS APERTO (35P)' : '🌧️ DEHORS CHIUSO PER METEO'}</span>
+              <span>{stats?.isOutdoorActive ? '☀️ ESTERNO APERTO (35P)' : '🌧️ ESTERNO CHIUSO PER METEO'}</span>
               <span className="text-[10px] underline font-medium">CAMBIA</span>
             </button>
 
@@ -593,7 +593,7 @@ export default function AdminDashboardPage() {
               </div>
 
               <div className="text-xs">
-                <span className="text-neutral-500 font-bold block">DEHORS:</span>
+                <span className="text-neutral-500 font-bold block">ESTERNO:</span>
                 <strong className={`text-base font-black ${stats?.isOutdoorActive ? 'text-black' : 'text-neutral-400 line-through'}`}>
                   {shiftOutdoorBooked} / 35
                 </strong>
@@ -628,7 +628,7 @@ export default function AdminDashboardPage() {
             placeholder="Cerca per nome, cellulare, codice o tavolo..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="flex-1 h-12 px-4 border-2 border-neutral-300 bg-white font-mono text-sm focus:border-black focus:outline-none transition-colors"
+            className="flex-1 h-12 px-4 border-2 border-neutral-300 bg-white font-sans text-sm focus:border-black focus:outline-none transition-colors"
           />
           {searchQuery && (
             <button
@@ -646,7 +646,7 @@ export default function AdminDashboardPage() {
             Caricamento servizio in corso...
           </div>
         ) : currentTabBookings.length === 0 ? (
-          <div className="py-20 border-2 border-dashed border-neutral-300 text-center font-mono">
+          <div className="py-20 border-2 border-dashed border-neutral-300 text-center font-sans">
             <p className="text-neutral-500 font-bold uppercase tracking-wider">
               Nessuna prenotazione per questo turno
             </p>
@@ -655,7 +655,7 @@ export default function AdminDashboardPage() {
             </p>
           </div>
         ) : (
-          <div className="space-y-3 font-mono">
+          <div className="space-y-3 font-sans">
             {currentTabBookings.map((b) => {
               const isSeated = b.status === 'SEATED';
               const isLate = b.status === 'LATE';
@@ -714,7 +714,7 @@ export default function AdminDashboardPage() {
                               : 'border-[#e60000] bg-white text-[#e60000]'
                           }`}
                         >
-                          {isIndoor ? 'SALA' : 'DEHORS'}
+                          {isIndoor ? 'SALA' : 'ESTERNO'}
                         </span>
                       </div>
 
@@ -820,7 +820,7 @@ export default function AdminDashboardPage() {
 
       {/* TELEPHONE / WALK-IN MODAL (CONVERSATIONAL SEQUENCE) */}
       {showWalkInModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-3 sm:p-4 backdrop-blur-xs font-mono overflow-y-auto">
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-3 sm:p-4 backdrop-blur-xs font-sans overflow-y-auto">
           <div className="bg-white border-2 border-black max-w-xl w-full p-5 sm:p-7 animate-in fade-in duration-150 my-auto shadow-2xl">
             {/* Modal Header */}
             <div className="flex justify-between items-start mb-5 border-b-2 border-black pb-3">
@@ -832,7 +832,7 @@ export default function AdminDashboardPage() {
                   + Nuova Prenotazione Tavolo
                 </h3>
                 <p className="text-[11px] text-neutral-500 font-medium mt-0.5">
-                  Segui l&apos;ordine vocale: Persone → Data → Orario → Sala/Dehors → Nome/Tel → Note
+                  Segui l&apos;ordine vocale: Persone → Data → Orario → Sala/Esterno → Nome/Tel → Note
                 </p>
               </div>
               <button
@@ -1042,7 +1042,7 @@ export default function AdminDashboardPage() {
                 </div>
               </div>
 
-              {/* 4. PREFERENZA TAVOLO (SALA O DEHORS) */}
+              {/* 4. PREFERENZA TAVOLO (SALA O ESTERNO) */}
               <div>
                 <label className="text-xs sm:text-sm font-black uppercase tracking-wider text-black block mb-1.5">
                   4. Preferenza Tavolo (Dentro o Fuori?)
@@ -1072,9 +1072,9 @@ export default function AdminDashboardPage() {
                         : 'border-neutral-300 bg-white text-black hover:border-black'
                     }`}
                   >
-                    <div className="font-black text-sm">🌿 DEHORS ESTERNO</div>
+                    <div className="font-black text-sm">🌿 ESTERNO (PORTICO)</div>
                     <div className={`text-[10px] font-medium ${walkInArea === 'outdoor' ? 'text-neutral-300' : 'text-neutral-500'}`}>
-                      35 posti plateatico sul Portello
+                      35 posti sotto il portico di Via del Portello
                     </div>
                   </button>
                 </div>

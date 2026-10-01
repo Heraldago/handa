@@ -25,7 +25,7 @@ export const translations = {
     calendarPickerPlaceholder: 'Scegli dal calendario...',
     calendarPickerOpen: 'APRI',
 
-    // Step 3: Turno & Orario (Moved to Step 3)
+    // Step 3: Turno & Orario
     step3Title: '3. Turno & Orario di arrivo',
     liveAvailability: 'Disponibilità live',
     checkingAvailability: 'Controllo...',
@@ -35,7 +35,7 @@ export const translations = {
     lunchNotice: '💡 Pranzo informale e veloce: permanenza media consigliata ~45 minuti per garantire i posti a tutti.',
     dinner1Title: '1° CENA',
     dinner1Time: '19:15–20',
-    dinner1Desc: 'Tavolo da liberare categoricamente entro le 21:15/20.',
+    dinner1Desc: 'Tavolo da liberare categoricamente entro le 21:15.',
     dinner1Notice: '⚠️ Nota bene: questo tavolo è prenotato per il 2° turno alle 21:30, andrà liberato alle',
     dinner2Title: '2° CENA',
     dinner2Time: '21:30+',
@@ -44,16 +44,16 @@ export const translations = {
     statusFull: 'PIENO',
     selectSlotPrompt: 'Scegli orario esatto di arrivo',
 
-    // Step 4: Preferenza Tavolo (Moved to Step 4)
+    // Step 4: Preferenza Tavolo
     step4Title: '4. Preferenza Tavolo',
-    outdoorActiveLabel: '☀️ Dehors attivo',
-    outdoorClosedLabel: '🌧️ Dehors chiuso per meteo',
+    outdoorActiveLabel: '☀️ Esterno aperto (sotto il portico)',
+    outdoorClosedLabel: '🌧️ Esterno chiuso per meteo',
     indoorTitle: '🏠 SALA INTERNA',
     indoorSeats: '36 POSTI',
     indoorDesc: 'Sempre garantito al coperto con qualsiasi meteo.',
-    outdoorTitle: '🌿 DEHORS ESTERNO',
+    outdoorTitle: '🌿 ESTERNO',
     outdoorSeats: '35 POSTI',
-    outdoorDesc: 'Plateatico all’aperto sul Portello (soggetto al meteo).',
+    outdoorDesc: 'Tavoli all’aperto sotto il portico di Via del Portello (soggetto al meteo).',
     outdoorDescClosed: 'Chiuso per pioggia o clima autunnale/invernale.',
 
     // Step 5: Contatti
@@ -94,7 +94,7 @@ export const translations = {
     personSingle: 'PERSONA',
     personPlural: 'PERSONE',
     tableArea: 'AREA TAVOLO',
-    outdoorSeating: '🌿 Dehors Esterno',
+    outdoorSeating: '🌿 Esterno (Portico)',
     indoorSeating: '🏠 Sala Interna (Coperta)',
     dateTime: 'DATA & ORA',
     atHour: 'ORE',
@@ -118,7 +118,7 @@ export const translations = {
       seatingArea: string;
       code: string;
     }) => {
-      const area = booking.seatingArea === 'outdoor' ? 'Dehors esterno' : 'Sala interna';
+      const area = booking.seatingArea === 'outdoor' ? 'Esterno (sotto il portico)' : 'Sala interna';
       return `🥢 Ho prenotato il tavolo da HANDĀ (Padova, Portello)!\n📅 Data: ${booking.date}\n⏰ Turno: ${booking.time} (${booking.shiftName})\n📍 Dove: ${area} • Via del Portello 32\n👥 Per: ${booking.guestCount} persone\nCodice prenotazione: #${booking.code}\n\nChi viene puntuale alza la mano 🙋`;
     },
 
@@ -154,7 +154,7 @@ export const translations = {
     calendarPickerPlaceholder: 'Pick from calendar...',
     calendarPickerOpen: 'OPEN',
 
-    // Step 3: Turno & Orario (Moved to Step 3)
+    // Step 3: Turno & Orario
     step3Title: '3. Service & Arrival time',
     liveAvailability: 'Live availability',
     checkingAvailability: 'Checking...',
@@ -173,16 +173,16 @@ export const translations = {
     statusFull: 'FULL',
     selectSlotPrompt: 'Choose exact arrival time',
 
-    // Step 4: Preferenza Tavolo (Moved to Step 4)
+    // Step 4: Preferenza Tavolo
     step4Title: '4. Seating Area',
-    outdoorActiveLabel: '☀️ Patio open',
-    outdoorClosedLabel: '🌧️ Patio closed due to weather',
+    outdoorActiveLabel: '☀️ Outdoor portico open',
+    outdoorClosedLabel: '🌧️ Outdoor portico closed due to weather',
     indoorTitle: '🏠 INDOOR DINING',
     indoorSeats: '36 SEATS',
     indoorDesc: 'Always guaranteed indoor dining with any weather.',
-    outdoorTitle: '🌿 OUTDOOR PATIO',
+    outdoorTitle: '🌿 OUTDOOR',
     outdoorSeats: '35 SEATS',
-    outdoorDesc: 'Open-air patio on Via del Portello (weather dependent).',
+    outdoorDesc: 'Outdoor tables sheltered under the portico on Via del Portello (weather dependent).',
     outdoorDescClosed: 'Closed due to rain or cold weather.',
 
     // Step 5: Contatti
@@ -223,7 +223,7 @@ export const translations = {
     personSingle: 'GUEST',
     personPlural: 'GUESTS',
     tableArea: 'SEATING AREA',
-    outdoorSeating: '🌿 Outdoor Patio',
+    outdoorSeating: '🌿 Outdoor (Portico)',
     indoorSeating: '🏠 Indoor Dining (Covered)',
     dateTime: 'DATE & TIME',
     atHour: 'AT',
@@ -247,7 +247,7 @@ export const translations = {
       seatingArea: string;
       code: string;
     }) => {
-      const area = booking.seatingArea === 'outdoor' ? 'Outdoor patio' : 'Indoor dining';
+      const area = booking.seatingArea === 'outdoor' ? 'Outdoor (under the portico)' : 'Indoor dining';
       return `🥢 I booked a table at HANDĀ (Padua, Portello)!\n📅 Date: ${booking.date}\n⏰ Time: ${booking.time} (${booking.shiftName})\n📍 Location: ${area} • Via del Portello 32\n👥 Party of: ${booking.guestCount} guests\nBooking code: #${booking.code}\n\nSee you there on time! 🙋`;
     },
 
