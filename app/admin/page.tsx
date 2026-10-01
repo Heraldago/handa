@@ -437,7 +437,7 @@ export default function AdminDashboardPage() {
                 onClick={() => setSelectedDate(getRelativeIsoDate(0))}
                 className={`h-10 px-3.5 sm:px-4 text-xs sm:text-sm font-black uppercase tracking-wider border-2 transition-all cursor-pointer shrink-0 ${
                   selectedDate === getRelativeIsoDate(0)
-                    ? 'border-black bg-black text-white shadow-xs'
+                    ? 'border-2 border-black bg-noren-active text-black shadow-xs ring-1 ring-black'
                     : 'border-neutral-300 bg-white text-neutral-700 hover:border-black hover:text-black'
                 }`}
               >
@@ -449,7 +449,7 @@ export default function AdminDashboardPage() {
                 onClick={() => setSelectedDate(getRelativeIsoDate(1))}
                 className={`h-10 px-3.5 sm:px-4 text-xs sm:text-sm font-black uppercase tracking-wider border-2 transition-all cursor-pointer shrink-0 ${
                   selectedDate === getRelativeIsoDate(1)
-                    ? 'border-black bg-black text-white shadow-xs'
+                    ? 'border-2 border-black bg-noren-active text-black shadow-xs ring-1 ring-black'
                     : 'border-neutral-300 bg-white text-neutral-700 hover:border-black hover:text-black'
                 }`}
               >
@@ -461,7 +461,7 @@ export default function AdminDashboardPage() {
                 onClick={() => setSelectedDate(getRelativeIsoDate(2))}
                 className={`h-10 px-3.5 sm:px-4 text-xs sm:text-sm font-black uppercase tracking-wider border-2 transition-all cursor-pointer shrink-0 ${
                   selectedDate === getRelativeIsoDate(2)
-                    ? 'border-black bg-black text-white shadow-xs'
+                    ? 'border-2 border-black bg-noren-active text-black shadow-xs ring-1 ring-black'
                     : 'border-neutral-300 bg-white text-neutral-700 hover:border-black hover:text-black'
                 }`}
               >
@@ -623,17 +623,17 @@ export default function AdminDashboardPage() {
                 onClick={() => setActiveTab(shift.id)}
                 className={`py-3 px-2 sm:px-3 text-center sm:text-left transition-all cursor-pointer flex flex-col sm:flex-row items-center justify-between gap-1 ${
                   isSelected
-                    ? 'bg-black text-white shadow-sm'
+                    ? 'bg-white bg-noren-active border-2 border-black text-black shadow-xs'
                     : 'bg-transparent text-neutral-700 hover:text-black hover:bg-neutral-200/50'
                 }`}
               >
                 <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
-                  <span className={`font-black text-xs sm:text-sm uppercase tracking-wider block ${isSelected ? 'text-white' : 'text-black'}`}>
+                  <span className="font-black text-xs sm:text-sm uppercase tracking-wider block text-black">
                     {shift.label}
                   </span>
                   <span
                     className={`text-[10px] sm:text-[11px] font-medium hidden md:inline ${
-                      isSelected ? 'text-neutral-300' : 'text-neutral-500'
+                      isSelected ? 'text-neutral-700' : 'text-neutral-500'
                     }`}
                   >
                     ({shift.time})
@@ -646,7 +646,7 @@ export default function AdminDashboardPage() {
                       BLOCCATO
                     </span>
                   )}
-                  <span className={`text-xs sm:text-sm font-black ${isSelected ? 'text-white' : 'text-black'}`}>
+                  <span className="text-xs sm:text-sm font-black text-black">
                     {totalPax} pax
                   </span>
                 </div>
@@ -717,12 +717,12 @@ export default function AdminDashboardPage() {
                 onClick={() => setStatusFilter('ALL')}
                 className={`h-10 px-3.5 text-xs sm:text-sm font-bold uppercase transition-colors cursor-pointer text-center flex items-center justify-center gap-1.5 ${
                   statusFilter === 'ALL'
-                    ? 'bg-black text-white font-black'
+                    ? 'bg-noren-active text-black font-black border-2 border-black -m-[1px]'
                     : 'text-neutral-600 hover:text-black hover:bg-neutral-50'
                 }`}
               >
                 <span>Tutti</span>
-                <span className={`text-[11px] font-black px-1.5 py-0.5 ${statusFilter === 'ALL' ? 'bg-neutral-800 text-white' : 'bg-neutral-100 text-neutral-600'}`}>
+                <span className={`text-[11px] font-black px-1.5 py-0.5 ${statusFilter === 'ALL' ? 'bg-black text-white' : 'bg-neutral-100 text-neutral-600'}`}>
                   {totalInShift}
                 </span>
               </button>

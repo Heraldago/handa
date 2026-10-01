@@ -33,3 +33,16 @@ button:focus-visible, input:focus-visible {
   outline: 2px solid #000000;
   outline-offset: 2px;
 }
+
+/* Japanese Noren / Washi micro-hatching pattern for tactile active states */
+.bg-noren-active {
+  background-color: #ffffff;
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(0, 0, 0, 0.045),
+    rgba(0, 0, 0, 0.045) 4px,
+    #ffffff 4px,
+    #ffffff 8px
+  );
+}
+

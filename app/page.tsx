@@ -292,7 +292,7 @@ export default function BookingPage() {
                 onClick={() => handleLanguageSwitch('it')}
                 className={`px-3 py-1 transition-colors cursor-pointer text-xs font-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${
                   lang === 'it'
-                    ? 'bg-black text-white shadow-xs'
+                    ? 'bg-noren-active text-black shadow-xs'
                     : 'bg-transparent text-neutral-600 hover:text-black'
                 }`}
               >
@@ -305,7 +305,7 @@ export default function BookingPage() {
                 onClick={() => handleLanguageSwitch('en')}
                 className={`px-3 py-1 border-l-2 border-black transition-colors cursor-pointer text-xs font-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${
                   lang === 'en'
-                    ? 'bg-black text-white shadow-xs'
+                    ? 'bg-noren-active text-black shadow-xs'
                     : 'bg-transparent text-neutral-600 hover:text-black'
                 }`}
               >
@@ -487,8 +487,8 @@ export default function BookingPage() {
                       onClick={() => setGuestCount(num)}
                       className={`h-14 sm:h-20 border-2 text-xl sm:text-4xl font-black transition-all cursor-pointer touch-manipulation select-none active:scale-95 flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${
                         isSelected
-                          ? 'border-black bg-black text-white shadow-sm'
-                          : 'border-neutral-200 bg-white text-neutral-700 hover:border-black hover:text-black'
+                          ? 'border-2 border-black bg-noren-active text-black shadow-xs ring-1 ring-black'
+                          : 'border-2 border-neutral-200 bg-white text-neutral-700 hover:border-black hover:text-black'
                       }`}
                     >
                       {num}
@@ -522,17 +522,17 @@ export default function BookingPage() {
                       onClick={() => handleSelectDate(d.iso)}
                       className={`min-w-[76px] sm:min-w-0 flex-1 py-3 sm:py-5 px-1 border-2 flex flex-col items-center justify-center transition-all cursor-pointer touch-manipulation select-none active:scale-95 snap-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${
                         isSelected
-                          ? 'border-black bg-black text-white shadow-sm'
-                          : 'border-neutral-200 bg-white text-neutral-700 hover:border-black hover:text-black'
+                          ? 'border-2 border-black bg-noren-active text-black shadow-xs ring-1 ring-black'
+                          : 'border-2 border-neutral-200 bg-white text-neutral-700 hover:border-black hover:text-black'
                       }`}
                     >
-                      <span className={`text-[11px] sm:text-xs uppercase font-black tracking-tight ${isSelected ? 'text-neutral-300' : 'text-neutral-500'}`}>
+                      <span className={`text-[11px] sm:text-xs uppercase font-black tracking-tight ${isSelected ? 'text-black' : 'text-neutral-500'}`}>
                         {d.label}
                       </span>
-                      <span className={`text-2xl sm:text-4xl font-black my-0.5 leading-none ${isSelected ? 'text-white' : 'text-black'}`}>
+                      <span className="text-2xl sm:text-4xl font-black my-0.5 leading-none text-black">
                         {d.dayNum}
                       </span>
-                      <span className={`text-[10px] sm:text-xs uppercase font-bold ${isSelected ? 'text-neutral-300' : 'text-neutral-500'}`}>
+                      <span className={`text-[10px] sm:text-xs uppercase font-bold ${isSelected ? 'text-black' : 'text-neutral-500'}`}>
                         {d.month}
                       </span>
                     </button>
@@ -606,7 +606,7 @@ export default function BookingPage() {
                         !isAvailable
                           ? 'opacity-35 border-dashed border-neutral-300 bg-neutral-100 cursor-not-allowed'
                           : isSelected
-                          ? 'border-2 border-black bg-white text-black shadow-md ring-1 ring-black'
+                          ? 'border-2 border-black bg-noren-active text-black shadow-xs ring-1 ring-black'
                           : 'border-2 border-neutral-200 bg-white text-neutral-600 hover:border-black hover:text-black'
                       }`}
                     >
@@ -659,7 +659,7 @@ export default function BookingPage() {
                         !isAvailable
                           ? 'opacity-35 border-dashed border-neutral-300 bg-neutral-100 cursor-not-allowed'
                           : isSelected
-                          ? 'border-2 border-black bg-white text-black shadow-md ring-1 ring-black'
+                          ? 'border-2 border-black bg-noren-active text-black shadow-xs ring-1 ring-black'
                           : 'border-2 border-neutral-200 bg-white text-neutral-600 hover:border-black hover:text-black'
                       }`}
                     >
@@ -712,7 +712,7 @@ export default function BookingPage() {
                         !isAvailable
                           ? 'opacity-35 border-dashed border-neutral-300 bg-neutral-100 cursor-not-allowed'
                           : isSelected
-                          ? 'border-2 border-black bg-white text-black shadow-md ring-1 ring-black'
+                          ? 'border-2 border-black bg-noren-active text-black shadow-xs ring-1 ring-black'
                           : 'border-2 border-neutral-200 bg-white text-neutral-600 hover:border-black hover:text-black'
                       }`}
                     >
@@ -767,8 +767,8 @@ export default function BookingPage() {
                           onClick={() => setSelectedSlot(slot)}
                           className={`px-4 py-2.5 sm:py-3 border-2 text-base sm:text-lg font-black transition-all cursor-pointer touch-manipulation select-none active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${
                             isSlotSelected
-                              ? 'border-black bg-black text-white shadow-xs'
-                              : 'border-neutral-200 bg-white text-neutral-700 hover:border-black hover:text-black'
+                              ? 'border-2 border-black bg-noren-active text-black shadow-xs ring-1 ring-black'
+                              : 'border-2 border-neutral-200 bg-white text-neutral-700 hover:border-black hover:text-black'
                           }`}
                         >
                           {slot}
@@ -811,7 +811,7 @@ export default function BookingPage() {
                   onClick={() => setSeatingArea('indoor')}
                   className={`p-4 sm:p-5 border-2 text-left transition-all cursor-pointer touch-manipulation select-none active:scale-98 flex flex-col justify-between focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${
                     seatingArea === 'indoor'
-                      ? 'border-2 border-black bg-white text-black shadow-md ring-1 ring-black'
+                      ? 'border-2 border-black bg-noren-active text-black shadow-xs ring-1 ring-black'
                       : 'border-2 border-neutral-200 bg-white text-neutral-600 hover:border-black hover:text-black'
                   }`}
                 >
@@ -847,7 +847,7 @@ export default function BookingPage() {
                     !availability?.isOutdoorActive
                       ? 'opacity-40 border-dashed border-neutral-300 bg-neutral-100 cursor-not-allowed'
                       : seatingArea === 'outdoor'
-                      ? 'border-2 border-black bg-white text-black shadow-md ring-1 ring-black'
+                      ? 'border-2 border-black bg-noren-active text-black shadow-xs ring-1 ring-black'
                       : 'border-2 border-neutral-200 bg-white text-neutral-600 hover:border-black hover:text-black'
                   }`}
                 >
@@ -944,8 +944,8 @@ export default function BookingPage() {
                       onClick={() => toggleDietary(opt.label)}
                       className={`text-xs sm:text-base px-3.5 py-2 sm:px-5 sm:py-3 border-2 transition-colors cursor-pointer touch-manipulation select-none active:scale-95 font-bold ${
                         isChecked
-                          ? 'border-black bg-black text-white'
-                          : 'border-neutral-300 bg-white text-black hover:border-black'
+                          ? 'border-2 border-black bg-noren-active text-black shadow-xs ring-1 ring-black'
+                          : 'border-2 border-neutral-300 bg-white text-black hover:border-black'
                       }`}
                     >
                       {opt.label}
