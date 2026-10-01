@@ -250,16 +250,13 @@ export default function BookingDetailPage({
           {!isCancelled ? (
             <div className="space-y-3 pt-2">
               <a
-                href={`https://wa.me/393492330492?text=${encodeURIComponent(
-                  lang === 'en'
-                    ? `Hello Handa, regarding booking #${booking.code} for ${booking.customerName}`
-                    : `Ciao Handa, scrivo per la prenotazione #${booking.code} a nome ${booking.customerName}`
-                )}`}
-                target="_blank"
-                rel="noreferrer"
-                className="block text-center w-full h-12 border-2 border-black bg-white hover:bg-neutral-100 text-black font-black py-3 uppercase text-xs transition-colors flex items-center justify-center cursor-pointer"
+                href="tel:+393492330492"
+                className="w-full h-12 border-2 border-black bg-white hover:bg-neutral-100 text-black font-black py-3 uppercase text-xs transition-colors flex items-center justify-center gap-2 cursor-pointer touch-manipulation"
               >
-                {lang === 'en' ? 'Contact us on WhatsApp' : 'Contattaci su WhatsApp'}
+                <span>📞</span>
+                <span>
+                  {lang === 'en' ? 'Call the restaurant (349 233 0492)' : 'Chiama il locale (349 233 0492)'}
+                </span>
               </a>
 
               <button

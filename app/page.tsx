@@ -87,6 +87,7 @@ export default function BookingPage() {
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successBooking, setSuccessBooking] = useState<BookingResult | null>(null);
+  const [copiedShare, setCopiedShare] = useState<boolean>(false);
 
   const dateInputRef = useRef<HTMLInputElement>(null);
 
@@ -215,9 +216,9 @@ export default function BookingPage() {
     }
   };
 
-  const getWhatsAppShareUrl = () => {
-    if (!successBooking) return '#';
-    const text = t.whatsAppMessage({
+  const handleShareBooking = async () => {
+    if (!successBooking) return;
+    const text = t.shareMessage({
       customerName: successBooking.customerName,
       date: successBooking.date,
       time: successBooking.time,
@@ -226,7 +227,28 @@ export default function BookingPage() {
       seatingArea: successBooking.seatingArea,
       code: successBooking.code,
     });
-    return `https://wa.me/?text=${encodeURIComponent(text)}`;
+
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share({
+          title: `HANDĀ - ${successBooking.customerName} (#${successBooking.code})`,
+          text: text,
+        });
+        return;
+      } catch (err: any) {
+        if (err.name === 'AbortError') return;
+      }
+    }
+
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      try {
+        await navigator.clipboard.writeText(text);
+        setCopiedShare(true);
+        setTimeout(() => setCopiedShare(false), 2500);
+      } catch (e) {
+        console.error('Failed to copy reservation text', e);
+      }
+    }
   };
 
   const getGoogleCalendarUrl = () => {
@@ -440,14 +462,18 @@ export default function BookingPage() {
 
             {/* Actions */}
             <div className="space-y-3 pt-3">
-              <a
-                href={getWhatsAppShareUrl()}
-                target="_blank"
-                rel="noreferrer"
-                className="w-full h-14 sm:h-18 border-2 border-black bg-black hover:bg-[#e60000] hover:border-[#e60000] text-white font-black text-sm sm:text-lg flex items-center justify-center transition-colors uppercase tracking-wider cursor-pointer touch-manipulation"
+              <button
+                type="button"
+                onClick={handleShareBooking}
+                className="w-full h-14 sm:h-18 border-2 border-black bg-black hover:bg-[#e60000] hover:border-[#e60000] text-white font-black text-sm sm:text-lg flex items-center justify-center gap-2 transition-colors uppercase tracking-wider cursor-pointer touch-manipulation"
               >
-                {t.shareWhatsApp}
-              </a>
+                <span>{copiedShare ? '✓' : '📤'}</span>
+                <span>
+                  {copiedShare
+                    ? (lang === 'en' ? 'COPIED TO CLIPBOARD!' : 'COPIATO NEGLI APPUNTI!')
+                    : t.shareBooking}
+                </span>
+              </button>
 
               <a
                 href={getGoogleCalendarUrl()}
@@ -488,12 +514,10 @@ export default function BookingPage() {
                 <span className="text-xs text-neutral-500 font-medium">
                   {t.step1GroupNotice}{' '}
                   <a
-                    href="https://wa.me/393492330492?text=Ciao%20Handa,%20vorremmo%20prenotare%20per%20un%20gruppo%20numeroso"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-[#e60000] font-black underline hover:text-red-700"
+                    href="tel:+393492330492"
+                    className="text-[#e60000] font-black underline hover:text-red-700 inline-flex items-center gap-1"
                   >
-                    {t.step1GroupAction}
+                    <span>📞</span> {t.step1GroupAction}
                   </a>
                 </span>
               </div>

@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
     if (guests > settings.maxGuestsOnline) {
       return NextResponse.json(
         {
-          error: `Per gruppi superiori a ${settings.maxGuestsOnline} persone, ti chiediamo di scriverci direttamente su WhatsApp!`,
+          error: `Per gruppi superiori a ${settings.maxGuestsOnline} persone, ti chiediamo di chiamarci direttamente al locale (349 233 0492)!`,
         },
         { status: 400 }
       );

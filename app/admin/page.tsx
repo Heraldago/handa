@@ -872,13 +872,11 @@ export default function AdminDashboardPage() {
                       </strong>
                       {b.customerPhone && (
                         <a
-                          href={`https://wa.me/${b.customerPhone.replace(/[^0-9]/g, '')}`}
-                          target="_blank"
-                          rel="noreferrer"
+                          href={`tel:${b.customerPhone.replace(/[^0-9+]/g, '')}`}
                           className="text-sm text-neutral-600 hover:text-black underline font-bold transition-colors flex items-center gap-1"
-                          title="Scrivi su WhatsApp"
+                          title="Chiama al telefono"
                         >
-                          <span>💬</span>
+                          <span>📞</span>
                           <span>{b.customerPhone}</span>
                         </a>
                       )}
@@ -1355,7 +1353,7 @@ export default function AdminDashboardPage() {
 
                 <div>
                   <label className="text-xs font-bold block mb-1 uppercase">
-                    CELLULARE / WHATSAPP
+                    NUMERO DI TELEFONO
                   </label>
                   <input
                     type="tel"

@@ -15,7 +15,7 @@ export const translations = {
     // Step 1: Persone
     step1Title: '1. Numero persone',
     step1GroupNotice: 'Tavoli 7+?',
-    step1GroupAction: 'WhatsApp',
+    step1GroupAction: 'Chiama il locale',
 
     // Step 2: Data
     step2Title: '2. Scegli data',
@@ -60,7 +60,7 @@ export const translations = {
     step5Title: '5. Dati di contatto',
     nameLabel: 'NOME E COGNOME *',
     namePlaceholder: 'Marco Rossi',
-    phoneLabel: 'CELLULARE (WHATSAPP) *',
+    phoneLabel: 'NUMERO DI TELEFONO *',
     phonePlaceholder: '340 1234567',
     emailLabel: 'EMAIL (OPZIONALE)',
     emailPlaceholder: 'nome@email.com',
@@ -103,13 +103,13 @@ export const translations = {
     addressValue: 'Via del Portello 32, Padova',
     notes: 'NOTE',
     toleranceNotice: 'Tolleranza di 15 minuti oltre l’orario prescelto. In caso di ritardo o disdetta avvisaci al 349 233 0492.',
-    shareWhatsApp: 'Invia riepilogo su WhatsApp agli amici',
+    shareBooking: 'Condividi riepilogo con gli amici',
     addToGoogleCalendar: 'Aggiungi a Google Calendar',
     modifyOrCancel: 'Modifica o cancella prenotazione',
     newBooking: '← Nuova prenotazione',
 
-    // WhatsApp Share Message Template
-    whatsAppMessage: (booking: {
+    // Share Message Template
+    shareMessage: (booking: {
       customerName: string;
       date: string;
       time: string;
@@ -119,7 +119,7 @@ export const translations = {
       code: string;
     }) => {
       const area = booking.seatingArea === 'outdoor' ? 'Esterno (sotto il portico)' : 'Sala interna';
-      return `🥢 Ho prenotato il tavolo da HANDĀ (Padova, Portello)!\n📅 Data: ${booking.date}\n⏰ Turno: ${booking.time} (${booking.shiftName})\n📍 Dove: ${area} • Via del Portello 32\n👥 Per: ${booking.guestCount} persone\nCodice prenotazione: #${booking.code}\n\nChi viene puntuale alza la mano 🙋`;
+      return `🥢 Ho prenotato il tavolo da HANDĀ (Padova, Portello)!\n📅 Data: ${booking.date}\n⏰ Turno: ${booking.time} (${booking.shiftName})\n📍 Dove: ${area} • Via del Portello 32\n👥 Per: ${booking.guestCount} persone\nCodice prenotazione: #${booking.code}\n\nCi vediamo lì puntuali! 🙋`;
     },
 
     calendarTitle: 'Cena da HANDA - Cicchetteria Asiatica',
@@ -144,7 +144,7 @@ export const translations = {
     // Step 1: Persone
     step1Title: '1. Number of guests',
     step1GroupNotice: 'Party of 7+?',
-    step1GroupAction: 'WhatsApp',
+    step1GroupAction: 'Call us directly',
 
     // Step 2: Data
     step2Title: '2. Choose date',
@@ -189,7 +189,7 @@ export const translations = {
     step5Title: '5. Contact details',
     nameLabel: 'FULL NAME *',
     namePlaceholder: 'John Smith',
-    phoneLabel: 'MOBILE PHONE (WHATSAPP) *',
+    phoneLabel: 'PHONE NUMBER *',
     phonePlaceholder: '+39 340 1234567',
     emailLabel: 'EMAIL (OPTIONAL)',
     emailPlaceholder: 'john@email.com',
@@ -232,13 +232,13 @@ export const translations = {
     addressValue: 'Via del Portello 32, Padua (Italy)',
     notes: 'NOTES',
     toleranceNotice: '15-minute grace period past reserved time. In case of delay or cancellation, call us at +39 349 233 0492.',
-    shareWhatsApp: 'Share reservation with friends on WhatsApp',
+    shareBooking: 'Share reservation summary',
     addToGoogleCalendar: 'Add to Google Calendar',
     modifyOrCancel: 'Modify or cancel reservation',
     newBooking: '← New reservation',
 
-    // WhatsApp Share Message Template
-    whatsAppMessage: (booking: {
+    // Share Message Template
+    shareMessage: (booking: {
       customerName: string;
       date: string;
       time: string;
