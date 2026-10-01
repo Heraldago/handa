@@ -435,9 +435,9 @@ export default function AdminDashboardPage() {
               <button
                 type="button"
                 onClick={() => setSelectedDate(getRelativeIsoDate(0))}
-                className={`h-10 px-3.5 sm:px-4 text-xs sm:text-sm font-black uppercase tracking-wider border transition-colors cursor-pointer shrink-0 ${
+                className={`h-10 px-3.5 sm:px-4 text-xs sm:text-sm font-black uppercase tracking-wider border-2 transition-all cursor-pointer shrink-0 ${
                   selectedDate === getRelativeIsoDate(0)
-                    ? 'border-black bg-black text-white'
+                    ? 'border-black bg-neutral-50 text-black shadow-xs border-b-4 border-b-[#e60000]'
                     : 'border-neutral-300 bg-white text-neutral-700 hover:border-black hover:text-black'
                 }`}
               >
@@ -447,9 +447,9 @@ export default function AdminDashboardPage() {
               <button
                 type="button"
                 onClick={() => setSelectedDate(getRelativeIsoDate(1))}
-                className={`h-10 px-3.5 sm:px-4 text-xs sm:text-sm font-black uppercase tracking-wider border transition-colors cursor-pointer shrink-0 ${
+                className={`h-10 px-3.5 sm:px-4 text-xs sm:text-sm font-black uppercase tracking-wider border-2 transition-all cursor-pointer shrink-0 ${
                   selectedDate === getRelativeIsoDate(1)
-                    ? 'border-black bg-black text-white'
+                    ? 'border-black bg-neutral-50 text-black shadow-xs border-b-4 border-b-[#e60000]'
                     : 'border-neutral-300 bg-white text-neutral-700 hover:border-black hover:text-black'
                 }`}
               >
@@ -459,9 +459,9 @@ export default function AdminDashboardPage() {
               <button
                 type="button"
                 onClick={() => setSelectedDate(getRelativeIsoDate(2))}
-                className={`h-10 px-3.5 sm:px-4 text-xs sm:text-sm font-black uppercase tracking-wider border transition-colors cursor-pointer shrink-0 ${
+                className={`h-10 px-3.5 sm:px-4 text-xs sm:text-sm font-black uppercase tracking-wider border-2 transition-all cursor-pointer shrink-0 ${
                   selectedDate === getRelativeIsoDate(2)
-                    ? 'border-black bg-black text-white'
+                    ? 'border-black bg-neutral-50 text-black shadow-xs border-b-4 border-b-[#e60000]'
                     : 'border-neutral-300 bg-white text-neutral-700 hover:border-black hover:text-black'
                 }`}
               >
@@ -607,7 +607,7 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* 3. SHIFT SEGMENTED TABS (PRANZO, 1° CENA, 2° CENA) */}
-        <div className="grid grid-cols-3 border border-neutral-300 bg-neutral-100 p-1 gap-1 mb-4">
+        <div className="grid grid-cols-3 border border-neutral-300 bg-neutral-100 p-1.5 gap-1.5 mb-4">
           {shiftsList.map((shift) => {
             const isSelected = activeTab === shift.id;
             const shiftBookings = bookings.filter(
@@ -621,19 +621,19 @@ export default function AdminDashboardPage() {
                 key={shift.id}
                 type="button"
                 onClick={() => setActiveTab(shift.id)}
-                className={`py-3 px-2 sm:px-3 text-center sm:text-left transition-colors cursor-pointer flex flex-col sm:flex-row items-center justify-between gap-1 ${
+                className={`py-3 px-2 sm:px-3 text-center sm:text-left transition-all cursor-pointer flex flex-col sm:flex-row items-center justify-between gap-1 ${
                   isSelected
-                    ? 'bg-black text-white shadow-xs'
-                    : 'bg-transparent text-neutral-700 hover:text-black hover:bg-white/70'
+                    ? 'bg-white text-black shadow-sm border-2 border-black border-b-4 border-b-[#e60000]'
+                    : 'bg-transparent text-neutral-700 hover:text-black hover:bg-white/60'
                 }`}
               >
                 <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
-                  <span className="font-black text-xs sm:text-sm uppercase tracking-wider block">
+                  <span className="font-black text-xs sm:text-sm uppercase tracking-wider block text-black">
                     {shift.label}
                   </span>
                   <span
                     className={`text-[10px] sm:text-[11px] font-medium hidden md:inline ${
-                      isSelected ? 'text-neutral-400' : 'text-neutral-500'
+                      isSelected ? 'text-[#e60000] font-bold' : 'text-neutral-500'
                     }`}
                   >
                     ({shift.time})
@@ -642,11 +642,11 @@ export default function AdminDashboardPage() {
 
                 <div className="flex items-center gap-1.5">
                   {isLocked && (
-                    <span className="text-[9px] font-black uppercase text-[#e60000] bg-white px-1 py-0.5">
+                    <span className="text-[9px] font-black uppercase text-[#e60000] bg-red-50 border border-red-200 px-1 py-0.5">
                       BLOCCATO
                     </span>
                   )}
-                  <span className={`text-xs sm:text-sm font-black ${isSelected ? 'text-white' : 'text-black'}`}>
+                  <span className="text-xs sm:text-sm font-black text-black">
                     {totalPax} pax
                   </span>
                 </div>
@@ -717,7 +717,7 @@ export default function AdminDashboardPage() {
                 onClick={() => setStatusFilter('ALL')}
                 className={`h-10 px-3 text-xs sm:text-sm font-bold uppercase transition-colors cursor-pointer text-center ${
                   statusFilter === 'ALL'
-                    ? 'bg-black text-white'
+                    ? 'bg-neutral-100 text-black font-black border-b-2 border-b-[#e60000]'
                     : 'text-neutral-600 hover:text-black'
                 }`}
               >
@@ -728,7 +728,7 @@ export default function AdminDashboardPage() {
                 onClick={() => setStatusFilter('WAITING')}
                 className={`h-10 px-3 text-xs sm:text-sm font-bold uppercase border-l border-neutral-200 transition-colors cursor-pointer text-center ${
                   statusFilter === 'WAITING'
-                    ? 'bg-black text-white'
+                    ? 'bg-neutral-100 text-black font-black border-b-2 border-b-[#e60000]'
                     : 'text-neutral-600 hover:text-black'
                 }`}
               >
@@ -739,7 +739,7 @@ export default function AdminDashboardPage() {
                 onClick={() => setStatusFilter('SEATED')}
                 className={`h-10 px-3 text-xs sm:text-sm font-bold uppercase border-l border-neutral-200 transition-colors cursor-pointer text-center ${
                   statusFilter === 'SEATED'
-                    ? 'bg-black text-white'
+                    ? 'bg-neutral-100 text-black font-black border-b-2 border-b-[#e60000]'
                     : 'text-neutral-600 hover:text-black'
                 }`}
               >
@@ -818,7 +818,7 @@ export default function AdminDashboardPage() {
                         onClick={() => handleUpdateTable(b.id, b.tableNumber)}
                         className={`h-9 px-3 text-xs font-black uppercase transition-colors cursor-pointer flex items-center justify-center ${
                           b.tableNumber
-                            ? 'bg-black text-white hover:bg-neutral-800'
+                            ? 'border-2 border-black bg-neutral-100 hover:bg-neutral-200 text-black'
                             : 'border-2 border-dashed border-neutral-400 text-neutral-600 hover:border-black hover:text-black bg-white'
                         }`}
                         title="Clicca per assegnare o cambiare tavolo"
@@ -1093,10 +1093,10 @@ export default function AdminDashboardPage() {
                       key={n}
                       type="button"
                       onClick={() => setWalkInGuests(n)}
-                      className={`h-11 font-black text-base border transition-colors cursor-pointer ${
+                      className={`h-11 font-black text-base border-2 transition-all cursor-pointer ${
                         walkInGuests === n
-                          ? 'border-black bg-black text-white'
-                          : 'border-neutral-300 bg-white text-black hover:border-black'
+                          ? 'border-black bg-neutral-50 text-black shadow-xs border-b-4 border-b-[#e60000]'
+                          : 'border-neutral-300 bg-white text-neutral-700 hover:border-black hover:text-black'
                       }`}
                     >
                       {n}
@@ -1134,10 +1134,10 @@ export default function AdminDashboardPage() {
                   <button
                     type="button"
                     onClick={() => setWalkInDate(getRelativeIsoDate(0))}
-                    className={`h-10 text-xs sm:text-sm font-black uppercase border transition-colors cursor-pointer ${
+                    className={`h-10 text-xs sm:text-sm font-black uppercase border-2 transition-all cursor-pointer ${
                       (walkInDate || selectedDate) === getRelativeIsoDate(0)
-                        ? 'border-black bg-black text-white'
-                        : 'border-neutral-300 bg-white text-black hover:border-black'
+                        ? 'border-black bg-neutral-50 text-black shadow-xs border-b-4 border-b-[#e60000]'
+                        : 'border-neutral-300 bg-white text-neutral-700 hover:border-black hover:text-black'
                     }`}
                   >
                     Oggi
@@ -1145,10 +1145,10 @@ export default function AdminDashboardPage() {
                   <button
                     type="button"
                     onClick={() => setWalkInDate(getRelativeIsoDate(1))}
-                    className={`h-10 text-xs sm:text-sm font-black uppercase border transition-colors cursor-pointer ${
+                    className={`h-10 text-xs sm:text-sm font-black uppercase border-2 transition-all cursor-pointer ${
                       (walkInDate || selectedDate) === getRelativeIsoDate(1)
-                        ? 'border-black bg-black text-white'
-                        : 'border-neutral-300 bg-white text-black hover:border-black'
+                        ? 'border-black bg-neutral-50 text-black shadow-xs border-b-4 border-b-[#e60000]'
+                        : 'border-neutral-300 bg-white text-neutral-700 hover:border-black hover:text-black'
                     }`}
                   >
                     Domani
@@ -1156,10 +1156,10 @@ export default function AdminDashboardPage() {
                   <button
                     type="button"
                     onClick={() => setWalkInDate(getRelativeIsoDate(2))}
-                    className={`h-10 text-xs sm:text-sm font-black uppercase border transition-colors cursor-pointer ${
+                    className={`h-10 text-xs sm:text-sm font-black uppercase border-2 transition-all cursor-pointer ${
                       (walkInDate || selectedDate) === getRelativeIsoDate(2)
-                        ? 'border-black bg-black text-white'
-                        : 'border-neutral-300 bg-white text-black hover:border-black'
+                        ? 'border-black bg-neutral-50 text-black shadow-xs border-b-4 border-b-[#e60000]'
+                        : 'border-neutral-300 bg-white text-neutral-700 hover:border-black hover:text-black'
                     }`}
                   >
                     Dopodomani
@@ -1192,10 +1192,10 @@ export default function AdminDashboardPage() {
                       setWalkInShift('lunch');
                       setWalkInTime('13:00');
                     }}
-                    className={`py-2 px-1 text-center border transition-colors cursor-pointer flex flex-col items-center ${
+                    className={`py-2 px-1 text-center border-2 transition-all cursor-pointer flex flex-col items-center ${
                       walkInShift === 'lunch'
-                        ? 'border-black bg-black text-white'
-                        : 'border-neutral-300 bg-white text-black hover:border-black'
+                        ? 'border-black bg-neutral-50 text-black shadow-xs border-b-4 border-b-[#e60000]'
+                        : 'border-neutral-300 bg-white text-neutral-700 hover:border-black hover:text-black'
                     }`}
                   >
                     <span className="text-xs sm:text-sm font-black uppercase">PRANZO</span>
@@ -1208,10 +1208,10 @@ export default function AdminDashboardPage() {
                       setWalkInShift('dinner_1');
                       setWalkInTime('19:30');
                     }}
-                    className={`py-2 px-1 text-center border transition-colors cursor-pointer flex flex-col items-center ${
+                    className={`py-2 px-1 text-center border-2 transition-all cursor-pointer flex flex-col items-center ${
                       walkInShift === 'dinner_1'
-                        ? 'border-black bg-black text-white'
-                        : 'border-neutral-300 bg-white text-black hover:border-black'
+                        ? 'border-black bg-neutral-50 text-black shadow-xs border-b-4 border-b-[#e60000]'
+                        : 'border-neutral-300 bg-white text-neutral-700 hover:border-black hover:text-black'
                     }`}
                   >
                     <span className="text-xs sm:text-sm font-black uppercase">1° CENA</span>
@@ -1224,10 +1224,10 @@ export default function AdminDashboardPage() {
                       setWalkInShift('dinner_2');
                       setWalkInTime('21:30');
                     }}
-                    className={`py-2 px-1 text-center border transition-colors cursor-pointer flex flex-col items-center ${
+                    className={`py-2 px-1 text-center border-2 transition-all cursor-pointer flex flex-col items-center ${
                       walkInShift === 'dinner_2'
-                        ? 'border-black bg-black text-white'
-                        : 'border-neutral-300 bg-white text-black hover:border-black'
+                        ? 'border-black bg-neutral-50 text-black shadow-xs border-b-4 border-b-[#e60000]'
+                        : 'border-neutral-300 bg-white text-neutral-700 hover:border-black hover:text-black'
                     }`}
                   >
                     <span className="text-xs sm:text-sm font-black uppercase">2° CENA</span>
@@ -1251,10 +1251,10 @@ export default function AdminDashboardPage() {
                         key={slot}
                         type="button"
                         onClick={() => setWalkInTime(slot)}
-                        className={`h-9 px-3 text-xs sm:text-sm font-black border transition-colors cursor-pointer ${
+                        className={`h-9 px-3 text-xs sm:text-sm font-black border-2 transition-all cursor-pointer ${
                           walkInTime === slot
-                            ? 'border-black bg-black text-white'
-                            : 'border-neutral-300 bg-white text-black hover:border-black'
+                            ? 'border-black bg-white text-black shadow-xs border-b-2 border-b-[#e60000]'
+                            : 'border-neutral-300 bg-white text-neutral-700 hover:border-black hover:text-black'
                         }`}
                       >
                         {slot}
@@ -1283,14 +1283,14 @@ export default function AdminDashboardPage() {
                   <button
                     type="button"
                     onClick={() => setWalkInArea('indoor')}
-                    className={`p-3 text-left border-2 transition-colors cursor-pointer ${
+                    className={`p-3 text-left border-2 transition-all cursor-pointer ${
                       walkInArea === 'indoor'
-                        ? 'border-black bg-black text-white'
-                        : 'border-neutral-300 bg-white text-black hover:border-black'
+                        ? 'border-black bg-neutral-50/80 text-black shadow-sm border-l-4 border-l-[#e60000]'
+                        : 'border-neutral-300 bg-white text-neutral-700 hover:border-black'
                     }`}
                   >
-                    <div className="font-black text-sm">🏠 SALA INTERNA</div>
-                    <div className={`text-xs font-medium ${walkInArea === 'indoor' ? 'text-neutral-300' : 'text-neutral-500'}`}>
+                    <div className="font-black text-sm text-black">🏠 SALA INTERNA</div>
+                    <div className="text-xs font-medium text-neutral-600">
                       36 posti coperti garantiti
                     </div>
                   </button>
@@ -1298,14 +1298,14 @@ export default function AdminDashboardPage() {
                   <button
                     type="button"
                     onClick={() => setWalkInArea('outdoor')}
-                    className={`p-3 text-left border-2 transition-colors cursor-pointer ${
+                    className={`p-3 text-left border-2 transition-all cursor-pointer ${
                       walkInArea === 'outdoor'
-                        ? 'border-black bg-black text-white'
-                        : 'border-neutral-300 bg-white text-black hover:border-black'
+                        ? 'border-black bg-neutral-50/80 text-black shadow-sm border-l-4 border-l-[#e60000]'
+                        : 'border-neutral-300 bg-white text-neutral-700 hover:border-black'
                     }`}
                   >
-                    <div className="font-black text-sm">🌿 ESTERNO (PORTICO)</div>
-                    <div className={`text-xs font-medium ${walkInArea === 'outdoor' ? 'text-neutral-300' : 'text-neutral-500'}`}>
+                    <div className="font-black text-sm text-black">🌿 ESTERNO (PORTICO)</div>
+                    <div className="text-xs font-medium text-neutral-600">
                       35 posti sotto il portico
                     </div>
                   </button>

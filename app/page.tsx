@@ -284,14 +284,14 @@ export default function BookingPage() {
 
           <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm">
             {/* Bilingual Switcher: IT | EN */}
-            <div className="inline-flex border-2 border-black overflow-hidden font-bold">
+            <div className="inline-flex border-2 border-black overflow-hidden font-bold bg-neutral-100">
               <button
                 type="button"
                 onClick={() => handleLanguageSwitch('it')}
-                className={`px-2.5 py-1 transition-colors cursor-pointer ${
+                className={`px-3 py-1 transition-colors cursor-pointer text-xs font-black ${
                   lang === 'it'
-                    ? 'bg-black text-white'
-                    : 'bg-white text-black hover:bg-neutral-100'
+                    ? 'bg-white text-black border-b-2 border-b-[#e60000] shadow-xs'
+                    : 'bg-transparent text-neutral-600 hover:text-black'
                 }`}
               >
                 IT
@@ -299,10 +299,10 @@ export default function BookingPage() {
               <button
                 type="button"
                 onClick={() => handleLanguageSwitch('en')}
-                className={`px-2.5 py-1 border-l-2 border-black transition-colors cursor-pointer ${
+                className={`px-3 py-1 border-l-2 border-black transition-colors cursor-pointer text-xs font-black ${
                   lang === 'en'
-                    ? 'bg-black text-white'
-                    : 'bg-white text-black hover:bg-neutral-100'
+                    ? 'bg-white text-black border-b-2 border-b-[#e60000] shadow-xs'
+                    : 'bg-transparent text-neutral-600 hover:text-black'
                 }`}
               >
                 EN
@@ -479,10 +479,10 @@ export default function BookingPage() {
                       key={num}
                       type="button"
                       onClick={() => setGuestCount(num)}
-                      className={`h-14 sm:h-20 border-2 text-xl sm:text-4xl font-black transition-colors cursor-pointer touch-manipulation select-none active:scale-95 flex items-center justify-center ${
+                      className={`h-14 sm:h-20 border-2 text-xl sm:text-4xl font-black transition-all cursor-pointer touch-manipulation select-none active:scale-95 flex items-center justify-center ${
                         isSelected
-                          ? 'border-black bg-black text-white'
-                          : 'border-neutral-300 bg-white text-black hover:border-black'
+                          ? 'border-black bg-neutral-50 text-black shadow-xs border-b-4 border-b-[#e60000]'
+                          : 'border-neutral-300 bg-white text-neutral-700 hover:border-black hover:text-black'
                       }`}
                     >
                       {num}
@@ -512,19 +512,19 @@ export default function BookingPage() {
                       key={d.iso}
                       type="button"
                       onClick={() => handleSelectDate(d.iso)}
-                      className={`min-w-[76px] sm:min-w-0 flex-1 py-3 sm:py-5 px-1 border-2 flex flex-col items-center justify-center transition-colors cursor-pointer touch-manipulation select-none active:scale-95 snap-start ${
+                      className={`min-w-[76px] sm:min-w-0 flex-1 py-3 sm:py-5 px-1 border-2 flex flex-col items-center justify-center transition-all cursor-pointer touch-manipulation select-none active:scale-95 snap-start ${
                         isSelected
-                          ? 'border-black bg-black text-white shadow-sm'
-                          : 'border-neutral-300 bg-white text-black hover:border-black'
+                          ? 'border-black bg-neutral-50 text-black shadow-xs border-b-4 border-b-[#e60000]'
+                          : 'border-neutral-300 bg-white text-neutral-700 hover:border-black hover:text-black'
                       }`}
                     >
-                      <span className={`text-[11px] sm:text-xs uppercase font-black tracking-tight ${isSelected ? 'text-neutral-300' : 'text-neutral-500'}`}>
+                      <span className={`text-[11px] sm:text-xs uppercase font-black tracking-tight ${isSelected ? 'text-[#e60000]' : 'text-neutral-500'}`}>
                         {d.label}
                       </span>
-                      <span className="text-2xl sm:text-4xl font-black my-0.5 leading-none">
+                      <span className="text-2xl sm:text-4xl font-black my-0.5 leading-none text-black">
                         {d.dayNum}
                       </span>
-                      <span className={`text-[10px] sm:text-xs uppercase font-bold ${isSelected ? 'text-neutral-400' : 'text-neutral-500'}`}>
+                      <span className="text-[10px] sm:text-xs uppercase font-bold text-neutral-500">
                         {d.month}
                       </span>
                     </button>
@@ -592,28 +592,28 @@ export default function BookingPage() {
                       type="button"
                       disabled={!isAvailable}
                       onClick={() => handleSelectShift('lunch')}
-                      className={`p-4 sm:p-5 border-2 text-left transition-colors cursor-pointer touch-manipulation select-none active:scale-98 flex flex-col justify-between ${
+                      className={`p-4 sm:p-5 border-2 text-left transition-all cursor-pointer touch-manipulation select-none active:scale-98 flex flex-col justify-between ${
                         !isAvailable
                           ? 'opacity-35 border-dashed border-neutral-300 bg-neutral-100 cursor-not-allowed'
                           : isSelected
-                          ? 'border-black bg-black text-white'
+                          ? 'border-black bg-neutral-50/80 text-black shadow-sm border-l-4 border-l-[#e60000]'
                           : 'border-neutral-300 bg-white text-black hover:border-black'
                       }`}
                     >
                       <div>
                         <div className="flex justify-between items-baseline mb-1.5">
-                          <span className="font-black text-xl sm:text-2xl tracking-tight">{t.lunchTitle}</span>
+                          <span className="font-black text-xl sm:text-2xl tracking-tight text-black">{t.lunchTitle}</span>
                           <span className={`text-xs sm:text-sm font-bold tracking-tight ${
                             !isAvailable
                               ? 'text-[#e60000] font-black uppercase'
                               : isSelected
-                              ? 'text-neutral-300'
+                              ? 'text-[#e60000] font-black'
                               : 'text-neutral-500'
                           }`}>
-                            {isAvailable ? t.lunchTime : t.statusClosed}
+                            {isAvailable ? (isSelected ? `● ${t.lunchTime}` : t.lunchTime) : t.statusClosed}
                           </span>
                         </div>
-                        <p className={`text-xs sm:text-sm font-medium mt-1 leading-snug ${isSelected ? 'text-neutral-300' : 'text-neutral-600'}`}>
+                        <p className="text-xs sm:text-sm font-medium mt-1 leading-snug text-neutral-600">
                           {shift?.reason || t.lunchDesc}
                         </p>
                       </div>
@@ -633,28 +633,28 @@ export default function BookingPage() {
                       type="button"
                       disabled={!isAvailable}
                       onClick={() => handleSelectShift('dinner_1')}
-                      className={`p-4 sm:p-5 border-2 text-left transition-colors cursor-pointer touch-manipulation select-none active:scale-98 flex flex-col justify-between ${
+                      className={`p-4 sm:p-5 border-2 text-left transition-all cursor-pointer touch-manipulation select-none active:scale-98 flex flex-col justify-between ${
                         !isAvailable
                           ? 'opacity-35 border-dashed border-neutral-300 bg-neutral-100 cursor-not-allowed'
                           : isSelected
-                          ? 'border-black bg-black text-white'
+                          ? 'border-black bg-neutral-50/80 text-black shadow-sm border-l-4 border-l-[#e60000]'
                           : 'border-neutral-300 bg-white text-black hover:border-black'
                       }`}
                     >
                       <div>
                         <div className="flex justify-between items-baseline mb-1.5">
-                          <span className="font-black text-xl sm:text-2xl tracking-tight">{t.dinner1Title}</span>
+                          <span className="font-black text-xl sm:text-2xl tracking-tight text-black">{t.dinner1Title}</span>
                           <span className={`text-xs sm:text-sm font-bold tracking-tight ${
                             !isAvailable
                               ? 'text-[#e60000] font-black uppercase'
                               : isSelected
-                              ? 'text-neutral-300'
+                              ? 'text-[#e60000] font-black'
                               : 'text-neutral-500'
                           }`}>
-                            {isAvailable ? t.dinner1Time : t.statusFull}
+                            {isAvailable ? (isSelected ? `● ${t.dinner1Time}` : t.dinner1Time) : t.statusFull}
                           </span>
                         </div>
-                        <p className={`text-xs sm:text-sm font-medium mt-1 leading-snug ${isSelected ? 'text-neutral-300' : 'text-neutral-600'}`}>
+                        <p className="text-xs sm:text-sm font-medium mt-1 leading-snug text-neutral-600">
                           {t.dinner1Desc}
                         </p>
                       </div>
@@ -674,28 +674,28 @@ export default function BookingPage() {
                       type="button"
                       disabled={!isAvailable}
                       onClick={() => handleSelectShift('dinner_2')}
-                      className={`p-4 sm:p-5 border-2 text-left transition-colors cursor-pointer touch-manipulation select-none active:scale-98 flex flex-col justify-between ${
+                      className={`p-4 sm:p-5 border-2 text-left transition-all cursor-pointer touch-manipulation select-none active:scale-98 flex flex-col justify-between ${
                         !isAvailable
                           ? 'opacity-35 border-dashed border-neutral-300 bg-neutral-100 cursor-not-allowed'
                           : isSelected
-                          ? 'border-black bg-black text-white'
+                          ? 'border-black bg-neutral-50/80 text-black shadow-sm border-l-4 border-l-[#e60000]'
                           : 'border-neutral-300 bg-white text-black hover:border-black'
                       }`}
                     >
                       <div>
                         <div className="flex justify-between items-baseline mb-1.5">
-                          <span className="font-black text-xl sm:text-2xl tracking-tight">{t.dinner2Title}</span>
+                          <span className="font-black text-xl sm:text-2xl tracking-tight text-black">{t.dinner2Title}</span>
                           <span className={`text-xs sm:text-sm font-bold tracking-tight ${
                             !isAvailable
                               ? 'text-[#e60000] font-black uppercase'
                               : isSelected
-                              ? 'text-neutral-300'
+                              ? 'text-[#e60000] font-black'
                               : 'text-neutral-500'
                           }`}>
-                            {isAvailable ? t.dinner2Time : t.statusFull}
+                            {isAvailable ? (isSelected ? `● ${t.dinner2Time}` : t.dinner2Time) : t.statusFull}
                           </span>
                         </div>
-                        <p className={`text-xs sm:text-sm font-medium mt-1 leading-snug ${isSelected ? 'text-neutral-300' : 'text-neutral-600'}`}>
+                        <p className="text-xs sm:text-sm font-medium mt-1 leading-snug text-neutral-600">
                           {t.dinner2Desc}
                         </p>
                       </div>
@@ -719,10 +719,10 @@ export default function BookingPage() {
                           key={slot}
                           type="button"
                           onClick={() => setSelectedSlot(slot)}
-                          className={`px-4 py-2.5 sm:py-3 border-2 text-base sm:text-lg font-black transition-colors cursor-pointer touch-manipulation select-none active:scale-95 ${
+                          className={`px-4 py-2.5 sm:py-3 border-2 text-base sm:text-lg font-black transition-all cursor-pointer touch-manipulation select-none active:scale-95 ${
                             isSlotSelected
-                              ? 'border-black bg-black text-white'
-                              : 'border-neutral-300 bg-white text-black hover:border-black'
+                              ? 'border-black bg-white text-black shadow-xs border-b-4 border-b-[#e60000]'
+                              : 'border-neutral-300 bg-white text-neutral-700 hover:border-black hover:text-black'
                           }`}
                         >
                           {slot}
@@ -761,19 +761,19 @@ export default function BookingPage() {
                 <button
                   type="button"
                   onClick={() => setSeatingArea('indoor')}
-                  className={`p-4 sm:p-5 border-2 text-left transition-colors cursor-pointer touch-manipulation select-none active:scale-98 flex flex-col justify-between ${
+                  className={`p-4 sm:p-5 border-2 text-left transition-all cursor-pointer touch-manipulation select-none active:scale-98 flex flex-col justify-between ${
                     seatingArea === 'indoor'
-                      ? 'border-black bg-black text-white'
+                      ? 'border-black bg-neutral-50/80 text-black shadow-sm border-l-4 border-l-[#e60000]'
                       : 'border-neutral-300 bg-white text-black hover:border-black'
                   }`}
                 >
                   <div className="flex justify-between items-baseline mb-1.5">
-                    <span className="font-black text-lg sm:text-2xl tracking-tight">{t.indoorTitle}</span>
-                    <span className={`text-xs sm:text-sm font-bold ${seatingArea === 'indoor' ? 'text-neutral-300' : 'text-neutral-500'}`}>
-                      {t.indoorSeats}
+                    <span className="font-black text-lg sm:text-2xl tracking-tight text-black">{t.indoorTitle}</span>
+                    <span className={`text-xs sm:text-sm font-bold ${seatingArea === 'indoor' ? 'text-[#e60000] font-black' : 'text-neutral-500'}`}>
+                      {seatingArea === 'indoor' ? `● ${t.indoorSeats}` : t.indoorSeats}
                     </span>
                   </div>
-                  <p className={`text-xs sm:text-sm font-medium ${seatingArea === 'indoor' ? 'text-neutral-300' : 'text-neutral-600'}`}>
+                  <p className="text-xs sm:text-sm font-medium text-neutral-600">
                     {t.indoorDesc}
                   </p>
                 </button>
@@ -783,21 +783,21 @@ export default function BookingPage() {
                   type="button"
                   disabled={!availability?.isOutdoorActive}
                   onClick={() => setSeatingArea('outdoor')}
-                  className={`p-4 sm:p-5 border-2 text-left transition-colors cursor-pointer touch-manipulation select-none active:scale-98 flex flex-col justify-between ${
+                  className={`p-4 sm:p-5 border-2 text-left transition-all cursor-pointer touch-manipulation select-none active:scale-98 flex flex-col justify-between ${
                     !availability?.isOutdoorActive
                       ? 'opacity-40 border-dashed border-neutral-300 bg-neutral-100 cursor-not-allowed'
                       : seatingArea === 'outdoor'
-                      ? 'border-black bg-black text-white'
+                      ? 'border-black bg-neutral-50/80 text-black shadow-sm border-l-4 border-l-[#e60000]'
                       : 'border-neutral-300 bg-white text-black hover:border-black'
                   }`}
                 >
                   <div className="flex justify-between items-baseline mb-1.5">
-                    <span className="font-black text-lg sm:text-2xl tracking-tight">{t.outdoorTitle}</span>
-                    <span className={`text-xs sm:text-sm font-bold ${seatingArea === 'outdoor' ? 'text-neutral-300' : 'text-neutral-500'}`}>
-                      {t.outdoorSeats}
+                    <span className="font-black text-lg sm:text-2xl tracking-tight text-black">{t.outdoorTitle}</span>
+                    <span className={`text-xs sm:text-sm font-bold ${seatingArea === 'outdoor' ? 'text-[#e60000] font-black' : 'text-neutral-500'}`}>
+                      {seatingArea === 'outdoor' ? `● ${t.outdoorSeats}` : t.outdoorSeats}
                     </span>
                   </div>
-                  <p className={`text-xs sm:text-sm font-medium ${seatingArea === 'outdoor' ? 'text-neutral-300' : 'text-neutral-600'}`}>
+                  <p className="text-xs sm:text-sm font-medium text-neutral-600">
                     {availability?.isOutdoorActive ? t.outdoorDesc : t.outdoorDescClosed}
                   </p>
                 </button>
