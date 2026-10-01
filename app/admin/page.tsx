@@ -444,10 +444,10 @@ export default function AdminDashboardPage() {
 
       {/* 2. OPERATIONS COMMAND CENTER (BIG DATE ORIENTATION & MASTER ESTERNO TOGGLE) */}
       <div className="max-w-6xl mx-auto px-4 sm:px-8 pt-4 sm:pt-6">
-        <div className="pb-5 sm:pb-6 mb-5 sm:mb-6 border-b-2 border-black flex flex-col lg:flex-row lg:items-center justify-between gap-4 sm:gap-6">
-          {/* LEFT: BIG DATE ORIENTATION & FAST DAY JUMPERS (MIN 48PX, GAP >= 8PX) */}
-          <div className="flex-1">
-            <div className="flex items-center gap-2 sm:gap-2.5 mb-3 overflow-x-auto no-scrollbar py-1">
+        <div className="pb-5 sm:pb-6 mb-5 sm:mb-6 border-b-2 border-black flex flex-col gap-4 sm:gap-5">
+          {/* TOP ROW: FAST DAY JUMPERS & DATE PICKER (FULL WIDTH, NEVER CLIPPED) */}
+          <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
+            <div className="flex items-center gap-1.5 sm:gap-2.5 flex-wrap xs:flex-nowrap">
               <button
                 type="button"
                 onClick={() => changeDateByDays(-1)}
@@ -460,7 +460,7 @@ export default function AdminDashboardPage() {
               <button
                 type="button"
                 onClick={() => setSelectedDate(getRelativeIsoDate(0))}
-                className={`h-12 sm:h-13 px-4 sm:px-5 text-sm font-black uppercase tracking-wider border-2 transition-all duration-75 cursor-pointer shrink-0 touch-manipulation select-none active:scale-95 ${
+                className={`h-12 sm:h-13 px-3.5 sm:px-5 text-xs sm:text-sm font-black uppercase tracking-wider border-2 transition-all duration-75 cursor-pointer shrink-0 touch-manipulation select-none active:scale-95 ${
                   selectedDate === getRelativeIsoDate(0)
                     ? 'border-2 border-black bg-noren-active text-black shadow-xs ring-1 ring-black'
                     : 'border-neutral-300 bg-white text-neutral-700 hover:border-black hover:text-black'
@@ -472,7 +472,7 @@ export default function AdminDashboardPage() {
               <button
                 type="button"
                 onClick={() => setSelectedDate(getRelativeIsoDate(1))}
-                className={`h-12 sm:h-13 px-4 sm:px-5 text-sm font-black uppercase tracking-wider border-2 transition-all duration-75 cursor-pointer shrink-0 touch-manipulation select-none active:scale-95 ${
+                className={`h-12 sm:h-13 px-3.5 sm:px-5 text-xs sm:text-sm font-black uppercase tracking-wider border-2 transition-all duration-75 cursor-pointer shrink-0 touch-manipulation select-none active:scale-95 ${
                   selectedDate === getRelativeIsoDate(1)
                     ? 'border-2 border-black bg-noren-active text-black shadow-xs ring-1 ring-black'
                     : 'border-neutral-300 bg-white text-neutral-700 hover:border-black hover:text-black'
@@ -484,7 +484,7 @@ export default function AdminDashboardPage() {
               <button
                 type="button"
                 onClick={() => setSelectedDate(getRelativeIsoDate(2))}
-                className={`h-12 sm:h-13 px-4 sm:px-5 text-sm font-black uppercase tracking-wider border-2 transition-all duration-75 cursor-pointer shrink-0 touch-manipulation select-none active:scale-95 ${
+                className={`h-12 sm:h-13 px-3.5 sm:px-5 text-xs sm:text-sm font-black uppercase tracking-wider border-2 transition-all duration-75 cursor-pointer shrink-0 touch-manipulation select-none active:scale-95 ${
                   selectedDate === getRelativeIsoDate(2)
                     ? 'border-2 border-black bg-noren-active text-black shadow-xs ring-1 ring-black'
                     : 'border-neutral-300 bg-white text-neutral-700 hover:border-black hover:text-black'
@@ -501,71 +501,75 @@ export default function AdminDashboardPage() {
               >
                 →
               </button>
-
-              {/* Styled Date Picker Button (Min 48px hit area) */}
-              <label className="relative h-12 sm:h-13 px-4 border-2 border-neutral-300 hover:border-black bg-white flex items-center gap-2 cursor-pointer text-sm font-black text-neutral-800 transition-all duration-75 shrink-0 touch-manipulation select-none active:scale-95">
-                <span>📅 Scegli Data</span>
-                <input
-                  type="date"
-                  value={selectedDate}
-                  onChange={(e) => setSelectedDate(e.target.value)}
-                  className="absolute inset-0 opacity-0 cursor-pointer w-full touch-manipulation"
-                />
-              </label>
             </div>
 
-            {/* BIG PROMINENT DATE HEADING (READABLE AT A GLANCE FROM AFAR) */}
-            <div className="flex items-center gap-2 mb-1">
-              {bigDateInfo.label ? (
-                <span
-                  className={`text-xs font-black uppercase tracking-widest px-2.5 py-1 ${
-                    bigDateInfo.isToday ? 'bg-[#e60000] text-white' : 'bg-black text-white'
-                  }`}
-                >
-                  {bigDateInfo.label}
-                </span>
-              ) : (
-                <span className="text-xs font-black uppercase tracking-widest text-neutral-500">
-                  DATA SELEZIONATA
-                </span>
-              )}
-              <span className="text-xs font-bold text-neutral-400">
-                • Servizio Tavoli HANDĀ
-              </span>
-            </div>
-
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black uppercase tracking-tight text-black leading-tight sm:leading-none">
-              {bigDateInfo.fullDate}
-            </h1>
-
-            {/* DAY TOTAL COVERS METRICS */}
-            <div className="flex flex-wrap items-center gap-2.5 sm:gap-4 text-xs sm:text-sm font-bold text-neutral-600 mt-2 sm:mt-3">
-              <div>
-                Totale Giorno:{' '}
-                <strong className="text-black font-black text-sm sm:text-base">{stats?.totalCovers || 0}</strong>{' '}
-                pax
-              </div>
-              <span className="text-neutral-300">·</span>
-              <div>
-                Seduti:{' '}
-                <strong className="text-[#e60000] font-black text-sm sm:text-base">
-                  {stats?.seatedCovers || 0}
-                </strong>{' '}
-                pax
-              </div>
-              <span className="text-neutral-300">·</span>
-              <div>
-                Da Accogliere:{' '}
-                <strong className="text-black font-black text-sm sm:text-base">
-                  {Math.max(0, (stats?.totalCovers || 0) - (stats?.seatedCovers || 0))}
-                </strong>{' '}
-                pax
-              </div>
-            </div>
+            {/* Styled Date Picker Button (Min 48px hit area, never clipped, whitespace-nowrap, responsive width) */}
+            <label className="relative h-12 sm:h-13 px-4 border-2 border-neutral-300 hover:border-black bg-white flex items-center justify-center gap-2 cursor-pointer text-xs sm:text-sm font-black text-neutral-800 transition-all duration-75 shrink-0 touch-manipulation select-none active:scale-95 whitespace-nowrap w-full sm:w-auto">
+              <span>📅 Scegli Data</span>
+              <input
+                type="date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                className="absolute inset-0 opacity-0 cursor-pointer w-full touch-manipulation"
+              />
+            </label>
           </div>
 
-          {/* RIGHT: MASTER ESTERNO (OUTDOOR) TOGGLE SWITCH — VERDE SU APERTO, ROSSO SU CHIUSO */}
-          <div className="flex flex-col sm:items-start lg:items-end justify-center shrink-0 w-full lg:w-auto">
+          {/* LOWER ROW: BIG DATE ORIENTATION (LEFT) & MASTER ESTERNO TOGGLE (RIGHT) */}
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 sm:gap-6 pt-1">
+            <div className="flex-1">
+              {/* BIG PROMINENT DATE HEADING (READABLE AT A GLANCE FROM AFAR) */}
+              <div className="flex items-center gap-2 mb-1">
+                {bigDateInfo.label ? (
+                  <span
+                    className={`text-xs font-black uppercase tracking-widest px-2.5 py-1 ${
+                      bigDateInfo.isToday ? 'bg-[#e60000] text-white' : 'bg-black text-white'
+                    }`}
+                  >
+                    {bigDateInfo.label}
+                  </span>
+                ) : (
+                  <span className="text-xs font-black uppercase tracking-widest text-neutral-500">
+                    DATA SELEZIONATA
+                  </span>
+                )}
+                <span className="text-xs font-bold text-neutral-400">
+                  • Servizio Tavoli HANDĀ
+                </span>
+              </div>
+
+              <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black uppercase tracking-tight text-black leading-tight sm:leading-none">
+                {bigDateInfo.fullDate}
+              </h1>
+
+              {/* DAY TOTAL COVERS METRICS */}
+              <div className="flex flex-wrap items-center gap-2.5 sm:gap-4 text-xs sm:text-sm font-bold text-neutral-600 mt-2 sm:mt-3">
+                <div>
+                  Totale Giorno:{' '}
+                  <strong className="text-black font-black text-sm sm:text-base">{stats?.totalCovers || 0}</strong>{' '}
+                  pax
+                </div>
+                <span className="text-neutral-300">·</span>
+                <div>
+                  Seduti:{' '}
+                  <strong className="text-[#e60000] font-black text-sm sm:text-base">
+                    {stats?.seatedCovers || 0}
+                  </strong>{' '}
+                  pax
+                </div>
+                <span className="text-neutral-300">·</span>
+                <div>
+                  Da Accogliere:{' '}
+                  <strong className="text-black font-black text-sm sm:text-base">
+                    {Math.max(0, (stats?.totalCovers || 0) - (stats?.seatedCovers || 0))}
+                  </strong>{' '}
+                  pax
+                </div>
+              </div>
+            </div>
+
+            {/* RIGHT: MASTER ESTERNO (OUTDOOR) TOGGLE SWITCH — VERDE SU APERTO, ROSSO SU CHIUSO */}
+            <div className="flex flex-col sm:items-start lg:items-end justify-center shrink-0 w-full lg:w-auto">
             <div className="text-xs font-black uppercase tracking-wider text-neutral-500 mb-1.5 flex items-center justify-between sm:justify-end gap-2 w-full">
               <span>Tavoli Esterni (Portico 35 Posti)</span>
               <span
@@ -630,8 +634,9 @@ export default function AdminDashboardPage() {
             </button>
           </div>
         </div>
+      </div>
 
-        {/* 3. SHIFT SEGMENTED TABS (MIN 56PX HEIGHT, GAP >= 8PX) */}
+      {/* 3. SHIFT SEGMENTED TABS (MIN 56PX HEIGHT, GAP >= 8PX) */}
         <div className="grid grid-cols-3 border-2 border-black bg-neutral-100 p-2 gap-2 mb-5 select-none">
           {shiftsList.map((shift) => {
             const isSelected = activeTab === shift.id;
