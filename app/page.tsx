@@ -293,8 +293,8 @@ export default function BookingPage() {
   return (
     <main className="min-h-screen bg-[#faf8f5] bg-paper-texture text-black font-sans flex flex-col justify-between selection:bg-[#e60000] selection:text-white max-w-full overflow-x-hidden">
       {/* Top Header */}
-      <header className="px-3 sm:px-10 py-2.5 sm:py-4 border-b-2 border-black sticky top-0 bg-[#faf8f5]/95 backdrop-blur-xs z-30 max-w-full">
-        <div className="max-w-3xl mx-auto flex items-center justify-between gap-1.5 sm:gap-4">
+      <header className="px-3 sm:px-8 py-3 border-b-2 border-black sticky top-0 bg-[#faf8f5]/95 backdrop-blur-xs z-30 max-w-full">
+        <div className="max-w-4xl mx-auto flex items-center justify-between gap-2 sm:gap-4">
           <div className="flex items-baseline gap-2 sm:gap-3 shrink-0">
             <span className="font-black text-2xl sm:text-4xl tracking-tighter text-black">
               HANDA<span className="text-[#e60000]">.</span>
@@ -316,14 +316,14 @@ export default function BookingPage() {
                 role="tab"
                 aria-selected={lang === 'it'}
                 onClick={() => handleLanguageSwitch('it')}
-                className={`h-8 sm:h-9 px-2 sm:px-2.5 flex items-center gap-1 text-xs transition-all cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${
+                className={`h-9 sm:h-10 px-2.5 sm:px-3 flex items-center gap-1.5 text-xs sm:text-sm transition-all cursor-pointer select-none touch-manipulation active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${
                   lang === 'it'
                     ? 'border-2 border-emerald-600 bg-emerald-50 text-emerald-950 font-black shadow-xs'
                     : 'border-2 border-neutral-200 bg-white text-neutral-400 font-bold hover:text-black hover:border-neutral-400 opacity-60 hover:opacity-100'
                 }`}
                 title="Italiano"
               >
-                <span className="text-sm sm:text-base leading-none" aria-hidden="true">🇮🇹</span>
+                <span className="text-base leading-none" aria-hidden="true">🇮🇹</span>
                 <span className="tracking-wider">IT</span>
                 {lang === 'it' && (
                   <span className="text-[10px] font-black text-emerald-700">✓</span>
@@ -335,14 +335,14 @@ export default function BookingPage() {
                 role="tab"
                 aria-selected={lang === 'en'}
                 onClick={() => handleLanguageSwitch('en')}
-                className={`h-8 sm:h-9 px-2 sm:px-2.5 flex items-center gap-1 text-xs transition-all cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${
+                className={`h-9 sm:h-10 px-2.5 sm:px-3 flex items-center gap-1.5 text-xs sm:text-sm transition-all cursor-pointer select-none touch-manipulation active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${
                   lang === 'en'
                     ? 'border-2 border-blue-600 bg-blue-50 text-blue-950 font-black shadow-xs'
                     : 'border-2 border-neutral-200 bg-white text-neutral-400 font-bold hover:text-black hover:border-neutral-400 opacity-60 hover:opacity-100'
                 }`}
                 title="English"
               >
-                <span className="text-sm sm:text-base leading-none" aria-hidden="true">🇬🇧</span>
+                <span className="text-base leading-none" aria-hidden="true">🇬🇧</span>
                 <span className="tracking-wider">EN</span>
                 {lang === 'en' && (
                   <span className="text-[10px] font-black text-blue-700">✓</span>
@@ -354,7 +354,7 @@ export default function BookingPage() {
               href="https://www.instagram.com/handa_mushi/"
               target="_blank"
               rel="noreferrer"
-              className="h-8 sm:h-9 border-2 border-neutral-300 hover:border-black px-2.5 sm:px-3 font-bold uppercase transition-colors flex items-center justify-center gap-1.5 shrink-0 text-xs sm:text-sm text-black"
+              className="h-9 sm:h-10 border-2 border-neutral-300 hover:border-black px-3 sm:px-3.5 font-bold uppercase transition-colors flex items-center justify-center gap-1.5 shrink-0 text-xs sm:text-sm text-black touch-manipulation select-none active:scale-95"
               title="Instagram @handa_mushi"
             >
               <svg
@@ -371,16 +371,16 @@ export default function BookingPage() {
       </header>
 
       {/* Main Container */}
-      <div className="max-w-3xl w-full mx-auto px-4 py-6 sm:py-16 flex-1 max-w-full overflow-x-hidden">
+      <div className="max-w-4xl w-full mx-auto px-3 sm:px-8 pt-4 sm:pt-6 pb-14 sm:pb-20 flex-1 max-w-full overflow-x-hidden">
         {/* Title */}
-        <div className="mb-8 sm:mb-14">
+        <div className="mb-6 sm:mb-8">
           <span className="text-xs sm:text-sm font-black uppercase tracking-widest text-[#e60000] block mb-1 sm:mb-2">
             {t.heroBadge}
           </span>
-          <h1 className="text-4xl sm:text-7xl font-black tracking-tighter uppercase text-black leading-none">
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tighter uppercase text-black leading-none">
             {t.heroTitle}<span className="text-[#e60000]">.</span>
           </h1>
-          <div className="text-xs sm:text-base text-neutral-600 mt-3 space-y-1">
+          <div className="text-xs sm:text-base text-neutral-600 mt-2.5 space-y-1">
             <p className="font-semibold">{t.heroHours}</p>
             <p className="text-neutral-400 text-xs sm:text-sm">
               {t.heroTagline}
@@ -504,7 +504,7 @@ export default function BookingPage() {
           </div>
         ) : (
           /* BOOKING FORM - FOLLOWS NATURAL VERBAL CONVERSATION ORDER */
-          <form onSubmit={handleBookingSubmit} className="space-y-9 sm:space-y-14">
+          <form onSubmit={handleBookingSubmit} className="space-y-7 sm:space-y-10">
             {/* 1. NUMERO PERSONE ("Per quante persone?") */}
             <div>
               <div className="flex justify-between items-baseline mb-3">
@@ -1048,8 +1048,8 @@ export default function BookingPage() {
       </div>
 
       {/* FOOTER */}
-      <footer className="border-t-2 border-black py-8 px-4 sm:px-10 text-xs sm:text-sm text-neutral-600">
-        <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <footer className="border-t-2 border-black py-6 sm:py-8 px-3 sm:px-8 text-xs sm:text-sm text-neutral-600">
+        <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
             <strong className="text-black font-black text-sm sm:text-base">HANDA.</strong> — Via del Portello 32, 35131 Padova
             <div className="text-[11px] text-neutral-500 mt-0.5 font-medium">

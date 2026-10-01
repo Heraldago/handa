@@ -128,8 +128,8 @@ export default function BookingDetailPage({
   return (
     <main className="min-h-screen bg-[#faf8f5] bg-paper-texture text-black font-sans selection:bg-[#e60000] selection:text-white flex flex-col justify-between">
       {/* Header */}
-      <header className="px-4 py-4 sm:px-10 border-b-2 border-black sticky top-0 bg-[#faf8f5]/95 backdrop-blur-xs z-30">
-        <div className="max-w-xl mx-auto flex items-center justify-between">
+      <header className="px-3 sm:px-8 py-3 border-b-2 border-black sticky top-0 bg-[#faf8f5]/95 backdrop-blur-xs z-30">
+        <div className="max-w-2xl mx-auto flex items-center justify-between">
           <Link href="/" className="font-black text-2xl tracking-tighter text-black">
             HANDA<span className="text-[#e60000]">.</span>
           </Link>
@@ -181,7 +181,7 @@ export default function BookingDetailPage({
       </header>
 
       {/* Main Details */}
-      <div className="max-w-xl w-full mx-auto px-4 py-8 sm:py-12 flex-1 space-y-6">
+      <div className="max-w-2xl w-full mx-auto px-3 sm:px-8 pt-4 sm:pt-6 pb-12 sm:pb-16 flex-1 space-y-6">
         <Link
           href="/"
           className="inline-block text-xs font-bold text-neutral-500 hover:text-black uppercase underline"
@@ -280,7 +280,7 @@ export default function BookingDetailPage({
       </div>
 
       {/* Footer */}
-      <footer className="border-t-2 border-black py-6 px-4 text-center text-xs text-neutral-500 font-sans">
+      <footer className="border-t-2 border-black py-6 px-3 sm:px-8 text-center text-xs text-neutral-500 font-sans">
         HANDA. • Via del Portello 32, Padova • 349 233 0492
       </footer>
     </main>
