@@ -37,24 +37,32 @@ export default function AdminDashboardPage() {
     return `${y}-${m}-${day}`;
   };
 
-  const formatDisplayDate = (iso: string): string => {
-    if (!iso) return '';
+  const formatBigDate = (iso: string): { label: string; fullDate: string; isToday: boolean } => {
+    if (!iso) return { label: '', fullDate: '', isToday: false };
     const parts = iso.split('-').map(Number);
-    if (parts.length !== 3) return iso;
+    if (parts.length !== 3) return { label: '', fullDate: iso, isToday: false };
     const [y, m, d] = parts;
     const dateObj = new Date(y, m - 1, d);
-    const days = ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'];
-    const months = ['gen', 'feb', 'mar', 'apr', 'mag', 'giu', 'lug', 'ago', 'set', 'ott', 'nov', 'dic'];
+
+    const daysFull = ['Domenica', 'Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato'];
+    const monthsFull = [
+      'Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno',
+      'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'
+    ];
 
     const todayIso = getRelativeIsoDate(0);
     const tomorrowIso = getRelativeIsoDate(1);
     const yesterdayIso = getRelativeIsoDate(-1);
 
-    const formattedDay = `${days[dateObj.getDay()]} ${d} ${months[dateObj.getMonth()]}`;
-    if (iso === todayIso) return `Oggi · ${formattedDay}`;
-    if (iso === tomorrowIso) return `Domani · ${formattedDay}`;
-    if (iso === yesterdayIso) return `Ieri · ${formattedDay}`;
-    return formattedDay;
+    const isToday = iso === todayIso;
+    let label = '';
+    if (isToday) label = 'OGGI';
+    else if (iso === tomorrowIso) label = 'DOMANI';
+    else if (iso === yesterdayIso) label = 'IERI';
+
+    const fullDate = `${daysFull[dateObj.getDay()]} ${d} ${monthsFull[dateObj.getMonth()]}`;
+
+    return { label, fullDate, isToday };
   };
 
   // Staff Security PIN Gate
@@ -248,6 +256,7 @@ export default function AdminDashboardPage() {
   };
 
   // Shift & booking computations
+  const bigDateInfo = formatBigDate(selectedDate);
   const isShiftLocked = stats?.lockedShifts?.includes(activeTab);
 
   const shiftBookingsAll = bookings.filter(
@@ -353,105 +362,43 @@ export default function AdminDashboardPage() {
 
   return (
     <main className="min-h-screen bg-white text-black font-sans selection:bg-[#e60000] selection:text-white pb-20">
-      {/* 1. UNIFIED COMMAND HEADER (CLEAN & COMPACT) */}
+      {/* 1. TOP HEADER (SLIM, BRAND & ACTION BAR) */}
       <header className="border-b border-black bg-white px-4 sm:px-8 py-3 sticky top-0 z-40">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-3">
-          {/* Left: Brand + Staff Pill + Live Pulse + Date Navigator */}
-          <div className="flex flex-wrap items-center gap-3">
+        <div className="max-w-6xl mx-auto flex items-center justify-between gap-3">
+          {/* Left: Brand + Staff Desk Pill + Live Sync Indicator */}
+          <div className="flex items-center gap-3">
             <Link href="/" className="font-black text-xl tracking-tight text-black hover:opacity-85">
               HANDA<span className="text-[#e60000]">.</span>
             </Link>
             <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 bg-black text-white">
-              STAFF
+              STAFF DESK
             </span>
             <div className="flex items-center gap-1.5 px-2 py-0.5 bg-neutral-100 text-[10px] font-bold text-neutral-600">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-              LIVE
+              LIVE (4S)
             </div>
-
-            <div className="h-4 w-px bg-neutral-200 hidden sm:block"></div>
-
-            {/* Date Navigator */}
-            <div className="flex items-center border border-neutral-300 bg-white">
-              <button
-                type="button"
-                onClick={() => changeDateByDays(-1)}
-                className="h-8 w-8 flex items-center justify-center hover:bg-neutral-100 text-xs font-bold border-r border-neutral-200 cursor-pointer"
-                title="Giorno precedente"
-              >
-                ←
-              </button>
-              <label className="relative flex items-center px-3 cursor-pointer select-none">
-                <span className="text-xs font-black uppercase tracking-wider text-black">
-                  {formatDisplayDate(selectedDate)}
-                </span>
-                <input
-                  type="date"
-                  value={selectedDate}
-                  onChange={(e) => setSelectedDate(e.target.value)}
-                  className="absolute inset-0 opacity-0 cursor-pointer w-full"
-                />
-              </label>
-              <button
-                type="button"
-                onClick={() => changeDateByDays(1)}
-                className="h-8 w-8 flex items-center justify-center hover:bg-neutral-100 text-xs font-bold border-l border-neutral-200 cursor-pointer"
-                title="Giorno successivo"
-              >
-                →
-              </button>
-            </div>
-
-            {/* Quick jump to today */}
-            {selectedDate !== getRelativeIsoDate(0) && (
-              <button
-                type="button"
-                onClick={() => setSelectedDate(getRelativeIsoDate(0))}
-                className="text-[11px] font-bold uppercase text-neutral-500 hover:text-black underline cursor-pointer"
-              >
-                Oggi
-              </button>
-            )}
+            <span className="text-xs text-neutral-400 font-bold hidden md:inline">
+              Via del Portello 32, Padova
+            </span>
           </div>
 
-          {/* Right: Weather / Day Totals / New Booking CTA / Exit */}
-          <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
-            {/* Weather / Esterno Toggle */}
-            <button
-              type="button"
-              onClick={handleToggleOutdoor}
-              className={`h-8 px-2.5 text-[11px] font-bold uppercase tracking-wider border transition-colors cursor-pointer flex items-center gap-1.5 ${
-                stats?.isOutdoorActive
-                  ? 'border-neutral-300 bg-white text-neutral-800 hover:border-black'
-                  : 'border-[#e60000] bg-red-50 text-[#e60000]'
-              }`}
-              title="Clicca per aprire o chiudere l'esterno"
-            >
-              <span>{stats?.isOutdoorActive ? '☀️ Esterno Aperto (35p)' : '🌧️ Esterno Chiuso'}</span>
-            </button>
-
-            {/* Day Covers Stats */}
-            <div className="h-8 px-3 border border-neutral-300 bg-neutral-50 flex items-center gap-2 text-xs font-bold">
-              <span>Tot: <strong className="text-black font-black">{stats?.totalCovers || 0}</strong> pax</span>
-              <span className="text-neutral-300">·</span>
-              <span>Seduti: <strong className="text-[#e60000] font-black">{stats?.seatedCovers || 0}</strong></span>
-            </div>
-
-            {/* New Booking CTA */}
+          {/* Right: + Nuova Prenotazione / Walk-In + Vista Cliente + Esci */}
+          <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={() => {
                 setWalkInDate(selectedDate || getRelativeIsoDate(0));
                 setShowWalkInModal(true);
               }}
-              className="h-8 px-3.5 bg-black text-white hover:bg-[#e60000] text-xs font-black uppercase tracking-wider transition-colors cursor-pointer flex items-center gap-1.5"
+              className="h-9 px-4 bg-black text-white hover:bg-[#e60000] text-xs font-black uppercase tracking-wider transition-colors cursor-pointer flex items-center gap-1.5"
             >
-              <span>+ Prenotazione</span>
+              <span>📞</span>
+              <span>+ Nuova Prenotazione / Walk-In</span>
             </button>
 
             <Link
               href="/"
-              className="text-[11px] text-neutral-500 hover:text-black font-bold uppercase hidden lg:inline"
+              className="text-xs text-neutral-500 hover:text-black font-bold uppercase hidden sm:inline"
             >
               Vista Cliente ↗
             </Link>
@@ -459,18 +406,193 @@ export default function AdminDashboardPage() {
             <button
               type="button"
               onClick={handleLogout}
-              className="text-[11px] text-neutral-400 hover:text-[#e60000] font-bold uppercase cursor-pointer ml-1"
+              className="text-xs text-neutral-400 hover:text-[#e60000] font-bold uppercase cursor-pointer"
               title="Esci dalla sessione"
             >
-              Esci
+              Esci 🔒
             </button>
           </div>
         </div>
       </header>
 
-      {/* 2. MAIN DASHBOARD CONTENT */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-8 pt-5">
-        {/* SHIFT SEGMENTED TABS (CLEAN & NON-DUPLICATIVE) */}
+      {/* 2. OPERATIONS COMMAND CENTER (BIG DATE ORIENTATION & MASTER ESTERNO TOGGLE) */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-8 pt-6">
+        <div className="pb-6 mb-6 border-b-2 border-black flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          {/* LEFT: BIG DATE ORIENTATION & FAST DAY JUMPERS */}
+          <div className="flex-1">
+            {/* Quick Day Switchers */}
+            <div className="flex flex-wrap items-center gap-1.5 mb-2.5">
+              <button
+                type="button"
+                onClick={() => changeDateByDays(-1)}
+                className="h-8 w-8 border border-neutral-300 hover:border-black bg-white flex items-center justify-center font-black text-sm cursor-pointer transition-colors"
+                title="Giorno precedente"
+              >
+                ←
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setSelectedDate(getRelativeIsoDate(0))}
+                className={`h-8 px-3 text-xs font-black uppercase tracking-wider border transition-colors cursor-pointer ${
+                  selectedDate === getRelativeIsoDate(0)
+                    ? 'border-black bg-black text-white'
+                    : 'border-neutral-300 bg-white text-neutral-600 hover:border-black hover:text-black'
+                }`}
+              >
+                Oggi
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setSelectedDate(getRelativeIsoDate(1))}
+                className={`h-8 px-3 text-xs font-black uppercase tracking-wider border transition-colors cursor-pointer ${
+                  selectedDate === getRelativeIsoDate(1)
+                    ? 'border-black bg-black text-white'
+                    : 'border-neutral-300 bg-white text-neutral-600 hover:border-black hover:text-black'
+                }`}
+              >
+                Domani
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setSelectedDate(getRelativeIsoDate(2))}
+                className={`h-8 px-3 text-xs font-black uppercase tracking-wider border transition-colors cursor-pointer ${
+                  selectedDate === getRelativeIsoDate(2)
+                    ? 'border-black bg-black text-white'
+                    : 'border-neutral-300 bg-white text-neutral-600 hover:border-black hover:text-black'
+                }`}
+              >
+                Dopodomani
+              </button>
+
+              <button
+                type="button"
+                onClick={() => changeDateByDays(1)}
+                className="h-8 w-8 border border-neutral-300 hover:border-black bg-white flex items-center justify-center font-black text-sm cursor-pointer transition-colors"
+                title="Giorno successivo"
+              >
+                →
+              </button>
+
+              {/* Styled Date Picker Button */}
+              <label className="relative h-8 px-3 border border-neutral-300 hover:border-black bg-white flex items-center gap-1.5 cursor-pointer text-xs font-bold text-neutral-700 transition-colors">
+                <span>📅 Scegli Data</span>
+                <input
+                  type="date"
+                  value={selectedDate}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                  className="absolute inset-0 opacity-0 cursor-pointer w-full"
+                />
+              </label>
+            </div>
+
+            {/* BIG PROMINENT DATE HEADING (VISIBLE FROM 3 METERS AWAY) */}
+            <div className="flex items-center gap-2.5 mb-1">
+              {bigDateInfo.label ? (
+                <span
+                  className={`text-xs font-black uppercase tracking-widest px-2.5 py-0.5 ${
+                    bigDateInfo.isToday ? 'bg-[#e60000] text-white' : 'bg-black text-white'
+                  }`}
+                >
+                  {bigDateInfo.label}
+                </span>
+              ) : (
+                <span className="text-xs font-black uppercase tracking-widest text-neutral-500">
+                  DATA SELEZIONATA
+                </span>
+              )}
+              <span className="text-xs font-bold text-neutral-400">
+                • Servizio Tavoli HANDĀ
+              </span>
+            </div>
+
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase tracking-tight text-black leading-none">
+              {bigDateInfo.fullDate}
+            </h1>
+
+            {/* DAY TOTAL COVERS METRICS */}
+            <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs font-bold text-neutral-600 mt-3">
+              <div>
+                Totale Giorno:{' '}
+                <strong className="text-black font-black text-base">{stats?.totalCovers || 0}</strong>{' '}
+                pax
+              </div>
+              <span className="text-neutral-300">·</span>
+              <div>
+                Già Seduti:{' '}
+                <strong className="text-[#e60000] font-black text-base">
+                  {stats?.seatedCovers || 0}
+                </strong>{' '}
+                pax
+              </div>
+              <span className="text-neutral-300">·</span>
+              <div>
+                Da Accogliere:{' '}
+                <strong className="text-black font-black text-base">
+                  {Math.max(0, (stats?.totalCovers || 0) - (stats?.seatedCovers || 0))}
+                </strong>{' '}
+                pax
+              </div>
+            </div>
+          </div>
+
+          {/* RIGHT: MASTER ESTERNO (OUTDOOR) TOGGLE SWITCH */}
+          <div className="flex flex-col sm:items-start lg:items-end justify-center shrink-0">
+            <div className="text-[11px] font-black uppercase tracking-wider text-neutral-500 mb-1.5 flex items-center gap-1.5">
+              <span>Tavoli Esterni (Portico 35 Posti)</span>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleToggleOutdoor}
+              className={`p-3.5 sm:px-5 sm:py-3.5 border-2 transition-all cursor-pointer flex items-center gap-4 text-left ${
+                stats?.isOutdoorActive
+                  ? 'border-black bg-white hover:bg-neutral-50 text-black shadow-xs'
+                  : 'border-[#e60000] bg-red-50 hover:bg-red-100/70 text-[#e60000]'
+              }`}
+              title={
+                stats?.isOutdoorActive
+                  ? "Clicca per disattivare i tavoli esterni per pioggia o freddo"
+                  : "Clicca per riaprire i 35 posti esterni sotto il portico"
+              }
+            >
+              <div className="text-left">
+                <div className="flex items-center gap-2">
+                  <span className="text-xl leading-none">
+                    {stats?.isOutdoorActive ? '☀️' : '🌧️'}
+                  </span>
+                  <span className="font-black text-sm sm:text-base uppercase tracking-wider">
+                    {stats?.isOutdoorActive ? 'ESTERNO APERTO' : 'ESTERNO CHIUSO'}
+                  </span>
+                </div>
+                <div className="text-[11px] font-medium opacity-80 mt-1">
+                  {stats?.isOutdoorActive
+                    ? '35 posti sotto il portico attivi online'
+                    : 'Chiuso per meteo · Solo 36 sala interna'}
+                </div>
+              </div>
+
+              {/* Big Tactile Physical Toggle Switch */}
+              <div
+                className={`relative w-14 h-7 border-2 transition-colors duration-200 flex items-center p-0.5 shrink-0 ${
+                  stats?.isOutdoorActive
+                    ? 'border-black bg-black justify-end'
+                    : 'border-[#e60000] bg-white justify-start'
+                }`}
+              >
+                <div
+                  className={`w-5 h-5 transition-transform duration-200 ${
+                    stats?.isOutdoorActive ? 'bg-white' : 'bg-[#e60000]'
+                  }`}
+                />
+              </div>
+            </button>
+          </div>
+        </div>
+
+        {/* 3. SHIFT SEGMENTED TABS (PRANZO, 1° CENA, 2° CENA) */}
         <div className="grid grid-cols-1 sm:grid-cols-3 border border-neutral-300 bg-neutral-100 p-1 gap-1 mb-4">
           {shiftsList.map((shift) => {
             const isSelected = activeTab === shift.id;
@@ -519,7 +641,7 @@ export default function AdminDashboardPage() {
           })}
         </div>
 
-        {/* UTILITY STRIP: CAPACITY BREAKDOWN + LOCK SHIFT + SEARCH & STATUS FILTER */}
+        {/* 4. UTILITY STRIP: CAPACITY BREAKDOWN + LOCK SHIFT + SEARCH & STATUS FILTER */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-4 mb-4 border-b border-neutral-200">
           {/* Capacity Breakdown & Lock Toggle */}
           <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs font-bold text-neutral-600">
@@ -627,7 +749,7 @@ export default function AdminDashboardPage() {
           </div>
         </div>
 
-        {/* 3. BOOKINGS LIST ("REGISTRO TAVOLI" - DECLUTTERED) */}
+        {/* 5. BOOKINGS LIST ("REGISTRO TAVOLI" - DECLUTTERED) */}
         {loading ? (
           <div className="py-20 text-center text-neutral-400 font-bold">
             Caricamento servizio in corso...
@@ -638,7 +760,7 @@ export default function AdminDashboardPage() {
               Nessuna prenotazione trovata per questo turno
             </p>
             <p className="text-xs text-neutral-400 mt-1.5">
-              Clicca su <span className="font-bold text-black">&quot;+ Prenotazione&quot;</span> in alto per registrare una telefonata o clienti al banco.
+              Clicca su <span className="font-bold text-black">&quot;+ Nuova Prenotazione&quot;</span> in alto per registrare una telefonata o clienti al banco.
             </p>
           </div>
         ) : (
@@ -891,7 +1013,7 @@ export default function AdminDashboardPage() {
         )}
       </div>
 
-      {/* 4. TELEPHONE / WALK-IN MODAL (VERBAL CONVERSATIONAL FLOW) */}
+      {/* 6. TELEPHONE / WALK-IN MODAL (VERBAL CONVERSATIONAL FLOW) */}
       {showWalkInModal && (
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-3 sm:p-4 backdrop-blur-xs font-sans overflow-y-auto">
           <div className="bg-white border-2 border-black max-w-xl w-full p-5 sm:p-7 animate-in fade-in duration-150 my-auto shadow-2xl">
