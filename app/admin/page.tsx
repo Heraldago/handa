@@ -538,24 +538,36 @@ export default function AdminDashboardPage() {
             </div>
           </div>
 
-          {/* RIGHT: MASTER ESTERNO (OUTDOOR) TOGGLE SWITCH */}
+          {/* RIGHT: MASTER ESTERNO (OUTDOOR) TOGGLE SWITCH — SEMANTIC GREEN (OPEN) & RED (CLOSED) */}
           <div className="flex flex-col sm:items-start lg:items-end justify-center shrink-0">
-            <div className="text-[11px] font-black uppercase tracking-wider text-neutral-500 mb-1.5 flex items-center gap-1.5">
-              <span>Tavoli Esterni (Portico 35 Posti)</span>
+            <div className="text-[11px] font-black uppercase tracking-wider text-neutral-500 mb-1.5 flex items-center gap-2">
+              <span>Tavoli Esterni (Portico 35P)</span>
+              <span
+                className={`text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 border ${
+                  stats?.isOutdoorActive
+                    ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
+                    : 'bg-red-50 text-red-700 border-red-300'
+                }`}
+              >
+                {stats?.isOutdoorActive ? '● ATTIVO' : '✕ DISATTIVATO'}
+              </span>
             </div>
 
             <button
               type="button"
+              role="switch"
+              aria-checked={Boolean(stats?.isOutdoorActive)}
+              aria-label="Interruttore stato tavoli esterni sotto il portico"
               onClick={handleToggleOutdoor}
-              className={`p-3.5 sm:px-5 sm:py-3.5 border-2 transition-all cursor-pointer flex items-center gap-4 text-left ${
+              className={`p-3.5 sm:px-5 sm:py-3.5 border-2 transition-all cursor-pointer flex items-center gap-4 text-left select-none ${
                 stats?.isOutdoorActive
-                  ? 'border-black bg-white hover:bg-neutral-50 text-black shadow-xs'
-                  : 'border-[#e60000] bg-red-50 hover:bg-red-100/70 text-[#e60000]'
+                  ? 'border-emerald-600 bg-emerald-50/70 hover:bg-emerald-100/70 text-emerald-950 shadow-xs'
+                  : 'border-red-600 bg-red-50/80 hover:bg-red-100/80 text-red-950'
               }`}
               title={
                 stats?.isOutdoorActive
-                  ? "Clicca per disattivare i tavoli esterni per pioggia o freddo"
-                  : "Clicca per riaprire i 35 posti esterni sotto il portico"
+                  ? "Esterno aperto: Clicca per chiudere i tavoli esterni per pioggia o freddo"
+                  : "Esterno chiuso: Clicca per riaprire i 35 posti esterni sotto il portico"
               }
             >
               <div className="text-left">
@@ -563,30 +575,31 @@ export default function AdminDashboardPage() {
                   <span className="text-xl leading-none">
                     {stats?.isOutdoorActive ? '☀️' : '🌧️'}
                   </span>
-                  <span className="font-black text-sm sm:text-base uppercase tracking-wider">
+                  <span
+                    className={`font-black text-sm sm:text-base uppercase tracking-wider ${
+                      stats?.isOutdoorActive ? 'text-emerald-800' : 'text-red-700'
+                    }`}
+                  >
                     {stats?.isOutdoorActive ? 'ESTERNO APERTO' : 'ESTERNO CHIUSO'}
                   </span>
                 </div>
-                <div className="text-[11px] font-medium opacity-80 mt-1">
+                <div className="text-[11px] font-medium opacity-85 mt-1">
                   {stats?.isOutdoorActive
-                    ? '35 posti sotto il portico attivi online'
+                    ? '35 posti portico attivi e prenotabili online'
                     : 'Chiuso per meteo · Solo 36 sala interna'}
                 </div>
               </div>
 
-              {/* Big Tactile Physical Toggle Switch */}
+              {/* SEMANTIC TOGGLE TRACK: VERDE SU APERTO, ROSSO SU CHIUSO */}
               <div
+                aria-hidden="true"
                 className={`relative w-14 h-7 border-2 transition-colors duration-200 flex items-center p-0.5 shrink-0 ${
                   stats?.isOutdoorActive
-                    ? 'border-black bg-black justify-end'
-                    : 'border-[#e60000] bg-white justify-start'
+                    ? 'border-emerald-700 bg-emerald-600 justify-end'
+                    : 'border-red-700 bg-red-600 justify-start'
                 }`}
               >
-                <div
-                  className={`w-5 h-5 transition-transform duration-200 ${
-                    stats?.isOutdoorActive ? 'bg-white' : 'bg-[#e60000]'
-                  }`}
-                />
+                <div className="w-5 h-5 bg-white shadow-xs transition-transform duration-200" />
               </div>
             </button>
           </div>
@@ -657,12 +670,18 @@ export default function AdminDashboardPage() {
               <span className="text-neutral-400 uppercase text-[10px] tracking-wider">Esterno:</span>
               <span
                 className={`font-black text-sm ${
-                  stats?.isOutdoorActive ? 'text-black' : 'text-neutral-400 line-through'
+                  stats?.isOutdoorActive ? 'text-emerald-700' : 'text-neutral-400 line-through'
                 }`}
               >
                 {shiftOutdoorBooked}
               </span>
               <span className="text-neutral-400 text-xs">/35</span>
+              <span
+                className={`w-2 h-2 rounded-full ${
+                  stats?.isOutdoorActive ? 'bg-emerald-500' : 'bg-red-500'
+                }`}
+                title={stats?.isOutdoorActive ? 'Esterno aperto' : 'Esterno chiuso per meteo'}
+              />
             </div>
 
             <span className="text-neutral-300">·</span>
