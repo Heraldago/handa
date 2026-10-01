@@ -647,7 +647,9 @@ export default function BookingPage() {
                             <span className="w-5 h-5 rounded-full border-2 border-neutral-300 block shrink-0" />
                           )}
                         </div>
-                        <p className="text-xs sm:text-sm font-medium mt-1 leading-snug text-neutral-600">
+                        <p className={`text-xs sm:text-sm mt-1 leading-snug ${
+                          isSelected ? 'text-black font-semibold' : 'text-neutral-600 font-medium'
+                        }`}>
                           {shift?.reason || t.lunchDesc}
                         </p>
                       </div>
@@ -699,7 +701,9 @@ export default function BookingPage() {
                             <span className="w-5 h-5 rounded-full border-2 border-neutral-300 block shrink-0" />
                           )}
                         </div>
-                        <p className="text-xs sm:text-sm font-medium mt-1 leading-snug text-neutral-600">
+                        <p className={`text-xs sm:text-sm mt-1 leading-snug ${
+                          isSelected ? 'text-black font-semibold' : 'text-neutral-600 font-medium'
+                        }`}>
                           {t.dinner1Desc}
                         </p>
                       </div>
@@ -751,7 +755,9 @@ export default function BookingPage() {
                             <span className="w-5 h-5 rounded-full border-2 border-neutral-300 block shrink-0" />
                           )}
                         </div>
-                        <p className="text-xs sm:text-sm font-medium mt-1 leading-snug text-neutral-600">
+                        <p className={`text-xs sm:text-sm mt-1 leading-snug ${
+                          isSelected ? 'text-black font-semibold' : 'text-neutral-600 font-medium'
+                        }`}>
                           {t.dinner2Desc}
                         </p>
                       </div>
@@ -831,7 +837,11 @@ export default function BookingPage() {
                     <div className="flex justify-between items-start mb-2">
                       <div>
                         <span className="font-black text-lg sm:text-2xl tracking-tight text-black block">{t.indoorTitle}</span>
-                        <span className="text-xs sm:text-sm font-bold text-neutral-500">{t.indoorSeats}</span>
+                        <span className={`text-xs sm:text-sm uppercase tracking-wider block ${
+                          seatingArea === 'indoor' ? 'text-black font-black' : 'text-neutral-500 font-bold'
+                        }`}>
+                          {t.indoorSeats}
+                        </span>
                       </div>
                       {seatingArea === 'indoor' ? (
                         <span className="w-5 h-5 rounded-full bg-black text-white flex items-center justify-center text-xs font-black shrink-0 shadow-xs">
@@ -841,7 +851,9 @@ export default function BookingPage() {
                         <span className="w-5 h-5 rounded-full border-2 border-neutral-300 block shrink-0" />
                       )}
                     </div>
-                    <p className="text-xs sm:text-sm font-medium text-neutral-600">
+                    <p className={`text-xs sm:text-sm leading-relaxed ${
+                      seatingArea === 'indoor' ? 'text-black font-semibold' : 'text-neutral-600 font-medium'
+                    }`}>
                       {t.indoorDesc}
                     </p>
                   </div>
@@ -866,7 +878,11 @@ export default function BookingPage() {
                     <div className="flex justify-between items-start mb-2">
                       <div>
                         <span className="font-black text-lg sm:text-2xl tracking-tight text-black block">{t.outdoorTitle}</span>
-                        <span className="text-xs sm:text-sm font-bold text-neutral-500">{t.outdoorSeats}</span>
+                        <span className={`text-xs sm:text-sm uppercase tracking-wider block ${
+                          seatingArea === 'outdoor' ? 'text-black font-black' : 'text-neutral-500 font-bold'
+                        }`}>
+                          {t.outdoorSeats}
+                        </span>
                       </div>
                       {!availability?.isOutdoorActive ? (
                         <span className="px-2 py-0.5 bg-red-100 text-[#e60000] border border-red-300 text-[10px] sm:text-xs font-black uppercase tracking-wider shrink-0">
@@ -880,7 +896,9 @@ export default function BookingPage() {
                         <span className="w-5 h-5 rounded-full border-2 border-neutral-300 block shrink-0" />
                       )}
                     </div>
-                    <p className="text-xs sm:text-sm font-medium text-neutral-600">
+                    <p className={`text-xs sm:text-sm leading-relaxed ${
+                      seatingArea === 'outdoor' ? 'text-black font-semibold' : 'text-neutral-600 font-medium'
+                    }`}>
                       {availability?.isOutdoorActive ? t.outdoorDesc : t.outdoorDescClosed}
                     </p>
                   </div>
