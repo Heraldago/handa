@@ -437,7 +437,7 @@ export default function AdminDashboardPage() {
                 onClick={() => setSelectedDate(getRelativeIsoDate(0))}
                 className={`h-10 px-3.5 sm:px-4 text-xs sm:text-sm font-black uppercase tracking-wider border-2 transition-all cursor-pointer shrink-0 ${
                   selectedDate === getRelativeIsoDate(0)
-                    ? 'border-black bg-neutral-50 text-black shadow-xs border-b-4 border-b-[#e60000]'
+                    ? 'border-black bg-black text-white shadow-xs'
                     : 'border-neutral-300 bg-white text-neutral-700 hover:border-black hover:text-black'
                 }`}
               >
@@ -449,7 +449,7 @@ export default function AdminDashboardPage() {
                 onClick={() => setSelectedDate(getRelativeIsoDate(1))}
                 className={`h-10 px-3.5 sm:px-4 text-xs sm:text-sm font-black uppercase tracking-wider border-2 transition-all cursor-pointer shrink-0 ${
                   selectedDate === getRelativeIsoDate(1)
-                    ? 'border-black bg-neutral-50 text-black shadow-xs border-b-4 border-b-[#e60000]'
+                    ? 'border-black bg-black text-white shadow-xs'
                     : 'border-neutral-300 bg-white text-neutral-700 hover:border-black hover:text-black'
                 }`}
               >
@@ -461,7 +461,7 @@ export default function AdminDashboardPage() {
                 onClick={() => setSelectedDate(getRelativeIsoDate(2))}
                 className={`h-10 px-3.5 sm:px-4 text-xs sm:text-sm font-black uppercase tracking-wider border-2 transition-all cursor-pointer shrink-0 ${
                   selectedDate === getRelativeIsoDate(2)
-                    ? 'border-black bg-neutral-50 text-black shadow-xs border-b-4 border-b-[#e60000]'
+                    ? 'border-black bg-black text-white shadow-xs'
                     : 'border-neutral-300 bg-white text-neutral-700 hover:border-black hover:text-black'
                 }`}
               >
@@ -623,17 +623,17 @@ export default function AdminDashboardPage() {
                 onClick={() => setActiveTab(shift.id)}
                 className={`py-3 px-2 sm:px-3 text-center sm:text-left transition-all cursor-pointer flex flex-col sm:flex-row items-center justify-between gap-1 ${
                   isSelected
-                    ? 'bg-white text-black shadow-sm border-2 border-black border-b-4 border-b-[#e60000]'
-                    : 'bg-transparent text-neutral-700 hover:text-black hover:bg-white/60'
+                    ? 'bg-black text-white shadow-sm'
+                    : 'bg-transparent text-neutral-700 hover:text-black hover:bg-neutral-200/50'
                 }`}
               >
                 <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
-                  <span className="font-black text-xs sm:text-sm uppercase tracking-wider block text-black">
+                  <span className={`font-black text-xs sm:text-sm uppercase tracking-wider block ${isSelected ? 'text-white' : 'text-black'}`}>
                     {shift.label}
                   </span>
                   <span
                     className={`text-[10px] sm:text-[11px] font-medium hidden md:inline ${
-                      isSelected ? 'text-[#e60000] font-bold' : 'text-neutral-500'
+                      isSelected ? 'text-neutral-300' : 'text-neutral-500'
                     }`}
                   >
                     ({shift.time})
@@ -646,7 +646,7 @@ export default function AdminDashboardPage() {
                       BLOCCATO
                     </span>
                   )}
-                  <span className="text-xs sm:text-sm font-black text-black">
+                  <span className={`text-xs sm:text-sm font-black ${isSelected ? 'text-white' : 'text-black'}`}>
                     {totalPax} pax
                   </span>
                 </div>
@@ -710,40 +710,49 @@ export default function AdminDashboardPage() {
 
           {/* Status Filter & Fast Search */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-            {/* Status Filter Pills */}
+            {/* Status Filter Pills with authentic semantic colors */}
             <div className="grid grid-cols-3 sm:flex border border-neutral-300 bg-white">
               <button
                 type="button"
                 onClick={() => setStatusFilter('ALL')}
-                className={`h-10 px-3 text-xs sm:text-sm font-bold uppercase transition-colors cursor-pointer text-center ${
+                className={`h-10 px-3.5 text-xs sm:text-sm font-bold uppercase transition-colors cursor-pointer text-center flex items-center justify-center gap-1.5 ${
                   statusFilter === 'ALL'
-                    ? 'bg-neutral-100 text-black font-black border-b-2 border-b-[#e60000]'
-                    : 'text-neutral-600 hover:text-black'
+                    ? 'bg-black text-white font-black'
+                    : 'text-neutral-600 hover:text-black hover:bg-neutral-50'
                 }`}
               >
-                Tutti ({totalInShift})
+                <span>Tutti</span>
+                <span className={`text-[11px] font-black px-1.5 py-0.5 ${statusFilter === 'ALL' ? 'bg-neutral-800 text-white' : 'bg-neutral-100 text-neutral-600'}`}>
+                  {totalInShift}
+                </span>
               </button>
               <button
                 type="button"
                 onClick={() => setStatusFilter('WAITING')}
-                className={`h-10 px-3 text-xs sm:text-sm font-bold uppercase border-l border-neutral-200 transition-colors cursor-pointer text-center ${
+                className={`h-10 px-3.5 text-xs sm:text-sm font-bold uppercase border-l border-neutral-200 transition-colors cursor-pointer text-center flex items-center justify-center gap-1.5 ${
                   statusFilter === 'WAITING'
-                    ? 'bg-neutral-100 text-black font-black border-b-2 border-b-[#e60000]'
-                    : 'text-neutral-600 hover:text-black'
+                    ? 'bg-amber-400 text-amber-950 font-black shadow-xs'
+                    : 'text-amber-800 bg-amber-50/40 hover:bg-amber-100/60'
                 }`}
               >
-                In Attesa ({waitingInShift})
+                <span>● In Attesa</span>
+                <span className={`text-[11px] font-black px-1.5 py-0.5 ${statusFilter === 'WAITING' ? 'bg-amber-950 text-white' : 'bg-amber-100 text-amber-900'}`}>
+                  {waitingInShift}
+                </span>
               </button>
               <button
                 type="button"
                 onClick={() => setStatusFilter('SEATED')}
-                className={`h-10 px-3 text-xs sm:text-sm font-bold uppercase border-l border-neutral-200 transition-colors cursor-pointer text-center ${
+                className={`h-10 px-3.5 text-xs sm:text-sm font-bold uppercase border-l border-neutral-200 transition-colors cursor-pointer text-center flex items-center justify-center gap-1.5 ${
                   statusFilter === 'SEATED'
-                    ? 'bg-neutral-100 text-black font-black border-b-2 border-b-[#e60000]'
-                    : 'text-neutral-600 hover:text-black'
+                    ? 'bg-emerald-600 text-white font-black shadow-xs'
+                    : 'text-emerald-800 bg-emerald-50/40 hover:bg-emerald-100/60'
                 }`}
               >
-                Seduti ({seatedInShift})
+                <span>✓ Seduti</span>
+                <span className={`text-[11px] font-black px-1.5 py-0.5 ${statusFilter === 'SEATED' ? 'bg-emerald-800 text-white' : 'bg-emerald-100 text-emerald-900'}`}>
+                  {seatedInShift}
+                </span>
               </button>
             </div>
 
@@ -840,7 +849,9 @@ export default function AdminDashboardPage() {
                         className={`text-xs font-black uppercase px-2 py-0.5 border ${
                           isIndoor
                             ? 'bg-neutral-100 text-neutral-800 border-neutral-200'
-                            : 'bg-red-50 text-[#e60000] border-red-200'
+                            : stats?.isOutdoorActive
+                            ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
+                            : 'bg-red-50 text-red-700 border-red-300 line-through'
                         }`}
                       >
                         {isIndoor ? 'SALA' : 'ESTERNO'}
@@ -1095,7 +1106,7 @@ export default function AdminDashboardPage() {
                       onClick={() => setWalkInGuests(n)}
                       className={`h-11 font-black text-base border-2 transition-all cursor-pointer ${
                         walkInGuests === n
-                          ? 'border-black bg-neutral-50 text-black shadow-xs border-b-4 border-b-[#e60000]'
+                          ? 'border-black bg-black text-white shadow-xs'
                           : 'border-neutral-300 bg-white text-neutral-700 hover:border-black hover:text-black'
                       }`}
                     >
@@ -1126,7 +1137,7 @@ export default function AdminDashboardPage() {
                   <label className="text-xs sm:text-sm font-black uppercase tracking-wider text-black">
                     2. Per che data?
                   </label>
-                  <span className="text-xs text-[#e60000] font-black uppercase">
+                  <span className="text-xs text-neutral-600 font-black uppercase">
                     {walkInDate || selectedDate}
                   </span>
                 </div>
@@ -1136,7 +1147,7 @@ export default function AdminDashboardPage() {
                     onClick={() => setWalkInDate(getRelativeIsoDate(0))}
                     className={`h-10 text-xs sm:text-sm font-black uppercase border-2 transition-all cursor-pointer ${
                       (walkInDate || selectedDate) === getRelativeIsoDate(0)
-                        ? 'border-black bg-neutral-50 text-black shadow-xs border-b-4 border-b-[#e60000]'
+                        ? 'border-black bg-black text-white shadow-xs'
                         : 'border-neutral-300 bg-white text-neutral-700 hover:border-black hover:text-black'
                     }`}
                   >
@@ -1147,7 +1158,7 @@ export default function AdminDashboardPage() {
                     onClick={() => setWalkInDate(getRelativeIsoDate(1))}
                     className={`h-10 text-xs sm:text-sm font-black uppercase border-2 transition-all cursor-pointer ${
                       (walkInDate || selectedDate) === getRelativeIsoDate(1)
-                        ? 'border-black bg-neutral-50 text-black shadow-xs border-b-4 border-b-[#e60000]'
+                        ? 'border-black bg-black text-white shadow-xs'
                         : 'border-neutral-300 bg-white text-neutral-700 hover:border-black hover:text-black'
                     }`}
                   >
@@ -1158,7 +1169,7 @@ export default function AdminDashboardPage() {
                     onClick={() => setWalkInDate(getRelativeIsoDate(2))}
                     className={`h-10 text-xs sm:text-sm font-black uppercase border-2 transition-all cursor-pointer ${
                       (walkInDate || selectedDate) === getRelativeIsoDate(2)
-                        ? 'border-black bg-neutral-50 text-black shadow-xs border-b-4 border-b-[#e60000]'
+                        ? 'border-black bg-black text-white shadow-xs'
                         : 'border-neutral-300 bg-white text-neutral-700 hover:border-black hover:text-black'
                     }`}
                   >
@@ -1180,7 +1191,7 @@ export default function AdminDashboardPage() {
                     3. Turno & Orario di arrivo
                   </label>
                   <span className="text-xs text-neutral-600 font-bold">
-                    Orario: <strong className="text-[#e60000]">{walkInTime}</strong>
+                    Orario: <strong className="text-black font-black">{walkInTime}</strong>
                   </span>
                 </div>
 
@@ -1194,12 +1205,12 @@ export default function AdminDashboardPage() {
                     }}
                     className={`py-2 px-1 text-center border-2 transition-all cursor-pointer flex flex-col items-center ${
                       walkInShift === 'lunch'
-                        ? 'border-black bg-neutral-50 text-black shadow-xs border-b-4 border-b-[#e60000]'
+                        ? 'border-black bg-black text-white shadow-xs'
                         : 'border-neutral-300 bg-white text-neutral-700 hover:border-black hover:text-black'
                     }`}
                   >
                     <span className="text-xs sm:text-sm font-black uppercase">PRANZO</span>
-                    <span className="text-[10px] opacity-80">12:00 – 15:00</span>
+                    <span className={`text-[10px] ${walkInShift === 'lunch' ? 'text-neutral-300' : 'text-neutral-500'}`}>12:00 – 15:00</span>
                   </button>
 
                   <button
@@ -1210,12 +1221,12 @@ export default function AdminDashboardPage() {
                     }}
                     className={`py-2 px-1 text-center border-2 transition-all cursor-pointer flex flex-col items-center ${
                       walkInShift === 'dinner_1'
-                        ? 'border-black bg-neutral-50 text-black shadow-xs border-b-4 border-b-[#e60000]'
+                        ? 'border-black bg-black text-white shadow-xs'
                         : 'border-neutral-300 bg-white text-neutral-700 hover:border-black hover:text-black'
                     }`}
                   >
                     <span className="text-xs sm:text-sm font-black uppercase">1° CENA</span>
-                    <span className="text-[10px] opacity-80">19:15 (esce 21:15)</span>
+                    <span className={`text-[10px] ${walkInShift === 'dinner_1' ? 'text-neutral-300' : 'text-neutral-500'}`}>19:15 (esce 21:15)</span>
                   </button>
 
                   <button
@@ -1226,12 +1237,12 @@ export default function AdminDashboardPage() {
                     }}
                     className={`py-2 px-1 text-center border-2 transition-all cursor-pointer flex flex-col items-center ${
                       walkInShift === 'dinner_2'
-                        ? 'border-black bg-neutral-50 text-black shadow-xs border-b-4 border-b-[#e60000]'
+                        ? 'border-black bg-black text-white shadow-xs'
                         : 'border-neutral-300 bg-white text-neutral-700 hover:border-black hover:text-black'
                     }`}
                   >
                     <span className="text-xs sm:text-sm font-black uppercase">2° CENA</span>
-                    <span className="text-[10px] opacity-80">21:30 – 23:00</span>
+                    <span className={`text-[10px] ${walkInShift === 'dinner_2' ? 'text-neutral-300' : 'text-neutral-500'}`}>21:30 – 23:00</span>
                   </button>
                 </div>
 
@@ -1253,7 +1264,7 @@ export default function AdminDashboardPage() {
                         onClick={() => setWalkInTime(slot)}
                         className={`h-9 px-3 text-xs sm:text-sm font-black border-2 transition-all cursor-pointer ${
                           walkInTime === slot
-                            ? 'border-black bg-white text-black shadow-xs border-b-2 border-b-[#e60000]'
+                            ? 'border-black bg-black text-white shadow-xs'
                             : 'border-neutral-300 bg-white text-neutral-700 hover:border-black hover:text-black'
                         }`}
                       >
@@ -1285,11 +1296,18 @@ export default function AdminDashboardPage() {
                     onClick={() => setWalkInArea('indoor')}
                     className={`p-3 text-left border-2 transition-all cursor-pointer ${
                       walkInArea === 'indoor'
-                        ? 'border-black bg-neutral-50/80 text-black shadow-sm border-l-4 border-l-[#e60000]'
-                        : 'border-neutral-300 bg-white text-neutral-700 hover:border-black'
+                        ? 'border-2 border-black bg-white text-black shadow-md ring-1 ring-black'
+                        : 'border-2 border-neutral-200 bg-white text-neutral-700 hover:border-black'
                     }`}
                   >
-                    <div className="font-black text-sm text-black">🏠 SALA INTERNA</div>
+                    <div className="flex justify-between items-center mb-1">
+                      <div className="font-black text-sm text-black">🏠 SALA INTERNA</div>
+                      {walkInArea === 'indoor' ? (
+                        <span className="px-1.5 py-0.5 bg-black text-white text-[10px] font-black uppercase tracking-wider">✓</span>
+                      ) : (
+                        <span className="w-4 h-4 rounded-full border border-neutral-300" />
+                      )}
+                    </div>
                     <div className="text-xs font-medium text-neutral-600">
                       36 posti coperti garantiti
                     </div>
@@ -1300,11 +1318,18 @@ export default function AdminDashboardPage() {
                     onClick={() => setWalkInArea('outdoor')}
                     className={`p-3 text-left border-2 transition-all cursor-pointer ${
                       walkInArea === 'outdoor'
-                        ? 'border-black bg-neutral-50/80 text-black shadow-sm border-l-4 border-l-[#e60000]'
-                        : 'border-neutral-300 bg-white text-neutral-700 hover:border-black'
+                        ? 'border-2 border-black bg-white text-black shadow-md ring-1 ring-black'
+                        : 'border-2 border-neutral-200 bg-white text-neutral-700 hover:border-black'
                     }`}
                   >
-                    <div className="font-black text-sm text-black">🌿 ESTERNO (PORTICO)</div>
+                    <div className="flex justify-between items-center mb-1">
+                      <div className="font-black text-sm text-black">🌿 ESTERNO (PORTICO)</div>
+                      {walkInArea === 'outdoor' ? (
+                        <span className="px-1.5 py-0.5 bg-black text-white text-[10px] font-black uppercase tracking-wider">✓</span>
+                      ) : (
+                        <span className="w-4 h-4 rounded-full border border-neutral-300" />
+                      )}
+                    </div>
                     <div className="text-xs font-medium text-neutral-600">
                       35 posti sotto il portico
                     </div>

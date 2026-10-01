@@ -290,7 +290,7 @@ export default function BookingPage() {
                 onClick={() => handleLanguageSwitch('it')}
                 className={`px-3 py-1 transition-colors cursor-pointer text-xs font-black ${
                   lang === 'it'
-                    ? 'bg-white text-black border-b-2 border-b-[#e60000] shadow-xs'
+                    ? 'bg-black text-white shadow-xs'
                     : 'bg-transparent text-neutral-600 hover:text-black'
                 }`}
               >
@@ -301,7 +301,7 @@ export default function BookingPage() {
                 onClick={() => handleLanguageSwitch('en')}
                 className={`px-3 py-1 border-l-2 border-black transition-colors cursor-pointer text-xs font-black ${
                   lang === 'en'
-                    ? 'bg-white text-black border-b-2 border-b-[#e60000] shadow-xs'
+                    ? 'bg-black text-white shadow-xs'
                     : 'bg-transparent text-neutral-600 hover:text-black'
                 }`}
               >
@@ -481,8 +481,8 @@ export default function BookingPage() {
                       onClick={() => setGuestCount(num)}
                       className={`h-14 sm:h-20 border-2 text-xl sm:text-4xl font-black transition-all cursor-pointer touch-manipulation select-none active:scale-95 flex items-center justify-center ${
                         isSelected
-                          ? 'border-black bg-neutral-50 text-black shadow-xs border-b-4 border-b-[#e60000]'
-                          : 'border-neutral-300 bg-white text-neutral-700 hover:border-black hover:text-black'
+                          ? 'border-black bg-black text-white shadow-sm'
+                          : 'border-neutral-200 bg-white text-neutral-700 hover:border-black hover:text-black'
                       }`}
                     >
                       {num}
@@ -514,17 +514,17 @@ export default function BookingPage() {
                       onClick={() => handleSelectDate(d.iso)}
                       className={`min-w-[76px] sm:min-w-0 flex-1 py-3 sm:py-5 px-1 border-2 flex flex-col items-center justify-center transition-all cursor-pointer touch-manipulation select-none active:scale-95 snap-start ${
                         isSelected
-                          ? 'border-black bg-neutral-50 text-black shadow-xs border-b-4 border-b-[#e60000]'
-                          : 'border-neutral-300 bg-white text-neutral-700 hover:border-black hover:text-black'
+                          ? 'border-black bg-black text-white shadow-sm'
+                          : 'border-neutral-200 bg-white text-neutral-700 hover:border-black hover:text-black'
                       }`}
                     >
-                      <span className={`text-[11px] sm:text-xs uppercase font-black tracking-tight ${isSelected ? 'text-[#e60000]' : 'text-neutral-500'}`}>
+                      <span className={`text-[11px] sm:text-xs uppercase font-black tracking-tight ${isSelected ? 'text-neutral-300' : 'text-neutral-500'}`}>
                         {d.label}
                       </span>
-                      <span className="text-2xl sm:text-4xl font-black my-0.5 leading-none text-black">
+                      <span className={`text-2xl sm:text-4xl font-black my-0.5 leading-none ${isSelected ? 'text-white' : 'text-black'}`}>
                         {d.dayNum}
                       </span>
-                      <span className="text-[10px] sm:text-xs uppercase font-bold text-neutral-500">
+                      <span className={`text-[10px] sm:text-xs uppercase font-bold ${isSelected ? 'text-neutral-300' : 'text-neutral-500'}`}>
                         {d.month}
                       </span>
                     </button>
@@ -596,22 +596,32 @@ export default function BookingPage() {
                         !isAvailable
                           ? 'opacity-35 border-dashed border-neutral-300 bg-neutral-100 cursor-not-allowed'
                           : isSelected
-                          ? 'border-black bg-neutral-50/80 text-black shadow-sm border-l-4 border-l-[#e60000]'
-                          : 'border-neutral-300 bg-white text-black hover:border-black'
+                          ? 'border-2 border-black bg-white text-black shadow-md ring-1 ring-black'
+                          : 'border-2 border-neutral-200 bg-white text-neutral-600 hover:border-black hover:text-black'
                       }`}
                     >
                       <div>
-                        <div className="flex justify-between items-baseline mb-1.5">
-                          <span className="font-black text-xl sm:text-2xl tracking-tight text-black">{t.lunchTitle}</span>
-                          <span className={`text-xs sm:text-sm font-bold tracking-tight ${
-                            !isAvailable
-                              ? 'text-[#e60000] font-black uppercase'
-                              : isSelected
-                              ? 'text-[#e60000] font-black'
-                              : 'text-neutral-500'
-                          }`}>
-                            {isAvailable ? (isSelected ? `● ${t.lunchTime}` : t.lunchTime) : t.statusClosed}
-                          </span>
+                        <div className="flex justify-between items-start mb-2">
+                          <div>
+                            <span className="font-black text-xl sm:text-2xl tracking-tight text-black block">{t.lunchTitle}</span>
+                            <span className={`text-xs sm:text-sm font-bold tracking-tight ${
+                              !isAvailable ? 'text-neutral-400' : isSelected ? 'text-black font-black' : 'text-neutral-500'
+                            }`}>
+                              {t.lunchTime}
+                            </span>
+                          </div>
+                          {!isAvailable ? (
+                            <span className="px-2 py-0.5 bg-neutral-100 text-neutral-500 text-[10px] sm:text-xs font-black uppercase tracking-wider">
+                              {t.statusClosed}
+                            </span>
+                          ) : isSelected ? (
+                            <span className="px-2 py-0.5 bg-black text-white text-[10px] sm:text-xs font-black uppercase tracking-wider flex items-center gap-1 shadow-xs">
+                              <span>✓</span>
+                              <span>SELEZIONATO</span>
+                            </span>
+                          ) : (
+                            <span className="w-5 h-5 rounded-full border-2 border-neutral-300 block" />
+                          )}
                         </div>
                         <p className="text-xs sm:text-sm font-medium mt-1 leading-snug text-neutral-600">
                           {shift?.reason || t.lunchDesc}
@@ -637,22 +647,32 @@ export default function BookingPage() {
                         !isAvailable
                           ? 'opacity-35 border-dashed border-neutral-300 bg-neutral-100 cursor-not-allowed'
                           : isSelected
-                          ? 'border-black bg-neutral-50/80 text-black shadow-sm border-l-4 border-l-[#e60000]'
-                          : 'border-neutral-300 bg-white text-black hover:border-black'
+                          ? 'border-2 border-black bg-white text-black shadow-md ring-1 ring-black'
+                          : 'border-2 border-neutral-200 bg-white text-neutral-600 hover:border-black hover:text-black'
                       }`}
                     >
                       <div>
-                        <div className="flex justify-between items-baseline mb-1.5">
-                          <span className="font-black text-xl sm:text-2xl tracking-tight text-black">{t.dinner1Title}</span>
-                          <span className={`text-xs sm:text-sm font-bold tracking-tight ${
-                            !isAvailable
-                              ? 'text-[#e60000] font-black uppercase'
-                              : isSelected
-                              ? 'text-[#e60000] font-black'
-                              : 'text-neutral-500'
-                          }`}>
-                            {isAvailable ? (isSelected ? `● ${t.dinner1Time}` : t.dinner1Time) : t.statusFull}
-                          </span>
+                        <div className="flex justify-between items-start mb-2">
+                          <div>
+                            <span className="font-black text-xl sm:text-2xl tracking-tight text-black block">{t.dinner1Title}</span>
+                            <span className={`text-xs sm:text-sm font-bold tracking-tight ${
+                              !isAvailable ? 'text-neutral-400' : isSelected ? 'text-black font-black' : 'text-neutral-500'
+                            }`}>
+                              {t.dinner1Time}
+                            </span>
+                          </div>
+                          {!isAvailable ? (
+                            <span className="px-2 py-0.5 bg-neutral-100 text-neutral-500 text-[10px] sm:text-xs font-black uppercase tracking-wider">
+                              {t.statusFull}
+                            </span>
+                          ) : isSelected ? (
+                            <span className="px-2 py-0.5 bg-black text-white text-[10px] sm:text-xs font-black uppercase tracking-wider flex items-center gap-1 shadow-xs">
+                              <span>✓</span>
+                              <span>SELEZIONATO</span>
+                            </span>
+                          ) : (
+                            <span className="w-5 h-5 rounded-full border-2 border-neutral-300 block" />
+                          )}
                         </div>
                         <p className="text-xs sm:text-sm font-medium mt-1 leading-snug text-neutral-600">
                           {t.dinner1Desc}
@@ -678,22 +698,32 @@ export default function BookingPage() {
                         !isAvailable
                           ? 'opacity-35 border-dashed border-neutral-300 bg-neutral-100 cursor-not-allowed'
                           : isSelected
-                          ? 'border-black bg-neutral-50/80 text-black shadow-sm border-l-4 border-l-[#e60000]'
-                          : 'border-neutral-300 bg-white text-black hover:border-black'
+                          ? 'border-2 border-black bg-white text-black shadow-md ring-1 ring-black'
+                          : 'border-2 border-neutral-200 bg-white text-neutral-600 hover:border-black hover:text-black'
                       }`}
                     >
                       <div>
-                        <div className="flex justify-between items-baseline mb-1.5">
-                          <span className="font-black text-xl sm:text-2xl tracking-tight text-black">{t.dinner2Title}</span>
-                          <span className={`text-xs sm:text-sm font-bold tracking-tight ${
-                            !isAvailable
-                              ? 'text-[#e60000] font-black uppercase'
-                              : isSelected
-                              ? 'text-[#e60000] font-black'
-                              : 'text-neutral-500'
-                          }`}>
-                            {isAvailable ? (isSelected ? `● ${t.dinner2Time}` : t.dinner2Time) : t.statusFull}
-                          </span>
+                        <div className="flex justify-between items-start mb-2">
+                          <div>
+                            <span className="font-black text-xl sm:text-2xl tracking-tight text-black block">{t.dinner2Title}</span>
+                            <span className={`text-xs sm:text-sm font-bold tracking-tight ${
+                              !isAvailable ? 'text-neutral-400' : isSelected ? 'text-black font-black' : 'text-neutral-500'
+                            }`}>
+                              {t.dinner2Time}
+                            </span>
+                          </div>
+                          {!isAvailable ? (
+                            <span className="px-2 py-0.5 bg-neutral-100 text-neutral-500 text-[10px] sm:text-xs font-black uppercase tracking-wider">
+                              {t.statusFull}
+                            </span>
+                          ) : isSelected ? (
+                            <span className="px-2 py-0.5 bg-black text-white text-[10px] sm:text-xs font-black uppercase tracking-wider flex items-center gap-1 shadow-xs">
+                              <span>✓</span>
+                              <span>SELEZIONATO</span>
+                            </span>
+                          ) : (
+                            <span className="w-5 h-5 rounded-full border-2 border-neutral-300 block" />
+                          )}
                         </div>
                         <p className="text-xs sm:text-sm font-medium mt-1 leading-snug text-neutral-600">
                           {t.dinner2Desc}
@@ -721,8 +751,8 @@ export default function BookingPage() {
                           onClick={() => setSelectedSlot(slot)}
                           className={`px-4 py-2.5 sm:py-3 border-2 text-base sm:text-lg font-black transition-all cursor-pointer touch-manipulation select-none active:scale-95 ${
                             isSlotSelected
-                              ? 'border-black bg-white text-black shadow-xs border-b-4 border-b-[#e60000]'
-                              : 'border-neutral-300 bg-white text-neutral-700 hover:border-black hover:text-black'
+                              ? 'border-black bg-black text-white shadow-xs'
+                              : 'border-neutral-200 bg-white text-neutral-700 hover:border-black hover:text-black'
                           }`}
                         >
                           {slot}
@@ -763,19 +793,29 @@ export default function BookingPage() {
                   onClick={() => setSeatingArea('indoor')}
                   className={`p-4 sm:p-5 border-2 text-left transition-all cursor-pointer touch-manipulation select-none active:scale-98 flex flex-col justify-between ${
                     seatingArea === 'indoor'
-                      ? 'border-black bg-neutral-50/80 text-black shadow-sm border-l-4 border-l-[#e60000]'
-                      : 'border-neutral-300 bg-white text-black hover:border-black'
+                      ? 'border-2 border-black bg-white text-black shadow-md ring-1 ring-black'
+                      : 'border-2 border-neutral-200 bg-white text-neutral-600 hover:border-black hover:text-black'
                   }`}
                 >
-                  <div className="flex justify-between items-baseline mb-1.5">
-                    <span className="font-black text-lg sm:text-2xl tracking-tight text-black">{t.indoorTitle}</span>
-                    <span className={`text-xs sm:text-sm font-bold ${seatingArea === 'indoor' ? 'text-[#e60000] font-black' : 'text-neutral-500'}`}>
-                      {seatingArea === 'indoor' ? `● ${t.indoorSeats}` : t.indoorSeats}
-                    </span>
+                  <div>
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <span className="font-black text-lg sm:text-2xl tracking-tight text-black block">{t.indoorTitle}</span>
+                        <span className="text-xs sm:text-sm font-bold text-neutral-500">{t.indoorSeats}</span>
+                      </div>
+                      {seatingArea === 'indoor' ? (
+                        <span className="px-2 py-0.5 bg-black text-white text-[10px] sm:text-xs font-black uppercase tracking-wider flex items-center gap-1 shadow-xs">
+                          <span>✓</span>
+                          <span>SELEZIONATO</span>
+                        </span>
+                      ) : (
+                        <span className="w-5 h-5 rounded-full border-2 border-neutral-300 block" />
+                      )}
+                    </div>
+                    <p className="text-xs sm:text-sm font-medium text-neutral-600">
+                      {t.indoorDesc}
+                    </p>
                   </div>
-                  <p className="text-xs sm:text-sm font-medium text-neutral-600">
-                    {t.indoorDesc}
-                  </p>
                 </button>
 
                 {/* ESTERNO (PORTICO) */}
@@ -787,19 +827,33 @@ export default function BookingPage() {
                     !availability?.isOutdoorActive
                       ? 'opacity-40 border-dashed border-neutral-300 bg-neutral-100 cursor-not-allowed'
                       : seatingArea === 'outdoor'
-                      ? 'border-black bg-neutral-50/80 text-black shadow-sm border-l-4 border-l-[#e60000]'
-                      : 'border-neutral-300 bg-white text-black hover:border-black'
+                      ? 'border-2 border-black bg-white text-black shadow-md ring-1 ring-black'
+                      : 'border-2 border-neutral-200 bg-white text-neutral-600 hover:border-black hover:text-black'
                   }`}
                 >
-                  <div className="flex justify-between items-baseline mb-1.5">
-                    <span className="font-black text-lg sm:text-2xl tracking-tight text-black">{t.outdoorTitle}</span>
-                    <span className={`text-xs sm:text-sm font-bold ${seatingArea === 'outdoor' ? 'text-[#e60000] font-black' : 'text-neutral-500'}`}>
-                      {seatingArea === 'outdoor' ? `● ${t.outdoorSeats}` : t.outdoorSeats}
-                    </span>
+                  <div>
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <span className="font-black text-lg sm:text-2xl tracking-tight text-black block">{t.outdoorTitle}</span>
+                        <span className="text-xs sm:text-sm font-bold text-neutral-500">{t.outdoorSeats}</span>
+                      </div>
+                      {!availability?.isOutdoorActive ? (
+                        <span className="px-2 py-0.5 bg-red-100 text-[#e60000] border border-red-300 text-[10px] sm:text-xs font-black uppercase tracking-wider">
+                          CHIUSO METEO
+                        </span>
+                      ) : seatingArea === 'outdoor' ? (
+                        <span className="px-2 py-0.5 bg-black text-white text-[10px] sm:text-xs font-black uppercase tracking-wider flex items-center gap-1 shadow-xs">
+                          <span>✓</span>
+                          <span>SELEZIONATO</span>
+                        </span>
+                      ) : (
+                        <span className="w-5 h-5 rounded-full border-2 border-neutral-300 block" />
+                      )}
+                    </div>
+                    <p className="text-xs sm:text-sm font-medium text-neutral-600">
+                      {availability?.isOutdoorActive ? t.outdoorDesc : t.outdoorDescClosed}
+                    </p>
                   </div>
-                  <p className="text-xs sm:text-sm font-medium text-neutral-600">
-                    {availability?.isOutdoorActive ? t.outdoorDesc : t.outdoorDescClosed}
-                  </p>
                 </button>
               </div>
             </div>
