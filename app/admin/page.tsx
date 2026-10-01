@@ -456,12 +456,12 @@ export default function AdminDashboardPage() {
                 <div className="flex justify-between items-baseline mb-2">
                   <span className="font-black text-lg sm:text-xl">PRANZO DINAMICO</span>
                   <span
-                    className={`text-[10px] font-black px-2 py-0.5 uppercase ${
+                    className={`text-xs font-bold ${
                       isLocked
-                        ? 'bg-[#e60000] text-white'
+                        ? 'text-[#e60000] font-black'
                         : isSelected
-                        ? 'bg-white text-black'
-                        : 'bg-black text-white'
+                        ? 'text-neutral-300'
+                        : 'text-neutral-500'
                     }`}
                   >
                     {isLocked ? 'BLOCCATO' : '12:00 – 15:00'}
@@ -499,12 +499,12 @@ export default function AdminDashboardPage() {
                 <div className="flex justify-between items-baseline mb-2">
                   <span className="font-black text-lg sm:text-xl">1° CENA (19:15–20)</span>
                   <span
-                    className={`text-[10px] font-black px-2 py-0.5 uppercase ${
+                    className={`text-xs font-bold ${
                       isLocked
-                        ? 'bg-[#e60000] text-white'
+                        ? 'text-[#e60000] font-black'
                         : isSelected
-                        ? 'bg-white text-black'
-                        : 'bg-black text-white'
+                        ? 'text-neutral-300'
+                        : 'text-neutral-500'
                     }`}
                   >
                     {isLocked ? 'BLOCCATO' : 'LIBERO 21:15'}
@@ -542,12 +542,12 @@ export default function AdminDashboardPage() {
                 <div className="flex justify-between items-baseline mb-2">
                   <span className="font-black text-lg sm:text-xl">2° CENA (21:30+)</span>
                   <span
-                    className={`text-[10px] font-black px-2 py-0.5 uppercase ${
+                    className={`text-xs font-bold ${
                       isLocked
-                        ? 'bg-[#e60000] text-white'
+                        ? 'text-[#e60000] font-black'
                         : isSelected
-                        ? 'bg-white text-black'
-                        : 'bg-black text-white'
+                        ? 'text-neutral-300'
+                        : 'text-neutral-500'
                     }`}
                   >
                     {isLocked ? 'BLOCCATO' : 'FINO A CHIUSURA'}

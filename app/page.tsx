@@ -601,9 +601,15 @@ export default function BookingPage() {
                       }`}
                     >
                       <div>
-                        <div className="flex justify-between items-baseline mb-1">
-                          <span className="font-black text-xl sm:text-2xl">{t.lunchTitle}</span>
-                          <span className={`text-[10px] sm:text-xs font-black px-2 py-0.5 uppercase ${isSelected ? 'bg-white text-black' : 'bg-black text-white'}`}>
+                        <div className="flex justify-between items-baseline mb-1.5">
+                          <span className="font-black text-xl sm:text-2xl tracking-tight">{t.lunchTitle}</span>
+                          <span className={`text-xs sm:text-sm font-bold tracking-tight ${
+                            !isAvailable
+                              ? 'text-[#e60000] font-black uppercase'
+                              : isSelected
+                              ? 'text-neutral-300'
+                              : 'text-neutral-500'
+                          }`}>
                             {isAvailable ? t.lunchTime : t.statusClosed}
                           </span>
                         </div>
@@ -636,9 +642,15 @@ export default function BookingPage() {
                       }`}
                     >
                       <div>
-                        <div className="flex justify-between items-baseline mb-1">
-                          <span className="font-black text-xl sm:text-2xl">{t.dinner1Title}</span>
-                          <span className={`text-[10px] sm:text-xs font-black px-2 py-0.5 uppercase ${isSelected ? 'bg-white text-black' : 'bg-black text-white'}`}>
+                        <div className="flex justify-between items-baseline mb-1.5">
+                          <span className="font-black text-xl sm:text-2xl tracking-tight">{t.dinner1Title}</span>
+                          <span className={`text-xs sm:text-sm font-bold tracking-tight ${
+                            !isAvailable
+                              ? 'text-[#e60000] font-black uppercase'
+                              : isSelected
+                              ? 'text-neutral-300'
+                              : 'text-neutral-500'
+                          }`}>
                             {isAvailable ? t.dinner1Time : t.statusFull}
                           </span>
                         </div>
@@ -671,9 +683,15 @@ export default function BookingPage() {
                       }`}
                     >
                       <div>
-                        <div className="flex justify-between items-baseline mb-1">
-                          <span className="font-black text-xl sm:text-2xl">{t.dinner2Title}</span>
-                          <span className={`text-[10px] sm:text-xs font-black px-2 py-0.5 uppercase ${isSelected ? 'bg-white text-black' : 'bg-black text-white'}`}>
+                        <div className="flex justify-between items-baseline mb-1.5">
+                          <span className="font-black text-xl sm:text-2xl tracking-tight">{t.dinner2Title}</span>
+                          <span className={`text-xs sm:text-sm font-bold tracking-tight ${
+                            !isAvailable
+                              ? 'text-[#e60000] font-black uppercase'
+                              : isSelected
+                              ? 'text-neutral-300'
+                              : 'text-neutral-500'
+                          }`}>
                             {isAvailable ? t.dinner2Time : t.statusFull}
                           </span>
                         </div>
@@ -749,9 +767,9 @@ export default function BookingPage() {
                       : 'border-neutral-300 bg-white text-black hover:border-black'
                   }`}
                 >
-                  <div className="flex justify-between items-baseline mb-1">
-                    <span className="font-black text-lg sm:text-2xl">{t.indoorTitle}</span>
-                    <span className={`text-[10px] sm:text-xs font-bold px-2 py-0.5 uppercase ${seatingArea === 'indoor' ? 'bg-white text-black' : 'bg-neutral-100 text-neutral-700'}`}>
+                  <div className="flex justify-between items-baseline mb-1.5">
+                    <span className="font-black text-lg sm:text-2xl tracking-tight">{t.indoorTitle}</span>
+                    <span className={`text-xs sm:text-sm font-bold ${seatingArea === 'indoor' ? 'text-neutral-300' : 'text-neutral-500'}`}>
                       {t.indoorSeats}
                     </span>
                   </div>
@@ -773,9 +791,9 @@ export default function BookingPage() {
                       : 'border-neutral-300 bg-white text-black hover:border-black'
                   }`}
                 >
-                  <div className="flex justify-between items-baseline mb-1">
-                    <span className="font-black text-lg sm:text-2xl">{t.outdoorTitle}</span>
-                    <span className={`text-[10px] sm:text-xs font-bold px-2 py-0.5 uppercase ${seatingArea === 'outdoor' ? 'bg-white text-black' : 'bg-neutral-100 text-neutral-700'}`}>
+                  <div className="flex justify-between items-baseline mb-1.5">
+                    <span className="font-black text-lg sm:text-2xl tracking-tight">{t.outdoorTitle}</span>
+                    <span className={`text-xs sm:text-sm font-bold ${seatingArea === 'outdoor' ? 'text-neutral-300' : 'text-neutral-500'}`}>
                       {t.outdoorSeats}
                     </span>
                   </div>
