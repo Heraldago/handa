@@ -269,11 +269,11 @@ export default function BookingPage() {
   const minDateIso = getLocalIso(new Date());
 
   return (
-    <main className="min-h-screen bg-white text-black font-sans flex flex-col justify-between selection:bg-[#e60000] selection:text-white">
+    <main className="min-h-screen bg-white text-black font-sans flex flex-col justify-between selection:bg-[#e60000] selection:text-white max-w-full overflow-x-hidden">
       {/* Top Header */}
-      <header className="px-4 py-4 sm:px-10 border-b-2 border-black sticky top-0 bg-white/95 backdrop-blur-xs z-30">
-        <div className="max-w-3xl mx-auto flex items-center justify-between">
-          <div className="flex items-baseline gap-3">
+      <header className="px-3 sm:px-10 py-2.5 sm:py-4 border-b-2 border-black sticky top-0 bg-white/95 backdrop-blur-xs z-30 max-w-full">
+        <div className="max-w-3xl mx-auto flex items-center justify-between gap-1.5 sm:gap-4">
+          <div className="flex items-baseline gap-2 sm:gap-3 shrink-0">
             <span className="font-black text-2xl sm:text-4xl tracking-tighter text-black">
               HANDA<span className="text-[#e60000]">.</span>
             </span>
@@ -282,10 +282,10 @@ export default function BookingPage() {
             </span>
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm">
+          <div className="flex items-center gap-1.5 sm:gap-3 text-xs sm:text-sm shrink-0">
             {/* Bilingual Switcher: IT | EN - Light, Colorful & Ultra-Legible */}
             <div
-              className="inline-flex items-center gap-1.5 shrink-0"
+              className="inline-flex items-center gap-1 shrink-0"
               role="tablist"
               aria-label="Selettore lingua"
             >
@@ -294,17 +294,17 @@ export default function BookingPage() {
                 role="tab"
                 aria-selected={lang === 'it'}
                 onClick={() => handleLanguageSwitch('it')}
-                className={`h-9 px-2.5 sm:px-3 flex items-center gap-1.5 text-xs sm:text-sm transition-all cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${
+                className={`h-8 sm:h-9 px-2 sm:px-2.5 flex items-center gap-1 text-xs transition-all cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${
                   lang === 'it'
                     ? 'border-2 border-emerald-600 bg-emerald-50 text-emerald-950 font-black shadow-xs'
                     : 'border-2 border-neutral-200 bg-white text-neutral-400 font-bold hover:text-black hover:border-neutral-400 opacity-60 hover:opacity-100'
                 }`}
                 title="Italiano"
               >
-                <span className="text-base leading-none" aria-hidden="true">🇮🇹</span>
+                <span className="text-sm sm:text-base leading-none" aria-hidden="true">🇮🇹</span>
                 <span className="tracking-wider">IT</span>
                 {lang === 'it' && (
-                  <span className="text-[11px] font-black text-emerald-700 ml-0.5">✓</span>
+                  <span className="text-[10px] font-black text-emerald-700">✓</span>
                 )}
               </button>
 
@@ -313,17 +313,17 @@ export default function BookingPage() {
                 role="tab"
                 aria-selected={lang === 'en'}
                 onClick={() => handleLanguageSwitch('en')}
-                className={`h-9 px-2.5 sm:px-3 flex items-center gap-1.5 text-xs sm:text-sm transition-all cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${
+                className={`h-8 sm:h-9 px-2 sm:px-2.5 flex items-center gap-1 text-xs transition-all cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black ${
                   lang === 'en'
                     ? 'border-2 border-blue-600 bg-blue-50 text-blue-950 font-black shadow-xs'
                     : 'border-2 border-neutral-200 bg-white text-neutral-400 font-bold hover:text-black hover:border-neutral-400 opacity-60 hover:opacity-100'
                 }`}
                 title="English"
               >
-                <span className="text-base leading-none" aria-hidden="true">🇬🇧</span>
+                <span className="text-sm sm:text-base leading-none" aria-hidden="true">🇬🇧</span>
                 <span className="tracking-wider">EN</span>
                 {lang === 'en' && (
-                  <span className="text-[11px] font-black text-blue-700 ml-0.5">✓</span>
+                  <span className="text-[10px] font-black text-blue-700">✓</span>
                 )}
               </button>
             </div>
@@ -332,16 +332,18 @@ export default function BookingPage() {
               href="https://www.instagram.com/handa_mushi/"
               target="_blank"
               rel="noreferrer"
-              className="border-2 border-neutral-300 hover:border-black px-3 py-1.5 font-bold uppercase transition-colors"
+              className="h-8 sm:h-9 border-2 border-neutral-300 hover:border-black px-2 sm:px-3 font-bold uppercase transition-colors flex items-center justify-center shrink-0 text-xs sm:text-sm"
+              title="Instagram @handa_mushi"
             >
-              {t.instaLink}
+              <span className="hidden sm:inline">{t.instaLink}</span>
+              <span className="sm:hidden">IG ↗</span>
             </a>
           </div>
         </div>
       </header>
 
       {/* Main Container */}
-      <div className="max-w-3xl w-full mx-auto px-4 py-6 sm:py-16 flex-1">
+      <div className="max-w-3xl w-full mx-auto px-4 py-6 sm:py-16 flex-1 max-w-full overflow-x-hidden">
         {/* Title */}
         <div className="mb-8 sm:mb-14">
           <span className="text-xs sm:text-sm font-black uppercase tracking-widest text-[#e60000] block mb-1 sm:mb-2">

@@ -361,9 +361,9 @@ export default function AdminDashboardPage() {
   }
 
   return (
-    <main className="min-h-screen bg-white text-black font-sans selection:bg-[#e60000] selection:text-white pb-24">
+    <main className="min-h-screen bg-white text-black font-sans selection:bg-[#e60000] selection:text-white pb-24 max-w-full overflow-x-hidden">
       {/* 1. TOP HEADER (MOBILE ROBUST & UN-CRAMPED) */}
-      <header className="border-b border-black bg-white px-3 sm:px-8 py-2.5 sm:py-3 sticky top-0 z-40">
+      <header className="border-b border-black bg-white px-3 sm:px-8 py-2.5 sm:py-3 sticky top-0 z-40 max-w-full overflow-hidden">
         <div className="max-w-6xl mx-auto flex items-center justify-between gap-2">
           {/* Left: Brand + Staff Desk Pill + Live Sync Indicator */}
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
