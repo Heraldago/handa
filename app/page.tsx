@@ -293,7 +293,7 @@ export default function BookingPage() {
   return (
     <main className="min-h-screen bg-[#faf8f5] bg-paper-texture text-black font-sans flex flex-col justify-between selection:bg-[#e60000] selection:text-white max-w-full overflow-x-hidden">
       {/* Top Header */}
-      <header className="px-3 sm:px-8 py-3 border-b-2 border-black sticky top-0 bg-[#faf8f5]/95 backdrop-blur-xs z-30 max-w-full">
+      <header className="px-5 sm:px-10 md:px-14 lg:px-16 py-3.5 border-b-2 border-black sticky top-0 bg-[#faf8f5]/95 backdrop-blur-xs z-30 max-w-full">
         <div className="max-w-4xl mx-auto flex items-center justify-between gap-2 sm:gap-4">
           <div className="flex items-baseline gap-2 sm:gap-3 shrink-0">
             <span className="font-black text-2xl sm:text-4xl tracking-tighter text-black">
@@ -371,7 +371,7 @@ export default function BookingPage() {
       </header>
 
       {/* Main Container */}
-      <div className="max-w-4xl w-full mx-auto px-3 sm:px-8 pt-4 sm:pt-6 pb-14 sm:pb-20 flex-1 max-w-full overflow-x-hidden">
+      <div className="max-w-4xl w-full mx-auto px-5 sm:px-10 md:px-14 lg:px-16 pt-6 sm:pt-10 pb-16 sm:pb-24 flex-1 max-w-full overflow-x-hidden">
         {/* Title */}
         <div className="mb-6 sm:mb-8">
           <span className="text-xs sm:text-sm font-black uppercase tracking-widest text-[#e60000] block mb-1 sm:mb-2">
@@ -1048,7 +1048,7 @@ export default function BookingPage() {
       </div>
 
       {/* FOOTER */}
-      <footer className="border-t-2 border-black py-6 sm:py-8 px-3 sm:px-8 text-xs sm:text-sm text-neutral-600">
+      <footer className="border-t-2 border-black py-8 px-5 sm:px-10 md:px-14 lg:px-16 text-xs sm:text-sm text-neutral-600">
         <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
             <strong className="text-black font-black text-sm sm:text-base">HANDA.</strong> — Via del Portello 32, 35131 Padova

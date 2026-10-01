@@ -389,7 +389,7 @@ export default function AdminDashboardPage() {
   return (
     <main className="min-h-screen bg-[#faf8f5] bg-paper-texture text-black font-sans selection:bg-[#e60000] selection:text-white pb-36 max-w-full overflow-x-hidden">
       {/* 1. TOP HEADER (TOUCH-ROBUST: MIN 48PX TARGETS) */}
-      <header className="border-b-2 border-black bg-[#faf8f5]/95 backdrop-blur-xs px-3 sm:px-8 py-3 sticky top-0 z-40 max-w-full overflow-hidden">
+      <header className="border-b-2 border-black bg-[#faf8f5]/95 backdrop-blur-xs px-4 sm:px-8 py-3 sticky top-0 z-40 max-w-full overflow-hidden">
         <div className="max-w-6xl mx-auto flex items-center justify-between gap-3">
           {/* Left: Brand + Staff Desk Pill + Live Sync Indicator */}
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
@@ -443,7 +443,7 @@ export default function AdminDashboardPage() {
       </header>
 
       {/* 2. OPERATIONS COMMAND CENTER (BIG DATE ORIENTATION & MASTER ESTERNO TOGGLE) */}
-      <div className="max-w-6xl mx-auto px-3 sm:px-8 pt-4 sm:pt-6">
+      <div className="max-w-6xl mx-auto px-4 sm:px-8 pt-4 sm:pt-6">
         <div className="pb-5 sm:pb-6 mb-5 sm:mb-6 border-b-2 border-black flex flex-col lg:flex-row lg:items-center justify-between gap-4 sm:gap-6">
           {/* LEFT: BIG DATE ORIENTATION & FAST DAY JUMPERS (MIN 48PX, GAP >= 8PX) */}
           <div className="flex-1">
