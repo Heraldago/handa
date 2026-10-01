@@ -509,6 +509,13 @@ export default function AdminDashboardPage() {
               <input
                 type="date"
                 value={selectedDate}
+                onClick={(e) => {
+                  if (typeof e.currentTarget.showPicker === 'function') {
+                    try {
+                      e.currentTarget.showPicker();
+                    } catch {}
+                  }
+                }}
                 onChange={(e) => setSelectedDate(e.target.value)}
                 className="absolute inset-0 opacity-0 cursor-pointer w-full touch-manipulation"
               />

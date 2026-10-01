@@ -107,6 +107,7 @@ export const translations = {
     addToGoogleCalendar: 'Aggiungi a Google Calendar',
     modifyOrCancel: 'Modifica o cancella prenotazione',
     newBooking: '← Nuova prenotazione',
+    makeAnotherBooking: '← Effettua un’altra prenotazione',
 
     // Share Message Template
     shareMessage: (booking: {
@@ -236,6 +237,7 @@ export const translations = {
     addToGoogleCalendar: 'Add to Google Calendar',
     modifyOrCancel: 'Modify or cancel reservation',
     newBooking: '← New reservation',
+    makeAnotherBooking: '← Make another reservation',
 
     // Share Message Template
     shareMessage: (booking: {

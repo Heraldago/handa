@@ -164,6 +164,21 @@ export default function BookingPage() {
     setSelectedDate(iso);
   };
 
+  const handleOpenCalendar = () => {
+    const input = dateInputRef.current;
+    if (input) {
+      if (typeof input.showPicker === 'function') {
+        try {
+          input.showPicker();
+          return;
+        } catch (err) {
+          console.warn('showPicker error:', err);
+        }
+      }
+      input.focus();
+    }
+  };
+
   const toggleDietary = (val: string) => {
     setSelectedDietary((prev) =>
       prev.includes(val) ? prev.filter((d) => d !== val) : [...prev, val]
@@ -391,6 +406,23 @@ export default function BookingPage() {
         {/* SUCCESS CONFIRMATION */}
         {successBooking ? (
           <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-200">
+            {/* Top Navigation Bar: Back / New Reservation */}
+            <div className="flex items-center justify-between pb-3 border-b-2 border-black">
+              <button
+                type="button"
+                onClick={() => {
+                  setSuccessBooking(null);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="h-10 sm:h-11 px-4 border-2 border-black bg-white hover:bg-black hover:text-white text-black font-black text-xs sm:text-sm uppercase tracking-wider transition-all duration-100 flex items-center gap-2 cursor-pointer touch-manipulation select-none active:scale-95 shadow-xs"
+              >
+                <span>{t.newBooking}</span>
+              </button>
+              <span className="text-xs text-neutral-500 font-black uppercase tracking-widest">
+                {lang === 'en' ? 'RESERVATION CONFIRMED' : 'PRENOTAZIONE COMPLETATA'}
+              </span>
+            </div>
+
             <div className="border-b-2 border-black pb-5 flex justify-between items-baseline">
               <div>
                 <span className="text-xs sm:text-sm text-neutral-500 uppercase tracking-widest block font-bold">
@@ -465,7 +497,7 @@ export default function BookingPage() {
               <button
                 type="button"
                 onClick={handleShareBooking}
-                className="w-full h-14 sm:h-18 border-2 border-black bg-black hover:bg-[#e60000] hover:border-[#e60000] text-white font-black text-sm sm:text-lg flex items-center justify-center gap-2 transition-colors uppercase tracking-wider cursor-pointer touch-manipulation"
+                className="w-full h-14 sm:h-16 border-2 border-black bg-black hover:bg-[#e60000] hover:border-[#e60000] text-white font-black text-sm sm:text-base flex items-center justify-center gap-2 transition-colors uppercase tracking-wider cursor-pointer touch-manipulation shadow-xs select-none active:scale-98"
               >
                 <span>{copiedShare ? '✓' : '📤'}</span>
                 <span>
@@ -479,26 +511,30 @@ export default function BookingPage() {
                 href={getGoogleCalendarUrl()}
                 target="_blank"
                 rel="noreferrer"
-                className="w-full h-14 sm:h-18 border-2 border-black bg-white hover:bg-neutral-100 text-black font-black text-sm sm:text-lg flex items-center justify-center transition-colors uppercase tracking-wider cursor-pointer touch-manipulation"
+                className="w-full h-14 sm:h-16 border-2 border-black bg-white hover:bg-neutral-100 text-black font-black text-sm sm:text-base flex items-center justify-center transition-colors uppercase tracking-wider cursor-pointer touch-manipulation shadow-xs select-none active:scale-98"
               >
                 {t.addToGoogleCalendar}
               </a>
 
-              <div className="pt-4 flex justify-between items-center text-xs sm:text-sm">
+              {/* Prominent High-Visibility New Booking Button */}
+              <button
+                type="button"
+                onClick={() => {
+                  setSuccessBooking(null);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="w-full h-14 sm:h-16 border-2 border-black bg-noren-active hover:bg-black hover:text-white text-black font-black text-sm sm:text-base flex items-center justify-center gap-2 transition-all uppercase tracking-wider cursor-pointer touch-manipulation shadow-xs select-none active:scale-98"
+              >
+                <span>{t.makeAnotherBooking}</span>
+              </button>
+
+              <div className="pt-3 text-center">
                 <Link
                   href={`/prenotazione/${successBooking.code}`}
-                  className="text-neutral-500 hover:text-black underline font-bold"
+                  className="text-xs sm:text-sm text-neutral-500 hover:text-black underline font-bold uppercase tracking-wider"
                 >
-                  {t.modifyOrCancel}
+                  {t.modifyOrCancel} →
                 </Link>
-
-                <button
-                  type="button"
-                  onClick={() => setSuccessBooking(null)}
-                  className="border-2 border-neutral-300 hover:border-black px-3 py-1.5 font-bold cursor-pointer touch-manipulation"
-                >
-                  {t.newBooking}
-                </button>
               </div>
             </div>
           </div>
@@ -591,7 +627,18 @@ export default function BookingPage() {
               </div>
 
               {/* Native Calendar Picker Card */}
-              <div className="mt-3 relative border-2 border-black bg-white hover:bg-neutral-50 transition-colors p-3.5 sm:p-4 flex items-center justify-between cursor-pointer touch-manipulation">
+              <div
+                role="button"
+                tabIndex={0}
+                onClick={handleOpenCalendar}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleOpenCalendar();
+                  }
+                }}
+                className="mt-3 relative border-2 border-black bg-white hover:bg-neutral-50 transition-colors p-3.5 sm:p-4 flex items-center justify-between cursor-pointer touch-manipulation select-none active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black"
+              >
                 <div className="flex items-center gap-3 pointer-events-none">
                   <span className="text-2xl sm:text-3xl">📅</span>
                   <div>
@@ -615,6 +662,13 @@ export default function BookingPage() {
                   type="date"
                   min={minDateIso}
                   value={selectedDate}
+                  onClick={(e) => {
+                    if (typeof e.currentTarget.showPicker === 'function') {
+                      try {
+                        e.currentTarget.showPicker();
+                      } catch {}
+                    }
+                  }}
                   onChange={(e) => {
                     if (e.target.value) {
                       handleSelectDate(e.target.value);

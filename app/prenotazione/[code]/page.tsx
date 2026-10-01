@@ -259,6 +259,14 @@ export default function BookingDetailPage({
                 </span>
               </a>
 
+              <Link
+                href="/"
+                className="w-full h-12 border-2 border-black bg-noren-active hover:bg-black hover:text-white text-black font-black py-3 uppercase text-xs transition-colors flex items-center justify-center gap-2 cursor-pointer touch-manipulation select-none active:scale-98"
+              >
+                <span>←</span>
+                <span>{lang === 'en' ? 'Make another reservation' : 'Effettua un’altra prenotazione'}</span>
+              </Link>
+
               <button
                 onClick={handleCancelBooking}
                 disabled={cancelling}
