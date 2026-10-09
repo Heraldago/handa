@@ -285,6 +285,9 @@ export async function getBookingByCode(code: string): Promise<Booking | null> {
       if (!error && data) {
         return mapRowToBooking(data);
       }
+      if (error && error.code === 'PGRST116') {
+        return null;
+      }
     } catch (err) {
       console.warn('Supabase getBookingByCode fallback to local:', err);
     }
