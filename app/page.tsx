@@ -88,6 +88,7 @@ export default function BookingPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successBooking, setSuccessBooking] = useState<BookingResult | null>(null);
   const [copiedShare, setCopiedShare] = useState<boolean>(false);
+  const [showGroupModal, setShowGroupModal] = useState<boolean>(false);
 
   const dateInputRef = useRef<HTMLInputElement>(null);
 
@@ -127,7 +128,7 @@ export default function BookingPage() {
           const currentAvailable = data.shifts.find(
             (s: Shift) => s.id === selectedShift && s.available
           );
-          // If current shift is unavailable (e.g. Sunday lunch), switch automatically to first available
+          // If current shift is unavailable (e.g. Sunday lunch or concluded today), switch automatically to first available
           if (!currentAvailable) {
             const firstAvail = data.shifts.find((s: Shift) => s.available);
             if (firstAvail) {
@@ -136,7 +137,17 @@ export default function BookingPage() {
                 setSelectedSlot(firstAvail.availableSlots[0]);
               }
             }
+          } else if (currentAvailable.availableSlots?.length > 0) {
+            // Check if selectedSlot is still valid in availableSlots
+            if (!currentAvailable.availableSlots.includes(selectedSlot)) {
+              setSelectedSlot(currentAvailable.availableSlots[0]);
+            }
           }
+        }
+
+        // Auto-fallback from outdoor to indoor if outdoor was closed
+        if (data && !data.isOutdoorActive && seatingArea === 'outdoor') {
+          setSeatingArea('indoor');
         }
       } catch (err) {
         console.error(err);
@@ -551,18 +562,19 @@ export default function BookingPage() {
                   <span className="text-xs text-neutral-500 font-bold uppercase tracking-wider">
                     {t.step1GroupNotice}
                   </span>
-                  <a
-                    href="tel:+393492330492"
+                  <button
+                    type="button"
+                    onClick={() => setShowGroupModal(true)}
                     className="h-8 sm:h-9 px-3 border-2 border-black bg-white hover:bg-black hover:text-white text-black text-xs font-black uppercase tracking-wider transition-all duration-100 flex items-center gap-1.5 cursor-pointer touch-manipulation select-none active:scale-95 shadow-2xs"
                   >
-                    <span className="text-xs">📞</span>
+                    <span className="text-xs">💬</span>
                     <span>{t.step1GroupAction}</span>
-                  </a>
+                  </button>
                 </div>
               </div>
 
-              <div className="grid grid-cols-6 gap-2" role="radiogroup" aria-label={t.step1Title}>
-                {[1, 2, 3, 4, 5, 6].map((num) => {
+              <div className="grid grid-cols-5 gap-2" role="radiogroup" aria-label={t.step1Title}>
+                {[1, 2, 3, 4].map((num) => {
                   const isSelected = guestCount === num;
                   return (
                     <button
@@ -581,6 +593,19 @@ export default function BookingPage() {
                     </button>
                   );
                 })}
+
+                {/* 5+ Groups Button */}
+                <button
+                  type="button"
+                  onClick={() => setShowGroupModal(true)}
+                  className="h-14 sm:h-20 border-2 border-dashed border-neutral-300 hover:border-black bg-white hover:bg-neutral-50 text-black transition-all cursor-pointer touch-manipulation select-none active:scale-95 flex flex-col items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black group"
+                  title={t.step1GroupModalTitle}
+                >
+                  <span className="text-lg sm:text-3xl font-black group-hover:text-[#e60000] leading-none">5+</span>
+                  <span className="text-[9px] sm:text-[11px] font-black uppercase text-neutral-500 group-hover:text-black tracking-tight mt-0.5">
+                    {lang === 'en' ? 'Groups ↗' : 'Gruppi ↗'}
+                  </span>
+                </button>
               </div>
             </div>
 
@@ -1140,6 +1165,83 @@ export default function BookingPage() {
           </div>
         </div>
       </footer>
+      {/* MODAL PRENOTAZIONI 5+ PERSONE / GRUPPI */}
+      {showGroupModal && (
+        <div
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-150"
+          onClick={() => setShowGroupModal(false)}
+        >
+          <div
+            className="bg-white border-2 border-black max-w-md w-full p-6 sm:p-7 shadow-2xl relative my-auto animate-in zoom-in-95 duration-150"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="group-modal-title"
+          >
+            <div className="flex justify-between items-start mb-3 border-b border-black pb-3">
+              <div>
+                <span className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-[#e60000] block">
+                  {t.step1GroupModalSubtitle}
+                </span>
+                <h3 id="group-modal-title" className="text-xl sm:text-2xl font-black uppercase text-black leading-tight mt-0.5">
+                  {t.step1GroupModalTitle}
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowGroupModal(false)}
+                className="w-10 h-10 flex items-center justify-center border-2 border-neutral-300 hover:border-black bg-white text-lg font-black cursor-pointer touch-manipulation select-none active:scale-95"
+                title={t.step1GroupClose}
+              >
+                ✕
+              </button>
+            </div>
+
+            <p className="text-xs sm:text-sm text-neutral-700 leading-relaxed font-medium mb-5">
+              {t.step1GroupModalDesc}
+            </p>
+
+            <div className="space-y-2.5">
+              {/* 1. Phone Call */}
+              <a
+                href="tel:+393492330492"
+                className="h-13 sm:h-14 w-full border-2 border-black bg-black text-white hover:bg-[#e60000] hover:border-[#e60000] text-xs sm:text-sm font-black uppercase tracking-wider flex items-center justify-center gap-2.5 transition-all cursor-pointer touch-manipulation select-none active:scale-95 shadow-xs"
+              >
+                <span className="text-base">📞</span>
+                <span>{t.step1GroupCall}</span>
+              </a>
+
+              {/* 2. WhatsApp */}
+              <a
+                href="https://wa.me/393492330492?text=Ciao%20HAND%C4%80%2C%20vorrei%20informazioni%20per%20prenotare%20un%20tavolo%20per%20un%20gruppo%20da%205%2B%20persone."
+                target="_blank"
+                rel="noreferrer"
+                className="h-13 sm:h-14 w-full border-2 border-emerald-600 bg-emerald-50 text-emerald-950 hover:bg-emerald-100 text-xs sm:text-sm font-black uppercase tracking-wider flex items-center justify-center gap-2.5 transition-all cursor-pointer touch-manipulation select-none active:scale-95"
+              >
+                <span className="text-base">💬</span>
+                <span>{t.step1GroupWhatsapp}</span>
+              </a>
+
+              {/* 3. Email */}
+              <a
+                href="mailto:handa.ramen@gmail.com?subject=Richiesta%20Tavolo%20Gruppo%20(5%2B%20persone)&body=Ciao%20team%20HAND%C4%80%2C%0A%0AVorrei%20prenotare%20un%20tavolo%20per%20un%20gruppo.%0AData%20desiderata%3A%0ATurno%2FOrario%3A%0ANumero%20persone%3A%0ANome%20e%20recapito%3A%0A%0AGrazie!"
+                className="h-12 w-full border-2 border-neutral-300 bg-white hover:border-black text-neutral-800 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer touch-manipulation select-none active:scale-95"
+              >
+                <span className="text-sm">✉️</span>
+                <span>{t.step1GroupEmail}</span>
+              </a>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setShowGroupModal(false)}
+              className="mt-4 w-full h-11 border-2 border-neutral-200 hover:border-neutral-400 bg-neutral-50 text-neutral-600 text-xs font-bold uppercase tracking-wider transition-all cursor-pointer touch-manipulation select-none active:scale-95"
+            >
+              {t.step1GroupClose}
+            </button>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

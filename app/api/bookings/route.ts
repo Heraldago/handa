@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createBooking, getShiftAvailability, getSettings } from '@/lib/db';
+import { createBooking, getShiftAvailability, getSettings, getRomeTimeInfo, parseTimeToMinutes } from '@/lib/db';
 import { sendStaffBookingNotification } from '@/lib/notifications';
 import { ShiftId, SeatingArea } from '@/lib/types';
 
@@ -37,10 +37,29 @@ export async function POST(request: NextRequest) {
     if (guests > settings.maxGuestsOnline) {
       return NextResponse.json(
         {
-          error: `Per gruppi superiori a ${settings.maxGuestsOnline} persone, ti chiediamo di chiamarci direttamente al locale (349 233 0492)!`,
+          error: `Per tavoli da 5 o più persone, ti chiediamo di contattarci direttamente (349 233 0492 o WhatsApp/email)!`,
         },
         { status: 400 }
       );
+    }
+
+    const { todayIso, currentMinutes } = getRomeTimeInfo();
+
+    if (date < todayIso) {
+      return NextResponse.json(
+        { error: 'Non è possibile effettuare prenotazioni per date passate.' },
+        { status: 400 }
+      );
+    }
+
+    if (date === todayIso && time) {
+      const timeMinutes = parseTimeToMinutes(time);
+      if (timeMinutes < currentMinutes - 10) {
+        return NextResponse.json(
+          { error: `L'orario selezionato (${time}) è già trascorso per oggi. Scegli un orario successivo o un'altra data!` },
+          { status: 400 }
+        );
+      }
     }
 
     // Check shift availability

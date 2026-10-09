@@ -358,10 +358,10 @@ export default function AdminDashboardPage() {
       );
     });
 
-  const shiftsList: { id: ShiftId; label: string; time: string; sub: string }[] = [
-    { id: 'lunch', label: 'Pranzo', time: '12:00 – 15:00', sub: 'Dinamico' },
-    { id: 'dinner_1', label: '1° Turno Cena', time: '19:15 – 20:00', sub: 'Esce 21:15' },
-    { id: 'dinner_2', label: '2° Turno Cena', time: '21:30 – 23:00', sub: 'A chiusura' },
+  const shiftsList: { id: ShiftId; label: string; shortLabel: string; time: string; sub: string }[] = [
+    { id: 'lunch', label: 'Pranzo', shortLabel: 'Pranzo', time: '12:00 – 15:00', sub: 'Dinamico' },
+    { id: 'dinner_1', label: '1° Turno Cena', shortLabel: '1° Cena', time: '19:15 – 20:00', sub: 'Esce 21:15' },
+    { id: 'dinner_2', label: '2° Turno Cena', shortLabel: '2° Cena', time: '21:30 – 23:00', sub: 'A chiusura' },
   ];
 
   if (!isAuthenticated) {
@@ -521,12 +521,12 @@ export default function AdminDashboardPage() {
       <div className="max-w-6xl mx-auto px-4 sm:px-8 pt-4 sm:pt-6">
         <div className="pb-5 sm:pb-6 mb-5 sm:mb-6 border-b-2 border-black flex flex-col gap-4 sm:gap-5">
           {/* TOP ROW: FAST DAY JUMPERS & DATE PICKER (FULL WIDTH, NEVER CLIPPED) */}
-          <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
-            <div className="flex items-center gap-1.5 sm:gap-2.5 flex-wrap xs:flex-nowrap">
+          <div className="flex flex-wrap sm:flex-nowrap items-center gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2 flex-1 justify-between sm:justify-start">
               <button
                 type="button"
                 onClick={() => changeDateByDays(-1)}
-                className="h-12 w-12 sm:h-13 sm:w-13 border-2 border-neutral-300 hover:border-black bg-white flex items-center justify-center font-black text-lg cursor-pointer transition-all duration-75 shrink-0 touch-manipulation select-none active:scale-95"
+                className="h-11 w-11 sm:h-12 sm:w-12 border-2 border-neutral-300 hover:border-black bg-white flex items-center justify-center font-black text-lg cursor-pointer transition-all duration-75 shrink-0 touch-manipulation select-none active:scale-95"
                 title="Giorno precedente"
               >
                 ←
@@ -535,7 +535,7 @@ export default function AdminDashboardPage() {
               <button
                 type="button"
                 onClick={() => setSelectedDate(getRelativeIsoDate(0))}
-                className={`h-12 sm:h-13 px-3.5 sm:px-5 text-xs sm:text-sm font-black uppercase tracking-wider border-2 transition-all duration-75 cursor-pointer shrink-0 touch-manipulation select-none active:scale-95 ${
+                className={`h-11 sm:h-12 px-3 sm:px-4 text-xs sm:text-sm font-black uppercase tracking-wider border-2 transition-all duration-75 cursor-pointer shrink-0 touch-manipulation select-none active:scale-95 ${
                   selectedDate === getRelativeIsoDate(0)
                     ? 'border-2 border-black bg-noren-active text-black shadow-xs ring-1 ring-black'
                     : 'border-neutral-300 bg-white text-neutral-700 hover:border-black hover:text-black'
@@ -547,7 +547,7 @@ export default function AdminDashboardPage() {
               <button
                 type="button"
                 onClick={() => setSelectedDate(getRelativeIsoDate(1))}
-                className={`h-12 sm:h-13 px-3.5 sm:px-5 text-xs sm:text-sm font-black uppercase tracking-wider border-2 transition-all duration-75 cursor-pointer shrink-0 touch-manipulation select-none active:scale-95 ${
+                className={`h-11 sm:h-12 px-3 sm:px-4 text-xs sm:text-sm font-black uppercase tracking-wider border-2 transition-all duration-75 cursor-pointer shrink-0 touch-manipulation select-none active:scale-95 ${
                   selectedDate === getRelativeIsoDate(1)
                     ? 'border-2 border-black bg-noren-active text-black shadow-xs ring-1 ring-black'
                     : 'border-neutral-300 bg-white text-neutral-700 hover:border-black hover:text-black'
@@ -559,28 +559,28 @@ export default function AdminDashboardPage() {
               <button
                 type="button"
                 onClick={() => setSelectedDate(getRelativeIsoDate(2))}
-                className={`h-12 sm:h-13 px-3.5 sm:px-5 text-xs sm:text-sm font-black uppercase tracking-wider border-2 transition-all duration-75 cursor-pointer shrink-0 touch-manipulation select-none active:scale-95 ${
+                className={`h-11 sm:h-12 px-3 sm:px-4 text-xs sm:text-sm font-black uppercase tracking-wider border-2 transition-all duration-75 cursor-pointer shrink-0 touch-manipulation select-none active:scale-95 hidden xs:inline-flex items-center justify-center ${
                   selectedDate === getRelativeIsoDate(2)
                     ? 'border-2 border-black bg-noren-active text-black shadow-xs ring-1 ring-black'
                     : 'border-neutral-300 bg-white text-neutral-700 hover:border-black hover:text-black'
                 }`}
               >
-                Dopodomani
+                +2 gg
               </button>
 
               <button
                 type="button"
                 onClick={() => changeDateByDays(1)}
-                className="h-12 w-12 sm:h-13 sm:w-13 border-2 border-neutral-300 hover:border-black bg-white flex items-center justify-center font-black text-lg cursor-pointer transition-all duration-75 shrink-0 touch-manipulation select-none active:scale-95"
+                className="h-11 w-11 sm:h-12 sm:w-12 border-2 border-neutral-300 hover:border-black bg-white flex items-center justify-center font-black text-lg cursor-pointer transition-all duration-75 shrink-0 touch-manipulation select-none active:scale-95"
                 title="Giorno successivo"
               >
                 →
               </button>
             </div>
 
-            {/* Styled Date Picker Button (Min 48px hit area, never clipped, whitespace-nowrap, responsive width) */}
-            <label className="relative h-12 sm:h-13 px-4 border-2 border-neutral-300 hover:border-black bg-white flex items-center justify-center gap-2 cursor-pointer text-xs sm:text-sm font-black text-neutral-800 transition-all duration-75 shrink-0 touch-manipulation select-none active:scale-95 whitespace-nowrap w-full sm:w-auto">
-              <span>📅 Scegli Data</span>
+            {/* Styled Date Picker Button */}
+            <label className="relative h-11 sm:h-12 px-3.5 sm:px-4 border-2 border-neutral-300 hover:border-black bg-white flex items-center justify-center gap-2 cursor-pointer text-xs sm:text-sm font-black text-neutral-800 transition-all duration-75 shrink-0 touch-manipulation select-none active:scale-95 whitespace-nowrap w-full sm:w-auto">
+              <span>📅 Data</span>
               <input
                 type="date"
                 value={selectedDate}
@@ -718,170 +718,171 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
-      {/* 3. SHIFT SEGMENTED TABS (MIN 56PX HEIGHT, GAP >= 8PX) */}
-        <div className="grid grid-cols-3 border-2 border-black bg-neutral-100 p-2 gap-2 mb-5 select-none">
-          {shiftsList.map((shift) => {
-            const isSelected = activeTab === shift.id;
-            const shiftBookings = bookings.filter(
-              (b) => b.shiftId === shift.id && b.status !== 'CANCELLED'
-            );
-            const totalPax = shiftBookings.reduce((sum, b) => sum + b.guestCount, 0);
-            const isLocked = stats?.lockedShifts?.includes(shift.id);
+      {/* 3. SHIFT SEGMENTED TABS */}
+      <div className="grid grid-cols-3 border-2 border-black bg-neutral-100 p-1.5 sm:p-2 gap-1.5 sm:gap-2 mb-4 select-none">
+        {shiftsList.map((shift) => {
+          const isSelected = activeTab === shift.id;
+          const shiftBookings = bookings.filter(
+            (b) => b.shiftId === shift.id && b.status !== 'CANCELLED'
+          );
+          const totalPax = shiftBookings.reduce((sum, b) => sum + b.guestCount, 0);
+          const isLocked = stats?.lockedShifts?.includes(shift.id);
 
-            return (
-              <button
-                key={shift.id}
-                type="button"
-                onClick={() => setActiveTab(shift.id)}
-                className={`min-h-[56px] py-3 px-3 sm:px-4 text-center sm:text-left transition-all duration-75 cursor-pointer flex flex-col sm:flex-row items-center justify-between gap-1.5 touch-manipulation select-none active:scale-[0.98] ${
-                  isSelected
-                    ? 'bg-white bg-noren-active border-2 border-black text-black shadow-xs ring-1 ring-black'
-                    : 'bg-white/60 border border-neutral-300 text-neutral-700 hover:text-black hover:border-black'
-                }`}
-              >
-                <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
-                  <span className="font-black text-xs sm:text-sm uppercase tracking-wider block text-black">
-                    {shift.label}
-                  </span>
-                  <span
-                    className={`text-[11px] font-medium hidden md:inline ${
-                      isSelected ? 'text-neutral-700 font-bold' : 'text-neutral-500'
-                    }`}
-                  >
-                    ({shift.time})
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-1.5">
-                  {isLocked && (
-                    <span className="text-[10px] font-black uppercase text-[#e60000] bg-red-50 border border-red-300 px-1.5 py-0.5">
-                      BLOCCATO
-                    </span>
-                  )}
-                  <span className="text-xs sm:text-sm font-black text-black px-2 py-0.5 bg-neutral-100 border border-neutral-200">
-                    {totalPax} pax
-                  </span>
-                </div>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* 4. UTILITY STRIP: CAPACITY BREAKDOWN + LOCK SHIFT + SEARCH & STATUS FILTER */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-5 mb-5 border-b-2 border-black">
-          {/* Capacity Breakdown & Lock Toggle */}
-          <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs sm:text-sm font-bold text-neutral-700">
-            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-neutral-300">
-              <span className="text-neutral-400 uppercase text-[11px] tracking-wider font-bold">Sala:</span>
-              <span className="text-black font-black text-base">{shiftIndoorBooked}</span>
-              <span className="text-neutral-400 text-xs">/36</span>
-            </div>
-
-            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-neutral-300">
-              <span className="text-neutral-400 uppercase text-[11px] tracking-wider font-bold">Esterno:</span>
-              <span
-                className={`font-black text-base ${
-                  stats?.isOutdoorActive ? 'text-emerald-700' : 'text-neutral-400 line-through'
-                }`}
-              >
-                {shiftOutdoorBooked}
-              </span>
-              <span className="text-neutral-400 text-xs">/35</span>
-              <span
-                className={`w-2.5 h-2.5 rounded-full ${
-                  stats?.isOutdoorActive ? 'bg-emerald-500' : 'bg-red-500'
-                }`}
-              />
-            </div>
-
-            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-neutral-300">
-              <span className="text-neutral-400 uppercase text-[11px] tracking-wider font-bold">Seduti:</span>
-              <span className="text-[#e60000] font-black text-base">{shiftTotalSeatedPax}</span>
-              <span className="text-neutral-400 text-xs">pax</span>
-            </div>
-
+          return (
             <button
+              key={shift.id}
               type="button"
-              onClick={() => handleToggleLock(activeTab)}
-              className={`h-12 min-h-[48px] px-4 text-xs sm:text-sm font-black uppercase tracking-wider border-2 transition-all duration-75 cursor-pointer touch-manipulation select-none active:scale-95 ${
-                isShiftLocked
-                  ? 'border-[#e60000] bg-red-50 text-[#e60000] hover:bg-[#e60000] hover:text-white'
-                  : 'border-neutral-300 bg-white text-neutral-800 hover:border-black hover:text-black'
+              onClick={() => setActiveTab(shift.id)}
+              className={`min-h-[50px] sm:min-h-[56px] py-2 px-2 sm:px-4 text-center sm:text-left transition-all duration-75 cursor-pointer flex flex-col sm:flex-row items-center justify-between gap-1 touch-manipulation select-none active:scale-[0.98] ${
+                isSelected
+                  ? 'bg-white bg-noren-active border-2 border-black text-black shadow-xs ring-1 ring-black'
+                  : 'bg-white/60 border border-neutral-300 text-neutral-700 hover:text-black hover:border-black'
               }`}
             >
-              {isShiftLocked ? '🔴 Turno Bloccato (Sblocca)' : '🔒 Blocca Turno'}
+              <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
+                <span className="font-black text-xs sm:text-sm uppercase tracking-wider block text-black">
+                  <span className="sm:hidden">{shift.shortLabel}</span>
+                  <span className="hidden sm:inline">{shift.label}</span>
+                </span>
+                <span
+                  className={`text-[10px] sm:text-[11px] font-medium hidden md:inline ${
+                    isSelected ? 'text-neutral-700 font-bold' : 'text-neutral-500'
+                  }`}
+                >
+                  ({shift.time})
+                </span>
+              </div>
+
+              <div className="flex items-center gap-1">
+                {isLocked && (
+                  <span className="text-[9px] sm:text-[10px] font-black uppercase text-[#e60000] bg-red-50 border border-red-300 px-1 py-0.2">
+                    LOCK
+                  </span>
+                )}
+                <span className="text-[11px] sm:text-sm font-black text-black px-1.5 sm:px-2 py-0.5 bg-neutral-100 border border-neutral-200">
+                  {totalPax}p
+                </span>
+              </div>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* 4. UTILITY STRIP: CAPACITY BREAKDOWN + LOCK SHIFT + SEARCH & STATUS FILTER */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-4 mb-4 border-b-2 border-black">
+        {/* Capacity Breakdown & Lock Toggle */}
+        <div className="flex items-center justify-between sm:justify-start gap-2 sm:gap-3 text-xs font-bold text-neutral-700 flex-wrap">
+          <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white border border-neutral-300">
+            <span className="text-neutral-400 uppercase text-[10px] sm:text-[11px] tracking-wider font-bold">Sala:</span>
+            <span className="text-black font-black text-sm sm:text-base">{shiftIndoorBooked}</span>
+            <span className="text-neutral-400 text-xs">/36</span>
+          </div>
+
+          <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white border border-neutral-300">
+            <span className="text-neutral-400 uppercase text-[10px] sm:text-[11px] tracking-wider font-bold">Est:</span>
+            <span
+              className={`font-black text-sm sm:text-base ${
+                stats?.isOutdoorActive ? 'text-emerald-700' : 'text-neutral-400 line-through'
+              }`}
+            >
+              {shiftOutdoorBooked}
+            </span>
+            <span className="text-neutral-400 text-xs">/35</span>
+            <span
+              className={`w-2 h-2 rounded-full ${
+                stats?.isOutdoorActive ? 'bg-emerald-500' : 'bg-red-500'
+              }`}
+            />
+          </div>
+
+          <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white border border-neutral-300">
+            <span className="text-neutral-400 uppercase text-[10px] sm:text-[11px] tracking-wider font-bold">Seduti:</span>
+            <span className="text-[#e60000] font-black text-sm sm:text-base">{shiftTotalSeatedPax}</span>
+            <span className="text-neutral-400 text-xs">pax</span>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => handleToggleLock(activeTab)}
+            className={`h-10 sm:h-11 px-3 text-xs font-black uppercase tracking-wider border-2 transition-all duration-75 cursor-pointer touch-manipulation select-none active:scale-95 ml-auto sm:ml-0 ${
+              isShiftLocked
+                ? 'border-[#e60000] bg-red-50 text-[#e60000] hover:bg-[#e60000] hover:text-white'
+                : 'border-neutral-300 bg-white text-neutral-800 hover:border-black hover:text-black'
+            }`}
+          >
+            {isShiftLocked ? '🔴 Bloccato' : '🔒 Blocca'}
+          </button>
+        </div>
+
+        {/* Status Filter & Fast Search */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+          {/* Status Filter Separate Pills (Responsive 3-col on mobile) */}
+          <div className="grid grid-cols-3 sm:flex items-center gap-1.5 sm:gap-2 select-none">
+            <button
+              type="button"
+              onClick={() => setStatusFilter('ALL')}
+              className={`h-11 sm:h-12 px-2 sm:px-3 text-xs sm:text-sm font-bold uppercase transition-all duration-75 cursor-pointer flex items-center justify-center gap-1.5 border-2 touch-manipulation select-none active:scale-95 ${
+                statusFilter === 'ALL'
+                  ? 'bg-noren-active text-black font-black border-black shadow-xs ring-1 ring-black'
+                  : 'border-neutral-300 bg-white text-neutral-600 hover:text-black hover:border-black'
+              }`}
+            >
+              <span>Tutti</span>
+              <span className={`text-[10px] sm:text-[11px] font-black px-1.5 py-0.2 ${statusFilter === 'ALL' ? 'bg-black text-white' : 'bg-neutral-100 text-neutral-600'}`}>
+                {totalInShift}
+              </span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setStatusFilter('WAITING')}
+              className={`h-11 sm:h-12 px-2 sm:px-3 text-xs sm:text-sm font-bold uppercase border-2 transition-all duration-75 cursor-pointer flex items-center justify-center gap-1 sm:gap-2 touch-manipulation select-none active:scale-95 ${
+                statusFilter === 'WAITING'
+                  ? 'border-amber-500 bg-amber-400 text-amber-950 font-black shadow-xs ring-1 ring-amber-500'
+                  : 'border-amber-200 text-amber-900 bg-amber-50/70 hover:bg-amber-100'
+              }`}
+            >
+              <span className="truncate">Attesa</span>
+              <span className={`text-[10px] sm:text-[11px] font-black px-1.5 py-0.2 ${statusFilter === 'WAITING' ? 'bg-amber-950 text-white' : 'bg-amber-100 text-amber-900'}`}>
+                {waitingInShift}
+              </span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setStatusFilter('SEATED')}
+              className={`h-11 sm:h-12 px-2 sm:px-3 text-xs sm:text-sm font-bold uppercase border-2 transition-all duration-75 cursor-pointer flex items-center justify-center gap-1 sm:gap-2 touch-manipulation select-none active:scale-95 ${
+                statusFilter === 'SEATED'
+                  ? 'border-emerald-700 bg-emerald-600 text-white font-black shadow-xs ring-1 ring-emerald-700'
+                  : 'border-emerald-200 text-emerald-900 bg-emerald-50/70 hover:bg-emerald-100'
+              }`}
+            >
+              <span className="truncate">Seduti</span>
+              <span className={`text-[10px] sm:text-[11px] font-black px-1.5 py-0.2 ${statusFilter === 'SEATED' ? 'bg-emerald-800 text-white' : 'bg-emerald-100 text-emerald-900'}`}>
+                {seatedInShift}
+              </span>
             </button>
           </div>
 
-          {/* Status Filter & Fast Search (Min 48px Touch Targets & >= 8px gap) */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
-            {/* Status Filter Separate Pills */}
-            <div className="flex items-center gap-2 select-none">
+          {/* Search Input */}
+          <div className="relative flex-1 sm:flex-initial">
+            <input
+              type="text"
+              placeholder="Cerca nome, tel, tavolo..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full sm:w-56 h-11 sm:h-12 px-3 pr-8 border-2 border-neutral-300 bg-white text-sm sm:text-base font-bold focus:border-black focus:outline-none transition-colors touch-manipulation"
+            />
+            {searchQuery && (
               <button
                 type="button"
-                onClick={() => setStatusFilter('ALL')}
-                className={`h-12 min-w-[75px] sm:min-w-[95px] px-3.5 text-xs sm:text-sm font-bold uppercase transition-all duration-75 cursor-pointer flex items-center justify-center gap-2 border-2 touch-manipulation select-none active:scale-95 ${
-                  statusFilter === 'ALL'
-                    ? 'bg-noren-active text-black font-black border-black shadow-xs ring-1 ring-black'
-                    : 'border-neutral-300 bg-white text-neutral-600 hover:text-black hover:border-black'
-                }`}
+                onClick={() => setSearchQuery('')}
+                className="absolute right-0 top-0 w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center text-sm font-black text-neutral-400 hover:text-black cursor-pointer touch-manipulation select-none active:scale-90"
               >
-                <span>Tutti</span>
-                <span className={`text-[11px] font-black px-1.5 py-0.5 ${statusFilter === 'ALL' ? 'bg-black text-white' : 'bg-neutral-100 text-neutral-600'}`}>
-                  {totalInShift}
-                </span>
+                ✕
               </button>
-              <button
-                type="button"
-                onClick={() => setStatusFilter('WAITING')}
-                className={`h-12 min-w-[100px] sm:min-w-[125px] px-3.5 text-xs sm:text-sm font-bold uppercase border-2 transition-all duration-75 cursor-pointer flex items-center justify-center gap-2 touch-manipulation select-none active:scale-95 ${
-                  statusFilter === 'WAITING'
-                    ? 'border-amber-500 bg-amber-400 text-amber-950 font-black shadow-xs ring-1 ring-amber-500'
-                    : 'border-amber-200 text-amber-900 bg-amber-50/70 hover:bg-amber-100'
-                }`}
-              >
-                <span>● In Attesa</span>
-                <span className={`text-[11px] font-black px-1.5 py-0.5 ${statusFilter === 'WAITING' ? 'bg-amber-950 text-white' : 'bg-amber-100 text-amber-900'}`}>
-                  {waitingInShift}
-                </span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setStatusFilter('SEATED')}
-                className={`h-12 min-w-[100px] sm:min-w-[125px] px-3.5 text-xs sm:text-sm font-bold uppercase border-2 transition-all duration-75 cursor-pointer flex items-center justify-center gap-2 touch-manipulation select-none active:scale-95 ${
-                  statusFilter === 'SEATED'
-                    ? 'border-emerald-700 bg-emerald-600 text-white font-black shadow-xs ring-1 ring-emerald-700'
-                    : 'border-emerald-200 text-emerald-900 bg-emerald-50/70 hover:bg-emerald-100'
-                }`}
-              >
-                <span>✓ Seduti</span>
-                <span className={`text-[11px] font-black px-1.5 py-0.5 ${statusFilter === 'SEATED' ? 'bg-emerald-800 text-white' : 'bg-emerald-100 text-emerald-900'}`}>
-                  {seatedInShift}
-                </span>
-              </button>
-            </div>
-
-            {/* Search Input (Min 48px height, 16px font prevents iOS zoom) */}
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Cerca nome, tel, tavolo..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full sm:w-60 h-12 px-3.5 pr-10 border-2 border-neutral-300 bg-white text-base font-bold focus:border-black focus:outline-none transition-colors touch-manipulation"
-              />
-              {searchQuery && (
-                <button
-                  type="button"
-                  onClick={() => setSearchQuery('')}
-                  className="absolute right-0 top-0 w-12 h-12 flex items-center justify-center text-sm font-black text-neutral-400 hover:text-black cursor-pointer touch-manipulation select-none active:scale-90"
-                >
-                  ✕
-                </button>
-              )}
-            </div>
+            )}
           </div>
         </div>
+      </div>
 
         {/* 5. BOOKINGS LIST ("REGISTRO TAVOLI" - OPTIMIZED FOR MOBILE TOUCH) */}
         {loading ? (
@@ -1015,21 +1016,21 @@ export default function AdminDashboardPage() {
                   <div className="pt-3 border-t border-neutral-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 select-none">
                     {/* CONFIRMED STATE */}
                     {!isSeated && !isLate && !isNoShow && (
-                      <>
+                      <div className="w-full flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                         <button
                           type="button"
                           onClick={() => handleUpdateStatus(b.id, 'SEATED')}
-                          className="w-full sm:w-auto h-14 sm:h-14 px-6 sm:px-8 bg-black hover:bg-[#e60000] text-white text-sm sm:text-base font-black uppercase tracking-wider transition-all duration-75 cursor-pointer flex items-center justify-center gap-2.5 shadow-sm touch-manipulation select-none active:scale-95"
+                          className="w-full sm:w-auto h-13 sm:h-14 px-6 sm:px-8 bg-black hover:bg-[#e60000] text-white text-sm sm:text-base font-black uppercase tracking-wider transition-all duration-75 cursor-pointer flex items-center justify-center gap-2.5 shadow-sm touch-manipulation select-none active:scale-95"
                         >
-                          <span className="text-lg">✓</span>
+                          <span className="text-base sm:text-lg">✓</span>
                           <span>Accogli / Siedi al Tavolo</span>
                         </button>
 
-                        <div className="flex items-center justify-end gap-2.5 sm:gap-3 flex-wrap sm:flex-nowrap">
+                        <div className="grid grid-cols-3 sm:flex items-center gap-1.5 sm:gap-3">
                           <button
                             type="button"
                             onClick={() => handleUpdateStatus(b.id, 'LATE')}
-                            className="h-12 px-4 text-xs sm:text-sm font-bold uppercase border-2 border-neutral-300 bg-white text-neutral-700 hover:border-black hover:text-black transition-all duration-75 cursor-pointer touch-manipulation select-none active:scale-95"
+                            className="h-11 sm:h-12 px-2 sm:px-4 text-xs sm:text-sm font-bold uppercase border-2 border-neutral-300 bg-white text-neutral-700 hover:border-black hover:text-black transition-all duration-75 cursor-pointer touch-manipulation select-none active:scale-95 flex items-center justify-center"
                             title="Segna in ritardo"
                           >
                             ⏳ Ritardo
@@ -1037,7 +1038,7 @@ export default function AdminDashboardPage() {
                           <button
                             type="button"
                             onClick={() => handleUpdateStatus(b.id, 'NOSHOW')}
-                            className="h-12 px-4 text-xs sm:text-sm font-bold uppercase border-2 border-neutral-300 bg-white text-neutral-500 hover:border-black hover:text-black transition-all duration-75 cursor-pointer touch-manipulation select-none active:scale-95"
+                            className="h-11 sm:h-12 px-2 sm:px-4 text-xs sm:text-sm font-bold uppercase border-2 border-neutral-300 bg-white text-neutral-500 hover:border-black hover:text-black transition-all duration-75 cursor-pointer touch-manipulation select-none active:scale-95 flex items-center justify-center"
                             title="Segna No-Show"
                           >
                             ✕ No-Show
@@ -1049,31 +1050,31 @@ export default function AdminDashboardPage() {
                                 handleUpdateStatus(b.id, 'CANCELLED');
                               }
                             }}
-                            className="h-12 px-4 text-xs sm:text-sm font-bold uppercase border-2 border-neutral-200 bg-white text-neutral-400 hover:text-[#e60000] hover:border-red-300 transition-all duration-75 cursor-pointer touch-manipulation select-none active:scale-95"
+                            className="h-11 sm:h-12 px-2 sm:px-4 text-xs sm:text-sm font-bold uppercase border-2 border-neutral-200 bg-white text-neutral-400 hover:text-[#e60000] hover:border-red-300 transition-all duration-75 cursor-pointer touch-manipulation select-none active:scale-95 flex items-center justify-center"
                             title="Elimina"
                           >
                             Elimina
                           </button>
                         </div>
-                      </>
+                      </div>
                     )}
 
                     {/* SEATED STATE */}
                     {isSeated && (
-                      <div className="w-full flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-                        <span className="h-12 px-4 flex items-center justify-center sm:justify-start gap-2.5 bg-emerald-50 text-emerald-900 text-xs sm:text-sm font-black uppercase tracking-wider border-2 border-emerald-400">
+                      <div className="w-full flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
+                        <span className="h-11 sm:h-12 px-3 sm:px-4 flex items-center justify-center sm:justify-start gap-2 bg-emerald-50 text-emerald-900 text-xs sm:text-sm font-black uppercase tracking-wider border-2 border-emerald-400">
                           <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 animate-pulse"></span>
                           Al Tavolo (Seduti)
                         </span>
 
-                        <div className="flex items-center justify-end gap-2.5 sm:gap-3">
+                        <div className="grid grid-cols-2 sm:flex items-center gap-2 sm:gap-3">
                           <button
                             type="button"
                             onClick={() => handleUpdateStatus(b.id, 'CONFIRMED')}
-                            className="h-12 px-4 border-2 border-neutral-300 bg-white hover:border-black text-xs sm:text-sm font-bold uppercase transition-all duration-75 cursor-pointer touch-manipulation select-none active:scale-95"
+                            className="h-11 sm:h-12 px-3 sm:px-4 border-2 border-neutral-300 bg-white hover:border-black text-xs sm:text-sm font-bold uppercase transition-all duration-75 cursor-pointer touch-manipulation select-none active:scale-95 flex items-center justify-center"
                             title="Riporta in attesa"
                           >
-                            Riporta in attesa
+                            In Attesa
                           </button>
                           <button
                             type="button"
@@ -1082,7 +1083,7 @@ export default function AdminDashboardPage() {
                                 handleUpdateStatus(b.id, 'CANCELLED');
                               }
                             }}
-                            className="h-12 px-4 border-2 border-neutral-200 bg-white text-neutral-400 hover:text-[#e60000] hover:border-red-300 text-xs sm:text-sm font-bold uppercase transition-all duration-75 cursor-pointer touch-manipulation select-none active:scale-95"
+                            className="h-11 sm:h-12 px-3 sm:px-4 border-2 border-neutral-200 bg-white text-neutral-400 hover:text-[#e60000] hover:border-red-300 text-xs sm:text-sm font-bold uppercase transition-all duration-75 cursor-pointer touch-manipulation select-none active:scale-95 flex items-center justify-center"
                             title="Elimina"
                           >
                             ✕ Elimina
@@ -1093,25 +1094,25 @@ export default function AdminDashboardPage() {
 
                     {/* LATE STATE */}
                     {isLate && (
-                      <>
-                        <div className="flex items-center gap-2.5">
-                          <span className="h-12 px-4 flex items-center text-xs sm:text-sm font-black uppercase tracking-wider bg-red-50 text-[#e60000] border-2 border-[#e60000]">
+                      <div className="w-full flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
+                        <div className="flex items-center gap-2">
+                          <span className="h-11 sm:h-12 px-3 sm:px-4 flex items-center text-xs sm:text-sm font-black uppercase tracking-wider bg-red-50 text-[#e60000] border-2 border-[#e60000] shrink-0">
                             ⏳ In Ritardo
                           </span>
                           <button
                             type="button"
                             onClick={() => handleUpdateStatus(b.id, 'SEATED')}
-                            className="h-12 px-5 bg-black text-white hover:bg-[#e60000] text-xs sm:text-sm font-black uppercase tracking-wider transition-all duration-75 cursor-pointer touch-manipulation select-none active:scale-95"
+                            className="h-11 sm:h-12 px-4 sm:px-5 bg-black text-white hover:bg-[#e60000] text-xs sm:text-sm font-black uppercase tracking-wider transition-all duration-75 cursor-pointer touch-manipulation select-none active:scale-95 flex-1 sm:flex-initial"
                           >
                             ✓ Siedi
                           </button>
                         </div>
 
-                        <div className="flex items-center gap-2.5 sm:gap-3 justify-end">
+                        <div className="grid grid-cols-2 sm:flex items-center gap-2 sm:gap-3">
                           <button
                             type="button"
                             onClick={() => handleUpdateStatus(b.id, 'NOSHOW')}
-                            className="h-12 px-4 text-xs sm:text-sm font-bold uppercase border-2 border-neutral-300 bg-white text-neutral-600 hover:border-black hover:text-black transition-all duration-75 cursor-pointer touch-manipulation select-none active:scale-95"
+                            className="h-11 sm:h-12 px-3 sm:px-4 text-xs sm:text-sm font-bold uppercase border-2 border-neutral-300 bg-white text-neutral-600 hover:border-black hover:text-black transition-all duration-75 cursor-pointer touch-manipulation select-none active:scale-95 flex items-center justify-center"
                           >
                             No-Show
                           </button>
@@ -1122,26 +1123,26 @@ export default function AdminDashboardPage() {
                                 handleUpdateStatus(b.id, 'CANCELLED');
                               }
                             }}
-                            className="h-12 px-4 text-xs sm:text-sm font-bold uppercase border-2 border-neutral-200 bg-white text-neutral-400 hover:text-[#e60000] hover:border-red-300 transition-all duration-75 cursor-pointer touch-manipulation select-none active:scale-95"
+                            className="h-11 sm:h-12 px-3 sm:px-4 text-xs sm:text-sm font-bold uppercase border-2 border-neutral-200 bg-white text-neutral-400 hover:text-[#e60000] hover:border-red-300 transition-all duration-75 cursor-pointer touch-manipulation select-none active:scale-95 flex items-center justify-center"
                             title="Elimina"
                           >
                             ✕ Elimina
                           </button>
                         </div>
-                      </>
+                      </div>
                     )}
 
                     {/* NO-SHOW STATE */}
                     {isNoShow && (
-                      <div className="w-full flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-                        <span className="h-12 px-4 flex items-center justify-center sm:justify-start text-xs sm:text-sm font-bold uppercase text-neutral-500 bg-neutral-100 border-2 border-neutral-300">
+                      <div className="w-full flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
+                        <span className="h-11 sm:h-12 px-3 sm:px-4 flex items-center justify-center sm:justify-start text-xs sm:text-sm font-bold uppercase text-neutral-500 bg-neutral-100 border-2 border-neutral-300">
                           ✕ No-Show
                         </span>
-                        <div className="flex items-center justify-end gap-2.5 sm:gap-3">
+                        <div className="grid grid-cols-2 sm:flex items-center gap-2 sm:gap-3">
                           <button
                             type="button"
                             onClick={() => handleUpdateStatus(b.id, 'CONFIRMED')}
-                            className="h-12 px-4 border-2 border-neutral-300 bg-white hover:border-black text-xs sm:text-sm font-bold uppercase transition-all duration-75 cursor-pointer touch-manipulation select-none active:scale-95"
+                            className="h-11 sm:h-12 px-3 sm:px-4 border-2 border-neutral-300 bg-white hover:border-black text-xs sm:text-sm font-bold uppercase transition-all duration-75 cursor-pointer touch-manipulation select-none active:scale-95 flex items-center justify-center"
                           >
                             Ripristina
                           </button>
@@ -1152,7 +1153,7 @@ export default function AdminDashboardPage() {
                                 handleUpdateStatus(b.id, 'CANCELLED');
                               }
                             }}
-                            className="h-12 px-4 border-2 border-neutral-200 bg-white text-neutral-400 hover:text-[#e60000] hover:border-red-300 text-xs sm:text-sm font-bold uppercase transition-all duration-75 cursor-pointer touch-manipulation select-none active:scale-95"
+                            className="h-11 sm:h-12 px-3 sm:px-4 border-2 border-neutral-200 bg-white text-neutral-400 hover:text-[#e60000] hover:border-red-300 text-xs sm:text-sm font-bold uppercase transition-all duration-75 cursor-pointer touch-manipulation select-none active:scale-95 flex items-center justify-center"
                             title="Elimina"
                           >
                             ✕ Elimina
@@ -1171,9 +1172,9 @@ export default function AdminDashboardPage() {
       {/* 6. TELEPHONE / WALK-IN MODAL (VERBAL CONVERSATIONAL FLOW - TOUCH POS OPTIMIZED) */}
       {showWalkInModal && (
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-2 sm:p-4 backdrop-blur-xs font-sans overflow-y-auto">
-          <div className="bg-white border-2 border-black max-w-xl w-full p-4 sm:p-7 animate-in fade-in duration-150 my-auto shadow-2xl">
+          <div className="bg-white border-2 border-black max-w-xl w-full max-h-[92dvh] flex flex-col p-4 sm:p-6 animate-in fade-in duration-150 my-auto shadow-2xl">
             {/* Modal Header */}
-            <div className="flex justify-between items-start mb-4 sm:mb-5 border-b border-black pb-3">
+            <div className="flex justify-between items-start mb-3 sm:mb-4 border-b border-black pb-3 shrink-0">
               <div>
                 <span className="text-[10px] sm:text-xs text-[#e60000] font-black uppercase tracking-widest block">
                   📞 PRESA RAPIDA AL TELEFONO & WALK-IN
@@ -1188,14 +1189,14 @@ export default function AdminDashboardPage() {
               <button
                 type="button"
                 onClick={() => setShowWalkInModal(false)}
-                className="w-12 h-12 flex items-center justify-center border-2 border-neutral-300 hover:border-black bg-white text-xl font-black cursor-pointer touch-manipulation select-none active:scale-95 transition-all"
+                className="w-11 h-11 flex items-center justify-center border-2 border-neutral-300 hover:border-black bg-white text-xl font-black cursor-pointer touch-manipulation select-none active:scale-95 transition-all"
                 title="Chiudi"
               >
                 ✕
               </button>
             </div>
 
-            <form onSubmit={handleSaveWalkIn} className="space-y-4 sm:space-y-5">
+            <form onSubmit={handleSaveWalkIn} className="flex-1 overflow-y-auto space-y-4 sm:space-y-5 pr-1 -mr-1">
               {/* 1. QUANTE PERSONE? (MIN 56PX POS BUTTONS) */}
               <div>
                 <div className="flex justify-between items-baseline mb-1.5">
@@ -1706,14 +1707,14 @@ export default function AdminDashboardPage() {
           {/* Mobile Glance */}
           <div className="sm:hidden flex flex-col">
             <span className="text-[10px] font-black uppercase tracking-widest text-neutral-500">
-              {activeTab === 'lunch' ? 'PRANZO' : activeTab === 'dinner_1' ? '1° TURNO CENA' : '2° TURNO CENA'}
+              {activeTab === 'lunch' ? 'PRANZO' : activeTab === 'dinner_1' ? '1° CENA' : '2° CENA'}
             </span>
-            <span className="text-sm font-black text-black">
+            <span className="text-xs font-black text-black">
               {currentTabBookings.reduce((sum: number, b: Booking) => sum + b.guestCount, 0)} PAX ({currentTabBookings.length} tav.)
             </span>
           </div>
 
-          {/* Right: Prominent 56px POS Quick Booking Action */}
+          {/* Right: Prominent 48px-56px POS Quick Booking Action */}
           <button
             type="button"
             onClick={() => {
@@ -1722,10 +1723,11 @@ export default function AdminDashboardPage() {
               setWalkInTime(activeTab === 'lunch' ? '13:00' : activeTab === 'dinner_1' ? '19:30' : '21:30');
               setShowWalkInModal(true);
             }}
-            className="h-14 sm:h-14 px-5 sm:px-8 bg-[#e60000] hover:bg-black text-white text-xs sm:text-base font-black uppercase tracking-wider transition-all duration-75 cursor-pointer flex items-center justify-center gap-2.5 shadow-md shrink-0 touch-manipulation select-none active:scale-95 border-2 border-black"
+            className="h-12 sm:h-14 px-3.5 sm:px-8 bg-[#e60000] hover:bg-black text-white text-xs sm:text-base font-black uppercase tracking-wider transition-all duration-75 cursor-pointer flex items-center justify-center gap-2 shadow-md shrink-0 touch-manipulation select-none active:scale-95 border-2 border-black"
           >
-            <span className="text-xl leading-none">📞</span>
-            <span>+ NUOVA PRENOTAZIONE / WALK-IN</span>
+            <span className="text-base sm:text-xl leading-none">📞</span>
+            <span className="sm:hidden">+ PRENOTA</span>
+            <span className="hidden sm:inline">+ NUOVA PRENOTAZIONE / WALK-IN</span>
           </button>
         </div>
       </aside>

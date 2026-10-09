@@ -17,7 +17,7 @@ const DEFAULT_SETTINGS: Settings = {
   instagram: 'handa_mushi',
   maxCapacityIndoor: 36,
   maxCapacityOutdoor: 35,
-  maxGuestsOnline: 6,
+  maxGuestsOnline: 4,
   closedDays: [], // Aperto tutti i giorni (Domenica solo cena)
   outdoorEnabledByDefault: true,
   outdoorStatusByDate: {},
@@ -426,17 +426,48 @@ export async function toggleOutdoorStatus(date: string, enabled?: boolean): Prom
   return nextValue;
 }
 
+export function getRomeTimeInfo() {
+  const formatter = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Europe/Rome',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23',
+  });
+  const parts = formatter.formatToParts(new Date());
+  const y = parts.find((p) => p.type === 'year')?.value || '';
+  const m = parts.find((p) => p.type === 'month')?.value || '';
+  const d = parts.find((p) => p.type === 'day')?.value || '';
+  const hh = parts.find((p) => p.type === 'hour')?.value || '00';
+  const mm = parts.find((p) => p.type === 'minute')?.value || '00';
+  return {
+    todayIso: `${y}-${m}-${d}`,
+    currentTime: `${hh}:${mm}`,
+    currentMinutes: Number(hh) * 60 + Number(mm),
+  };
+}
+
+export function parseTimeToMinutes(t: string): number {
+  const [h, m] = t.split(':').map(Number);
+  return (h || 0) * 60 + (m || 0);
+}
+
 export async function getShiftAvailability(date: string) {
   const settings = await getSettings();
+  const { todayIso, currentMinutes } = getRomeTimeInfo();
+  const isPastDate = date < todayIso;
+  const isToday = date === todayIso;
 
   // Parse date safely in local time
   const [y, m, d] = date.split('-').map(Number);
   const dateObj = new Date(y, m - 1, d);
   const dayOfWeek = dateObj.getDay(); // 0 = Sunday, 1 = Monday, ... 6 = Saturday
 
-  const isClosed = settings.closedDays.includes(dayOfWeek);
+  const isClosed = isPastDate || settings.closedDays.includes(dayOfWeek);
   const lockedForDate = settings.lockedShifts[date] || [];
-  const bookingsForDate = await getBookingsByDate(date);
+  const bookingsForDate = isPastDate ? [] : await getBookingsByDate(date);
 
   // Weather / Dehors condition for this date
   const isOutdoorActive = settings.outdoorStatusByDate[date] ?? settings.outdoorEnabledByDefault;
@@ -448,6 +479,20 @@ export async function getShiftAvailability(date: string) {
   const maxOutdoor = isOutdoorActive ? settings.maxCapacityOutdoor : 0; // 35 or 0
 
   const shiftsAvailability = Object.values(settings.shifts).map((shift) => {
+    if (isPastDate) {
+      return {
+        ...shift,
+        available: false,
+        reason: 'Data passata',
+        availableSlots: [],
+        bookedIndoor: 0,
+        bookedOutdoor: 0,
+        remainingIndoor: 0,
+        remainingOutdoor: 0,
+        remainingTotal: 0,
+      };
+    }
+
     if (!shift.enabled) {
       return {
         ...shift,
@@ -502,6 +547,28 @@ export async function getShiftAvailability(date: string) {
       };
     }
 
+    // Filter available slots for today if some have already passed
+    // Allow slots up to 10 minutes past arrival (buffer for last-minute bookings)
+    let validSlots = shift.availableSlots;
+    if (isToday) {
+      validSlots = shift.availableSlots.filter(
+        (slot) => parseTimeToMinutes(slot) >= currentMinutes - 10
+      );
+      if (validSlots.length === 0) {
+        return {
+          ...shift,
+          available: false,
+          reason: 'Turno concluso per oggi',
+          availableSlots: [],
+          bookedIndoor: 0,
+          bookedOutdoor: 0,
+          remainingIndoor: 0,
+          remainingOutdoor: 0,
+          remainingTotal: 0,
+        };
+      }
+    }
+
     // Filter bookings for this shift
     const shiftBookings = bookingsForDate.filter((b) => b.shiftId === shift.id);
 
@@ -522,6 +589,7 @@ export async function getShiftAvailability(date: string) {
 
     return {
       ...shift,
+      availableSlots: validSlots,
       available,
       reason: available ? undefined : 'Posti esauriti',
       bookedIndoor,

@@ -14,8 +14,15 @@ export const translations = {
 
     // Step 1: Persone
     step1Title: '1. Numero persone',
-    step1GroupNotice: 'Tavoli 7+?',
-    step1GroupAction: 'Chiama il locale',
+    step1GroupNotice: '5 o più persone?',
+    step1GroupAction: 'Contattaci',
+    step1GroupModalTitle: 'Tavoli da 5 o più persone',
+    step1GroupModalSubtitle: 'PRENOTAZIONI GRUPPI & GRANDI TAVOLI',
+    step1GroupModalDesc: 'Per garantire una sistemazione comoda e organizzare al meglio i tavoli e i coperti, le prenotazioni da 5 o più persone vengono gestite direttamente con il nostro staff via telefono, WhatsApp o email.',
+    step1GroupCall: 'Chiama al locale (349 233 0492)',
+    step1GroupWhatsapp: 'Scrivi su WhatsApp',
+    step1GroupEmail: 'Invia una Email',
+    step1GroupClose: 'Chiudi',
 
     // Step 2: Data
     step2Title: '2. Scegli data',
@@ -144,8 +151,15 @@ export const translations = {
 
     // Step 1: Persone
     step1Title: '1. Number of guests',
-    step1GroupNotice: 'Party of 7+?',
-    step1GroupAction: 'Call us directly',
+    step1GroupNotice: '5 or more guests?',
+    step1GroupAction: 'Contact us',
+    step1GroupModalTitle: 'Bookings for 5 or more guests',
+    step1GroupModalSubtitle: 'LARGE GROUPS & PARTIES',
+    step1GroupModalDesc: 'To ensure a comfortable seating arrangement and the best dining experience, bookings of 5 or more guests are arranged directly with our team via phone, WhatsApp or email.',
+    step1GroupCall: 'Call the restaurant (+39 349 233 0492)',
+    step1GroupWhatsapp: 'Message on WhatsApp',
+    step1GroupEmail: 'Send an Email',
+    step1GroupClose: 'Close',
 
     // Step 2: Data
     step2Title: '2. Choose date',
