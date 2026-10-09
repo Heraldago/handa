@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Parametri mancanti' }, { status: 400 });
     }
 
-    const settings = getSettings();
+    const settings = await getSettings();
     if (!settings.lockedShifts[date]) {
       settings.lockedShifts[date] = [];
     }
@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     }
 
     settings.lockedShifts[date] = currentLocked;
-    saveSettings(settings);
+    await saveSettings(settings);
 
     return NextResponse.json({
       success: true,

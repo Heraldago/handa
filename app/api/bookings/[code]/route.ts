@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getBookingByCode, cancelBookingByCode } from '@/lib/db';
+import { sendStaffBookingNotification } from '@/lib/notifications';
 
 export async function GET(
   request: NextRequest,
@@ -11,7 +12,7 @@ export async function GET(
       return NextResponse.json({ error: 'Codice mancante' }, { status: 400 });
     }
 
-    const booking = getBookingByCode(code);
+    const booking = await getBookingByCode(code);
     if (!booking) {
       return NextResponse.json({ error: 'Prenotazione non trovata' }, { status: 404 });
     }
@@ -32,10 +33,18 @@ export async function PATCH(
     const body = await request.json();
 
     if (body.action === 'CANCEL') {
-      const ok = cancelBookingByCode(code);
+      const existing = await getBookingByCode(code);
+      const ok = await cancelBookingByCode(code);
       if (!ok) {
         return NextResponse.json({ error: 'Prenotazione non trovata' }, { status: 404 });
       }
+
+      if (existing) {
+        sendStaffBookingNotification(existing, 'CANCELLED').catch((err) =>
+          console.error('Cancellation notification error:', err)
+        );
+      }
+
       return NextResponse.json({ success: true, message: 'Prenotazione annullata con successo' });
     }
 

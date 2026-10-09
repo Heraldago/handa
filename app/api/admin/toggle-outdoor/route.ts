@@ -10,8 +10,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Data mancante' }, { status: 400 });
     }
 
-    const nextOutdoorActive = toggleOutdoorStatus(date, enabled);
-    const availability = getShiftAvailability(date);
+    const nextOutdoorActive = await toggleOutdoorStatus(date, enabled);
+    const availability = await getShiftAvailability(date);
 
     return NextResponse.json({
       success: true,

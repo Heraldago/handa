@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Data non fornita' }, { status: 400 });
     }
 
-    const availability = getShiftAvailability(date);
+    const availability = await getShiftAvailability(date);
     return NextResponse.json(availability);
   } catch (error) {
     console.error('Error fetching availability:', error);

@@ -7,9 +7,9 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const date = searchParams.get('date') || new Date().toISOString().split('T')[0];
 
-    const bookings = getBookingsByDate(date);
-    const settings = getSettings();
-    const availability = getShiftAvailability(date);
+    const bookings = await getBookingsByDate(date);
+    const settings = await getSettings();
+    const availability = await getShiftAvailability(date);
 
     // Calculate quick stats
     const totalCovers = bookings.reduce((sum, b) => sum + b.guestCount, 0);
@@ -58,10 +58,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Dati incompleti per walk-in' }, { status: 400 });
     }
 
-    const settings = getSettings();
+    const settings = await getSettings();
     const shiftConfig = settings.shifts[shiftId as ShiftId];
 
-    const booking = createBooking({
+    const booking = await createBooking({
       date,
       shiftId: shiftId as ShiftId,
       shiftName: shiftConfig ? shiftConfig.name : shiftId,

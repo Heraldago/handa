@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { Booking, BookingStatus, ShiftId, Settings, SeatingArea } from '@/lib/types';
 
@@ -31,6 +31,45 @@ export default function AdminDashboardPage() {
   // Table assignment modal
   const [tableModalBooking, setTableModalBooking] = useState<Booking | null>(null);
   const [customTableInput, setCustomTableInput] = useState<string>('');
+
+  // Real-time audio chime & toast notification
+  const [newBookingToast, setNewBookingToast] = useState<Booking | null>(null);
+  const knownBookingIdsRef = useRef<Set<string>>(new Set());
+  const initialLoadDoneRef = useRef<boolean>(false);
+
+  const playNotificationChime = () => {
+    try {
+      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const now = ctx.currentTime;
+      const osc1 = ctx.createOscillator();
+      const osc2 = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc1.type = 'sine';
+      osc1.frequency.setValueAtTime(587.33, now); // D5
+      osc1.frequency.exponentialRampToValueAtTime(880, now + 0.12); // A5
+
+      osc2.type = 'triangle';
+      osc2.frequency.setValueAtTime(880, now + 0.12);
+
+      gain.gain.setValueAtTime(0.001, now);
+      gain.gain.exponentialRampToValueAtTime(0.25, now + 0.05);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.9);
+
+      osc1.connect(gain);
+      osc2.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc1.start(now);
+      osc2.start(now + 0.12);
+      osc1.stop(now + 0.9);
+      osc2.stop(now + 0.9);
+    } catch (e) {
+      console.debug('Chime audio blocked by browser policy:', e);
+    }
+  };
 
   const getRelativeIsoDate = (offsetDays: number): string => {
     const d = new Date();
@@ -113,7 +152,24 @@ export default function AdminDashboardPage() {
       const res = await fetch(`/api/admin/bookings?date=${selectedDate}`);
       const data = await res.json();
       if (res.ok) {
-        setBookings(data.bookings || []);
+        const fetchedBookings: Booking[] = data.bookings || [];
+
+        // If not initial load, detect if any newly arrived booking exists
+        if (initialLoadDoneRef.current && !showLoading) {
+          const fresh = fetchedBookings.find(
+            (b) => !knownBookingIdsRef.current.has(b.id) && b.status === 'CONFIRMED'
+          );
+          if (fresh) {
+            playNotificationChime();
+            setNewBookingToast(fresh);
+          }
+        }
+
+        // Register all fetched booking IDs
+        fetchedBookings.forEach((b) => knownBookingIdsRef.current.add(b.id));
+        initialLoadDoneRef.current = true;
+
+        setBookings(fetchedBookings);
         setSettings(data.settings);
         setAvailability(data.availability);
         setStats(data.stats);
@@ -442,7 +498,26 @@ export default function AdminDashboardPage() {
         </div>
       </header>
 
-      {/* 2. OPERATIONS COMMAND CENTER (BIG DATE ORIENTATION & MASTER ESTERNO TOGGLE) */}
+      {/* REAL-TIME NOTIFICATION BANNER (TOUCH-FRIENDLY & INSTANT) */}
+      {newBookingToast && (
+        <div className="bg-black text-white px-4 sm:px-8 py-3.5 border-b-2 border-[#e60000] flex flex-wrap items-center justify-between gap-3 sticky top-[57px] z-30 shadow-xl animate-in slide-in-from-top-2 duration-150">
+          <div className="flex items-center gap-3 text-xs sm:text-sm font-black uppercase tracking-wider">
+            <span className="w-3.5 h-3.5 rounded-full bg-[#e60000] animate-ping shrink-0" />
+            <span>
+              🔔 Nuova Prenotazione Ricevuta:{' '}
+              <span className="text-[#e60000] underline">{newBookingToast.customerName}</span>{' '}
+              ({newBookingToast.guestCount} PAX) alle {newBookingToast.time} • #{newBookingToast.code}
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setNewBookingToast(null)}
+            className="px-3 py-1.5 border-2 border-white/40 hover:border-white text-xs font-black uppercase tracking-wider cursor-pointer touch-manipulation active:scale-95 transition-colors"
+          >
+            Chiudi ✕
+          </button>
+        </div>
+      )}
       <div className="max-w-6xl mx-auto px-4 sm:px-8 pt-4 sm:pt-6">
         <div className="pb-5 sm:pb-6 mb-5 sm:mb-6 border-b-2 border-black flex flex-col gap-4 sm:gap-5">
           {/* TOP ROW: FAST DAY JUMPERS & DATE PICKER (FULL WIDTH, NEVER CLIPPED) */}

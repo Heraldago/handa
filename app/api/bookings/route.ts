@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createBooking, getShiftAvailability, getSettings } from '@/lib/db';
+import { sendStaffBookingNotification } from '@/lib/notifications';
 import { ShiftId, SeatingArea } from '@/lib/types';
 
 export async function POST(request: NextRequest) {
@@ -26,7 +27,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const settings = getSettings();
+    const settings = await getSettings();
     const guests = parseInt(guestCount, 10);
 
     if (isNaN(guests) || guests < 1) {
@@ -43,7 +44,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check shift availability
-    const avail = getShiftAvailability(date);
+    const avail = await getShiftAvailability(date);
     if (avail.isClosed) {
       return NextResponse.json({ error: 'Siamo chiusi in questa data.' }, { status: 400 });
     }
@@ -94,7 +95,7 @@ export async function POST(request: NextRequest) {
     const shiftConfig = settings.shifts[shiftId as ShiftId];
     const finalTime = time || (shiftConfig?.availableSlots?.[0] ?? '19:30');
 
-    const booking = createBooking({
+    const booking = await createBooking({
       date,
       shiftId: shiftId as ShiftId,
       shiftName: shiftConfig ? shiftConfig.name : shiftId,
@@ -107,6 +108,11 @@ export async function POST(request: NextRequest) {
       dietary: Array.isArray(dietary) ? dietary : [],
       notes: notes ? notes.trim() : '',
     });
+
+    // Send instant staff notification (Telegram / Email)
+    sendStaffBookingNotification(booking, 'NEW').catch((err) =>
+      console.error('Notification error in POST /api/bookings:', err)
+    );
 
     return NextResponse.json({
       success: true,
