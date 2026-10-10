@@ -152,6 +152,7 @@ async function sendEmailNotification(
         </div>
       `;
 
+    // Send staff notification
     await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
@@ -165,6 +166,83 @@ async function sendEmailNotification(
         html,
       }),
     });
+
+    // Send confirmation to customer if customerEmail is provided
+    if (booking.customerEmail && booking.customerEmail.includes('@')) {
+      const customerSubject = isNew
+        ? `Conferma Prenotazione Tavolo #${booking.code} • HANDĀ`
+        : `Cancellazione Prenotazione #${booking.code} • HANDĀ`;
+
+      const customerHtml = isNew
+        ? `
+          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #111; max-width: 580px; margin: 0 auto; padding: 24px; border: 2px solid #000; background-color: #faf8f5;">
+            <div style="border-bottom: 2px solid #000; padding-bottom: 12px; margin-bottom: 20px;">
+              <h1 style="margin: 0; font-size: 26px; text-transform: uppercase; font-weight: 900; letter-spacing: -1px;">
+                HANDĀ<span style="color: #e60000;">.</span>
+              </h1>
+              <p style="margin: 4px 0 0 0; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #666; font-weight: bold;">
+                Cicchetteria Asiatica • Made in Portello (Padova)
+              </p>
+            </div>
+
+            <div style="background-color: #ffffff; border: 2px solid #000; padding: 20px; margin-bottom: 20px;">
+              <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+                <span style="font-size: 12px; font-weight: bold; text-transform: uppercase; color: #059669; background: #ecfdf5; padding: 4px 8px; border: 1px solid #a7f3d0;">
+                  ✓ PRENOTAZIONE CONFERMATA
+                </span>
+                <span style="font-size: 22px; font-weight: 900; color: #000;">
+                  #${booking.code}
+                </span>
+              </div>
+
+              <p style="margin: 8px 0; font-size: 15px;"><strong>Nome:</strong> ${booking.customerName}</p>
+              <p style="margin: 8px 0; font-size: 15px;"><strong>Persone:</strong> ${booking.guestCount} ${booking.guestCount === 1 ? 'persona' : 'persone'}</p>
+              <p style="margin: 8px 0; font-size: 15px;"><strong>Data e Orario:</strong> <span style="color: #e60000; font-weight: bold;">${booking.date} alle ${booking.time}</span> (${booking.shiftName})</p>
+              <p style="margin: 8px 0; font-size: 15px;"><strong>Zona:</strong> ${areaLabel}</p>
+              <p style="margin: 8px 0; font-size: 15px;"><strong>Indirizzo:</strong> Via del Portello, 32 - Padova</p>
+              ${booking.dietary && booking.dietary.length > 0 ? `<p style="margin: 8px 0; font-size: 14px; color: #e60000;"><strong>Note / Allergie:</strong> ${booking.dietary.join(', ')}</p>` : ''}
+            </div>
+
+            <div style="background: #f4f4f5; padding: 12px 16px; border-left: 4px solid #000; font-size: 12px; color: #444; line-height: 1.5; margin-bottom: 24px;">
+              <strong>Info Servizio:</strong> Tolleranza di arrivo 15 minuti. Per il 1° turno cena, il tavolo va liberato entro le 21:15 per permettere la preparazione del secondo turno.
+            </div>
+
+            <div style="text-align: center; margin-bottom: 20px;">
+              <a href="https://handa-rose.vercel.app/prenotazione/${booking.code}" style="display: inline-block; background-color: #000; color: #ffffff; text-decoration: none; padding: 14px 28px; font-weight: 900; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; border: 2px solid #000;">
+                Visualizza o Cancella Prenotazione →
+              </a>
+            </div>
+
+            <p style="text-align: center; font-size: 11px; color: #888; margin: 0;">
+              Se hai bisogno di contattarci: Tel. 349 233 0492 • Via del Portello 32, Padova
+            </p>
+          </div>
+        `
+        : `
+          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #111; max-width: 580px; margin: 0 auto; padding: 24px; border: 2px solid #e60000; background-color: #faf8f5;">
+            <h2 style="margin-top: 0; color: #e60000; text-transform: uppercase;">HANDĀ • Prenotazione Annullata</h2>
+            <p style="font-size: 15px;">Ciao ${booking.customerName}, la tua prenotazione <strong>#${booking.code}</strong> per il <strong>${booking.date} alle ${booking.time}</strong> è stata annullata con successo.</p>
+            <p style="font-size: 13px; color: #666;">Il tavolo è stato rimesso a disposizione. Speriamo di rivederti presto!</p>
+            <div style="margin-top: 20px;">
+              <a href="https://handa-rose.vercel.app" style="display: inline-block; background: #000; color: #fff; padding: 12px 20px; text-decoration: none; font-weight: bold; text-transform: uppercase; font-size: 12px;">Effettua una nuova prenotazione</a>
+            </div>
+          </div>
+        `;
+
+      await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${config.resendApiKey}`,
+        },
+        body: JSON.stringify({
+          from: 'HANDĀ Prenotazioni <prenotazioni@handa-izakaya.it>',
+          to: [booking.customerEmail],
+          subject: customerSubject,
+          html: customerHtml,
+        }),
+      });
+    }
   } catch (error) {
     console.error('Failed to send Email notification:', error);
   }

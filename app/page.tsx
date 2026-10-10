@@ -87,6 +87,8 @@ export default function BookingPage() {
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successBooking, setSuccessBooking] = useState<BookingResult | null>(null);
+  const [cancellingImmediate, setCancellingImmediate] = useState<boolean>(false);
+  const [immediateCancelled, setImmediateCancelled] = useState<boolean>(false);
   const [copiedShare, setCopiedShare] = useState<boolean>(false);
   const [showGroupModal, setShowGroupModal] = useState<boolean>(false);
 
@@ -235,11 +237,75 @@ export default function BookingPage() {
       }
 
       setSuccessBooking(data.booking);
+      setImmediateCancelled(false);
+
+      // Save to device local storage for quick retrieval
+      try {
+        const stored = localStorage.getItem('handa_user_bookings');
+        const list = stored ? JSON.parse(stored) : [];
+        const filtered = list.filter((b: any) => b.code !== data.booking.code);
+        filtered.unshift({
+          code: data.booking.code,
+          customerName: data.booking.customerName,
+          date: data.booking.date,
+          time: data.booking.time,
+          guestCount: data.booking.guestCount,
+        });
+        localStorage.setItem('handa_user_bookings', JSON.stringify(filtered.slice(0, 10)));
+      } catch {}
     } catch (err: any) {
       setErrorMessage(err.message || t.errorGeneric);
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const handleImmediateCancel = async () => {
+    if (!successBooking) return;
+    const confirmMsg =
+      lang === 'en'
+        ? 'Are you sure you want to cancel this booking? The table will be immediately released.'
+        : 'Sei sicuro di voler annullare questa prenotazione? Il tavolo verrà liberato all\'istante.';
+    if (!confirm(confirmMsg)) return;
+
+    setCancellingImmediate(true);
+    try {
+      const res = await fetch(`/api/bookings/${successBooking.code}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'CANCEL' }),
+      });
+      if (res.ok) {
+        setImmediateCancelled(true);
+        try {
+          const stored = localStorage.getItem('handa_user_bookings');
+          if (stored) {
+            const list = JSON.parse(stored).filter((b: any) => b.code !== successBooking.code);
+            localStorage.setItem('handa_user_bookings', JSON.stringify(list));
+          }
+        } catch {}
+      } else {
+        alert(lang === 'en' ? 'Cancellation error' : 'Errore nella cancellazione');
+      }
+    } catch {
+      alert(lang === 'en' ? 'Connection error' : 'Errore di connessione');
+    } finally {
+      setCancellingImmediate(false);
+    }
+  };
+
+  const getWhatsAppShareUrl = () => {
+    if (!successBooking) return '#';
+    const text = encodeURIComponent(
+      `*Prenotazione HANDĀ Confermata!* 🥢\n` +
+      `📋 Codice: #${successBooking.code}\n` +
+      `👤 Nome: ${successBooking.customerName}\n` +
+      `👥 Persone: ${successBooking.guestCount} pax\n` +
+      `📅 Data: ${successBooking.date} alle ${successBooking.time} (${successBooking.shiftName})\n` +
+      `📍 Area: ${successBooking.seatingArea === 'outdoor' ? 'Portico Esterno' : 'Sala Interna'}\n` +
+      `🔗 Gestisci o cancella tavolo qui: https://handa-rose.vercel.app/prenotazione/${successBooking.code}`
+    );
+    return `https://wa.me/?text=${text}`;
   };
 
   const handleShareBooking = async () => {
@@ -376,6 +442,15 @@ export default function BookingPage() {
               </button>
             </div>
 
+            <Link
+              href="/trova-prenotazione"
+              className="h-9 sm:h-10 border-2 border-neutral-300 hover:border-black px-2.5 sm:px-3 font-bold uppercase transition-colors flex items-center justify-center gap-1.5 shrink-0 text-xs sm:text-sm text-black touch-manipulation select-none active:scale-95 bg-white"
+              title="Trova o cancella una prenotazione"
+            >
+              <span>🔍</span>
+              <span className="hidden xs:inline">{lang === 'en' ? 'Find Booking' : 'Trova Prenotazione'}</span>
+            </Link>
+
             <a
               href="https://www.instagram.com/handa_mushi/"
               target="_blank"
@@ -423,6 +498,7 @@ export default function BookingPage() {
                 type="button"
                 onClick={() => {
                   setSuccessBooking(null);
+                  setImmediateCancelled(false);
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
                 className="h-10 sm:h-11 px-4 border-2 border-black bg-white hover:bg-black hover:text-white text-black font-black text-xs sm:text-sm uppercase tracking-wider transition-all duration-100 flex items-center gap-2 cursor-pointer touch-manipulation select-none active:scale-95 shadow-xs"
@@ -430,124 +506,216 @@ export default function BookingPage() {
                 <span>{t.newBooking}</span>
               </button>
               <span className="text-xs text-neutral-500 font-black uppercase tracking-widest">
-                {lang === 'en' ? 'RESERVATION CONFIRMED' : 'PRENOTAZIONE COMPLETATA'}
+                {immediateCancelled
+                  ? (lang === 'en' ? 'RESERVATION CANCELLED' : 'PRENOTAZIONE ANNULLATA')
+                  : (lang === 'en' ? 'RESERVATION CONFIRMED' : 'PRENOTAZIONE COMPLETATA')}
               </span>
             </div>
 
-            <div className="border-b-2 border-black pb-5 flex justify-between items-baseline">
-              <div>
-                <span className="text-xs sm:text-sm text-neutral-500 uppercase tracking-widest block font-bold">
-                  {t.successStatus}
-                </span>
-                <span className="text-xl sm:text-2xl font-black text-[#e60000] mt-1 block">
-                  {t.confirmed}
-                </span>
-              </div>
-              <div className="text-right">
-                <span className="text-xs sm:text-sm text-neutral-500 uppercase tracking-widest block font-bold">
-                  {t.code}
-                </span>
-                <span className="text-3xl sm:text-4xl font-black">
-                  #{successBooking.code}
-                </span>
-              </div>
-            </div>
-
-            {/* Details Table */}
-            <div className="space-y-3.5 text-sm sm:text-base">
-              <div className="flex justify-between border-b-2 border-neutral-200 pb-2.5">
-                <span className="text-neutral-500 uppercase font-medium">{t.name}</span>
-                <strong className="text-black font-black text-base sm:text-lg">{successBooking.customerName}</strong>
-              </div>
-
-              <div className="flex justify-between border-b-2 border-neutral-200 pb-2.5">
-                <span className="text-neutral-500 uppercase font-medium">{t.covers}</span>
-                <strong className="text-black font-black text-base sm:text-lg">
-                  {successBooking.guestCount} {successBooking.guestCount === 1 ? t.personSingle : t.personPlural}
-                </strong>
-              </div>
-
-              <div className="flex justify-between border-b-2 border-neutral-200 pb-2.5">
-                <span className="text-neutral-500 uppercase font-medium">{t.tableArea}</span>
-                <strong className="text-black font-black text-base sm:text-lg uppercase">
-                  {successBooking.seatingArea === 'outdoor' ? t.outdoorSeating : t.indoorSeating}
-                </strong>
-              </div>
-
-              <div className="flex justify-between border-b-2 border-neutral-200 pb-2.5">
-                <span className="text-neutral-500 uppercase font-medium">{t.dateTime}</span>
-                <strong className="text-[#e60000] font-black text-base sm:text-lg">
-                  {successBooking.date} • {t.atHour} {successBooking.time}
-                </strong>
-              </div>
-
-              <div className="flex justify-between border-b-2 border-neutral-200 pb-2.5">
-                <span className="text-neutral-500 uppercase font-medium">{t.service}</span>
-                <span className="font-bold">{successBooking.shiftName}</span>
-              </div>
-
-              <div className="flex justify-between border-b-2 border-neutral-200 pb-2.5">
-                <span className="text-neutral-500 uppercase font-medium">{t.address}</span>
-                <span className="font-bold">{t.addressValue}</span>
-              </div>
-
-              {successBooking.dietary && successBooking.dietary.length > 0 && (
-                <div className="flex justify-between border-b-2 border-neutral-200 pb-2.5">
-                  <span className="text-neutral-500 uppercase font-medium">{t.notes}</span>
-                  <span className="font-bold text-[#e60000]">{successBooking.dietary.join(', ')}</span>
+            {immediateCancelled ? (
+              <div className="p-6 sm:p-8 bg-red-50 border-2 border-[#e60000] text-center space-y-4 animate-in fade-in">
+                <span className="text-4xl block leading-none" aria-hidden="true">✕</span>
+                <h3 className="font-black text-2xl text-[#e60000] uppercase tracking-tight">
+                  {lang === 'en' ? 'RESERVATION CANCELLED' : 'PRENOTAZIONE ANNULLATA'}
+                </h3>
+                <p className="text-sm font-bold text-neutral-800 max-w-md mx-auto">
+                  {lang === 'en'
+                    ? `Reservation #${successBooking.code} has been successfully cancelled. The table has been released for other guests.`
+                    : `La prenotazione #${successBooking.code} è stata annullata con successo. Il tavolo è stato liberato all'istante.`}
+                </p>
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSuccessBooking(null);
+                      setImmediateCancelled(false);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="h-12 px-6 bg-black hover:bg-[#e60000] text-white font-black text-xs uppercase tracking-wider transition-colors cursor-pointer touch-manipulation active:scale-95"
+                  >
+                    {lang === 'en' ? 'Make a new booking →' : 'Effettua una nuova prenotazione →'}
+                  </button>
                 </div>
-              )}
-            </div>
-
-            <div className="text-xs sm:text-sm text-neutral-700 bg-neutral-100 p-3.5 border-l-4 border-black">
-              {t.toleranceNotice}
-            </div>
-
-            {/* Actions */}
-            <div className="space-y-3 pt-3">
-              <button
-                type="button"
-                onClick={handleShareBooking}
-                className="w-full h-14 sm:h-16 border-2 border-black bg-black hover:bg-[#e60000] hover:border-[#e60000] text-white font-black text-sm sm:text-base flex items-center justify-center gap-2 transition-colors uppercase tracking-wider cursor-pointer touch-manipulation shadow-xs select-none active:scale-98"
-              >
-                <span>{copiedShare ? '✓' : '📤'}</span>
-                <span>
-                  {copiedShare
-                    ? (lang === 'en' ? 'COPIED TO CLIPBOARD!' : 'COPIATO NEGLI APPUNTI!')
-                    : t.shareBooking}
-                </span>
-              </button>
-
-              <a
-                href={getGoogleCalendarUrl()}
-                target="_blank"
-                rel="noreferrer"
-                className="w-full h-14 sm:h-16 border-2 border-black bg-white hover:bg-neutral-100 text-black font-black text-sm sm:text-base flex items-center justify-center transition-colors uppercase tracking-wider cursor-pointer touch-manipulation shadow-xs select-none active:scale-98"
-              >
-                {t.addToGoogleCalendar}
-              </a>
-
-              {/* Prominent High-Visibility New Booking Button */}
-              <button
-                type="button"
-                onClick={() => {
-                  setSuccessBooking(null);
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-                className="w-full h-14 sm:h-16 border-2 border-black bg-noren-active hover:bg-black hover:text-white text-black font-black text-sm sm:text-base flex items-center justify-center gap-2 transition-all uppercase tracking-wider cursor-pointer touch-manipulation shadow-xs select-none active:scale-98"
-              >
-                <span>{t.makeAnotherBooking}</span>
-              </button>
-
-              <div className="pt-3 text-center">
-                <Link
-                  href={`/prenotazione/${successBooking.code}`}
-                  className="text-xs sm:text-sm text-neutral-500 hover:text-black underline font-bold uppercase tracking-wider"
-                >
-                  {t.modifyOrCancel} →
-                </Link>
               </div>
-            </div>
+            ) : (
+              <>
+                <div className="border-b-2 border-black pb-5 flex justify-between items-baseline">
+                  <div>
+                    <span className="text-xs sm:text-sm text-neutral-500 uppercase tracking-widest block font-bold">
+                      {t.successStatus}
+                    </span>
+                    <span className="text-xl sm:text-2xl font-black text-[#e60000] mt-1 block">
+                      {t.confirmed}
+                    </span>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-xs sm:text-sm text-neutral-500 uppercase tracking-widest block font-bold">
+                      {t.code}
+                    </span>
+                    <span className="text-3xl sm:text-4xl font-black">
+                      #{successBooking.code}
+                    </span>
+                  </div>
+                </div>
+
+                {/* PROMINENT HIGH-VISIBILITY CANCELLATION BANNER (TOP OF SCREEN) */}
+                <div className="bg-red-50/90 border-2 border-[#e60000] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+                  <div>
+                    <span className="text-xs font-black uppercase text-[#e60000] tracking-wider flex items-center gap-1.5">
+                      <span>⚠️</span>
+                      <span>{lang === 'en' ? 'Wrong date, time, or people?' : 'Hai sbagliato data, orario o persone?'}</span>
+                    </span>
+                    <p className="text-xs text-neutral-700 font-bold mt-0.5">
+                      {lang === 'en'
+                        ? 'You can cancel this booking right now and immediately release the table.'
+                        : 'Puoi annullare subito questo tavolo in 1 tap e liberarlo all\'istante.'}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleImmediateCancel}
+                    disabled={cancellingImmediate}
+                    className="h-12 px-5 bg-[#e60000] hover:bg-black text-white font-black text-xs uppercase tracking-wider transition-colors cursor-pointer shrink-0 touch-manipulation active:scale-95 flex items-center justify-center gap-1.5 shadow-sm border border-[#e60000]"
+                  >
+                    <span>✕</span>
+                    <span>
+                      {cancellingImmediate
+                        ? (lang === 'en' ? 'Cancelling...' : 'Annullamento...')
+                        : (lang === 'en' ? 'Cancel Booking Now' : 'Annulla Prenotazione Adesso')}
+                    </span>
+                  </button>
+                </div>
+
+                {/* Details Table */}
+                <div className="space-y-3.5 text-sm sm:text-base bg-white border-2 border-black p-5 sm:p-6">
+                  <div className="flex justify-between border-b-2 border-neutral-200 pb-2.5">
+                    <span className="text-neutral-500 uppercase font-medium">{t.name}</span>
+                    <strong className="text-black font-black text-base sm:text-lg">{successBooking.customerName}</strong>
+                  </div>
+
+                  <div className="flex justify-between border-b-2 border-neutral-200 pb-2.5">
+                    <span className="text-neutral-500 uppercase font-medium">{t.covers}</span>
+                    <strong className="text-black font-black text-base sm:text-lg">
+                      {successBooking.guestCount} {successBooking.guestCount === 1 ? t.personSingle : t.personPlural}
+                    </strong>
+                  </div>
+
+                  <div className="flex justify-between border-b-2 border-neutral-200 pb-2.5">
+                    <span className="text-neutral-500 uppercase font-medium">{t.tableArea}</span>
+                    <strong className="text-black font-black text-base sm:text-lg uppercase">
+                      {successBooking.seatingArea === 'outdoor' ? t.outdoorSeating : t.indoorSeating}
+                    </strong>
+                  </div>
+
+                  <div className="flex justify-between border-b-2 border-neutral-200 pb-2.5">
+                    <span className="text-neutral-500 uppercase font-medium">{t.dateTime}</span>
+                    <strong className="text-[#e60000] font-black text-base sm:text-lg">
+                      {successBooking.date} • {t.atHour} {successBooking.time}
+                    </strong>
+                  </div>
+
+                  <div className="flex justify-between border-b-2 border-neutral-200 pb-2.5">
+                    <span className="text-neutral-500 uppercase font-medium">{t.service}</span>
+                    <span className="font-bold">{successBooking.shiftName}</span>
+                  </div>
+
+                  <div className="flex justify-between border-b-2 border-neutral-200 pb-2.5">
+                    <span className="text-neutral-500 uppercase font-medium">{t.address}</span>
+                    <span className="font-bold">{t.addressValue}</span>
+                  </div>
+
+                  {successBooking.dietary && successBooking.dietary.length > 0 && (
+                    <div className="flex justify-between border-b-2 border-neutral-200 pb-2.5">
+                      <span className="text-neutral-500 uppercase font-medium">{t.notes}</span>
+                      <span className="font-bold text-[#e60000]">{successBooking.dietary.join(', ')}</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="text-xs sm:text-sm text-neutral-700 bg-neutral-100 p-3.5 border-l-4 border-black">
+                  {t.toleranceNotice}
+                </div>
+
+                {/* RECOVERY & NOTIFICATION INFO BOX */}
+                <div className="p-4 bg-white border-2 border-neutral-300 text-xs text-neutral-700 space-y-1.5 shadow-2xs">
+                  <div className="font-black text-black uppercase tracking-wider flex items-center gap-1.5">
+                    <span>📩</span>
+                    <span>
+                      {lang === 'en'
+                        ? 'If you close this page, how do you find your table?'
+                        : 'Se chiudi la pagina, dove ritrovi la prenotazione?'}
+                    </span>
+                  </div>
+                  <p className="leading-relaxed">
+                    {lang === 'en'
+                      ? `We sent a confirmation email if you provided one. Your reservation is also saved on this device. You can return anytime and click "Find Booking" using your code #${successBooking.code} or your phone number.`
+                      : `Se hai indicato un'email ti abbiamo inviato il riepilogo con il link di gestione. Inoltre è salvata nella memoria di questo dispositivo. Puoi ritrovarla in qualsiasi momento cliccando in alto su "Trova Prenotazione" con il codice #${successBooking.code} o il tuo numero di telefono.`}
+                  </p>
+                </div>
+
+                {/* Primary Actions: WhatsApp, Share, Calendar, Manage */}
+                <div className="space-y-3 pt-2">
+                  {/* DIRECT WHATSAPP PROMPT */}
+                  <a
+                    href={getWhatsAppShareUrl()}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="w-full h-14 sm:h-16 border-2 border-emerald-700 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm sm:text-base flex items-center justify-center gap-2.5 transition-colors uppercase tracking-wider cursor-pointer touch-manipulation shadow-xs select-none active:scale-98"
+                  >
+                    <span className="text-2xl leading-none" aria-hidden="true">💬</span>
+                    <span>
+                      {lang === 'en'
+                        ? 'SAVE TO WHATSAPP / SEND REMINDER'
+                        : 'SALVA SU WHATSAPP / INVIA PROMEMORIA'}
+                    </span>
+                  </a>
+
+                  <button
+                    type="button"
+                    onClick={handleShareBooking}
+                    className="w-full h-14 sm:h-16 border-2 border-black bg-black hover:bg-[#e60000] hover:border-[#e60000] text-white font-black text-sm sm:text-base flex items-center justify-center gap-2 transition-colors uppercase tracking-wider cursor-pointer touch-manipulation shadow-xs select-none active:scale-98"
+                  >
+                    <span>{copiedShare ? '✓' : '📤'}</span>
+                    <span>
+                      {copiedShare
+                        ? (lang === 'en' ? 'COPIED TO CLIPBOARD!' : 'COPIATO NEGLI APPUNTI!')
+                        : t.shareBooking}
+                    </span>
+                  </button>
+
+                  <a
+                    href={getGoogleCalendarUrl()}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="w-full h-14 sm:h-16 border-2 border-black bg-white hover:bg-neutral-100 text-black font-black text-sm sm:text-base flex items-center justify-center transition-colors uppercase tracking-wider cursor-pointer touch-manipulation shadow-xs select-none active:scale-98"
+                  >
+                    {t.addToGoogleCalendar}
+                  </a>
+
+                  {/* Prominent High-Visibility New Booking Button */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSuccessBooking(null);
+                      setImmediateCancelled(false);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="w-full h-14 sm:h-16 border-2 border-black bg-noren-active hover:bg-black hover:text-white text-black font-black text-sm sm:text-base flex items-center justify-center gap-2 transition-all uppercase tracking-wider cursor-pointer touch-manipulation shadow-xs select-none active:scale-98"
+                  >
+                    <span>{t.makeAnotherBooking}</span>
+                  </button>
+
+                  <div className="pt-2 text-center">
+                    <Link
+                      href={`/prenotazione/${successBooking.code}`}
+                      className="text-xs sm:text-sm text-neutral-600 hover:text-black underline font-black uppercase tracking-wider"
+                    >
+                      {lang === 'en' ? 'Open Dedicated Booking Page →' : 'Apri Pagina Dettagliata Prenotazione →'}
+                    </Link>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         ) : (
           /* BOOKING FORM - FOLLOWS NATURAL VERBAL CONVERSATION ORDER */
@@ -1127,6 +1295,26 @@ export default function BookingPage() {
             </div>
           </form>
         )}
+
+        {/* FIND EXISTING BOOKING CALLOUT */}
+        <div className="mt-12 sm:mt-16 p-4 sm:p-5 border-2 border-neutral-300 bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <span className="text-xs font-black uppercase tracking-wider text-black block">
+              {lang === 'en' ? 'ALREADY HAVE A RESERVATION?' : 'HAI GIÀ UNA PRENOTAZIONE TAVOLO?'}
+            </span>
+            <p className="text-xs text-neutral-600 font-semibold mt-0.5">
+              {lang === 'en'
+                ? 'Look up, review details or cancel your existing table anytime with your code or phone.'
+                : 'Ritrova o cancella la tua prenotazione in qualsiasi momento usando il codice o il tuo numero di telefono.'}
+            </p>
+          </div>
+          <Link
+            href="/trova-prenotazione"
+            className="h-11 px-5 bg-black hover:bg-[#e60000] text-white font-black text-xs uppercase tracking-wider flex items-center justify-center shrink-0 transition-colors touch-manipulation"
+          >
+            {lang === 'en' ? 'FIND OR CANCEL →' : 'TROVA O CANCELLA →'}
+          </Link>
+        </div>
       </div>
 
       {/* FOOTER */}

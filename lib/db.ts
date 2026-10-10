@@ -297,6 +297,62 @@ export async function getBookingByCode(code: string): Promise<Booking | null> {
   return all.find((b) => b.code.toUpperCase() === cleanCode) || null;
 }
 
+export async function findBookingsByCustomer(query: string): Promise<Booking[]> {
+  const clean = query.trim().toLowerCase();
+  if (!clean) return [];
+
+  const cleanPhone = clean.replace(/\D/g, '');
+
+  const supabase = getSupabaseClient();
+  if (supabase) {
+    try {
+      if (clean.startsWith('hnd') || clean.length <= 8) {
+        const { data } = await supabase
+          .from('bookings')
+          .select('*')
+          .ilike('code', `%${clean}%`)
+          .neq('status', 'CANCELLED')
+          .order('date', { ascending: false });
+        if (data && data.length > 0) return data.map(mapRowToBooking);
+      }
+
+      if (cleanPhone.length >= 6) {
+        const { data } = await supabase
+          .from('bookings')
+          .select('*')
+          .neq('status', 'CANCELLED')
+          .order('date', { ascending: false });
+        if (data) {
+          const matched = data
+            .filter((row: any) => (row.customer_phone || '').replace(/\D/g, '').includes(cleanPhone))
+            .map(mapRowToBooking);
+          if (matched.length > 0) return matched;
+        }
+      }
+
+      if (clean.includes('@')) {
+        const { data } = await supabase
+          .from('bookings')
+          .select('*')
+          .ilike('customer_email', `%${clean}%`)
+          .neq('status', 'CANCELLED')
+          .order('date', { ascending: false });
+        if (data && data.length > 0) return data.map(mapRowToBooking);
+      }
+    } catch (err) {
+      console.warn('findBookingsByCustomer supabase error:', err);
+    }
+  }
+
+  const all = getLocalBookings().filter((b) => b.status !== 'CANCELLED');
+  return all.filter((b) => {
+    if (b.code.toLowerCase().includes(clean)) return true;
+    if (b.customerEmail && b.customerEmail.toLowerCase().includes(clean)) return true;
+    if (cleanPhone.length >= 6 && b.customerPhone.replace(/\D/g, '').includes(cleanPhone)) return true;
+    return false;
+  });
+}
+
 export async function createBooking(
   data: Omit<Booking, 'id' | 'code' | 'createdAt' | 'status'>
 ): Promise<Booking> {

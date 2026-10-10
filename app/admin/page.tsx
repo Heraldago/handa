@@ -230,6 +230,30 @@ export default function AdminDashboardPage() {
   };
 
   const handleToggleLock = async (shiftId: ShiftId) => {
+    // 1. Optimistic instant UI update (0ms feedback)
+    const previousLocked: ShiftId[] = stats?.lockedShifts || [];
+    const isCurrentlyLocked = previousLocked.includes(shiftId);
+    const nextLocked: ShiftId[] = isCurrentlyLocked
+      ? previousLocked.filter((s) => s !== shiftId)
+      : [...previousLocked, shiftId];
+
+    setStats((prev: any) => ({
+      ...prev,
+      lockedShifts: nextLocked,
+    }));
+
+    setAvailability((prev: any) => {
+      if (!prev?.shifts) return prev;
+      return {
+        ...prev,
+        shifts: prev.shifts.map((s: any) =>
+          s.id === shiftId
+            ? { ...s, available: isCurrentlyLocked, reason: isCurrentlyLocked ? undefined : 'Turno bloccato dalla cassa' }
+            : s
+        ),
+      };
+    });
+
     try {
       const res = await fetch('/api/admin/toggle-shift', {
         method: 'POST',
@@ -237,27 +261,46 @@ export default function AdminDashboardPage() {
         body: JSON.stringify({ date: selectedDate, shiftId }),
       });
       const data = await res.json();
-      if (res.ok) {
-        loadData();
+      if (!res.ok) {
+        // Revert on error
+        setStats((prev: any) => ({ ...prev, lockedShifts: previousLocked }));
+      } else if (data.lockedShifts) {
+        setStats((prev: any) => ({ ...prev, lockedShifts: data.lockedShifts }));
       }
     } catch (err) {
       console.error(err);
+      // Revert on error
+      setStats((prev: any) => ({ ...prev, lockedShifts: previousLocked }));
     }
   };
 
   const handleToggleOutdoor = async () => {
+    // 1. Optimistic instant UI update (0ms feedback)
+    const current = Boolean(stats?.isOutdoorActive);
+    const nextActive = !current;
+
+    setStats((prev: any) => ({
+      ...prev,
+      isOutdoorActive: nextActive,
+    }));
+
     try {
-      const current = stats?.isOutdoorActive;
       const res = await fetch('/api/admin/toggle-outdoor', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ date: selectedDate, enabled: !current }),
+        body: JSON.stringify({ date: selectedDate, enabled: nextActive }),
       });
-      if (res.ok) {
-        loadData();
+      const data = await res.json();
+      if (res.ok && data.availability) {
+        setAvailability(data.availability);
+      } else if (!res.ok) {
+        // Revert on error
+        setStats((prev: any) => ({ ...prev, isOutdoorActive: current }));
       }
     } catch (err) {
       console.error(err);
+      // Revert on error
+      setStats((prev: any) => ({ ...prev, isOutdoorActive: current }));
     }
   };
 
@@ -313,6 +356,69 @@ export default function AdminDashboardPage() {
     const dd = String(dateObj.getDate()).padStart(2, '0');
     setSelectedDate(`${yyyy}-${mm}-${dd}`);
   };
+
+  // Dynamic Date Carousel around current selection
+  const carouselContainerRef = useRef<HTMLDivElement>(null);
+
+  const carouselDates = (() => {
+    const list: {
+      iso: string;
+      dayName: string;
+      dayNum: number;
+      monthShort: string;
+      isToday: boolean;
+      isTomorrow: boolean;
+    }[] = [];
+    const daysShort = ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'];
+    const monthsShort = [
+      'Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu',
+      'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic',
+    ];
+
+    const todayIso = getRelativeIsoDate(0);
+    const tomorrowIso = getRelativeIsoDate(1);
+
+    for (let offset = -1; offset <= 24; offset++) {
+      const iso = getRelativeIsoDate(offset);
+      const [y, m, d] = iso.split('-').map(Number);
+      const dateObj = new Date(y, m - 1, d);
+
+      list.push({
+        iso,
+        dayName: daysShort[dateObj.getDay()],
+        dayNum: d,
+        monthShort: monthsShort[m - 1],
+        isToday: iso === todayIso,
+        isTomorrow: iso === tomorrowIso,
+      });
+    }
+
+    if (selectedDate && !list.some((item) => item.iso === selectedDate)) {
+      const [y, m, d] = selectedDate.split('-').map(Number);
+      const dateObj = new Date(y, m - 1, d);
+      list.push({
+        iso: selectedDate,
+        dayName: daysShort[dateObj.getDay()],
+        dayNum: d,
+        monthShort: monthsShort[m - 1],
+        isToday: selectedDate === todayIso,
+        isTomorrow: selectedDate === tomorrowIso,
+      });
+      list.sort((a, b) => a.iso.localeCompare(b.iso));
+    }
+
+    return list;
+  })();
+
+  useEffect(() => {
+    if (!carouselContainerRef.current || !selectedDate) return;
+    const activeEl = carouselContainerRef.current.querySelector(
+      `[data-date="${selectedDate}"]`
+    ) as HTMLElement;
+    if (activeEl) {
+      activeEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+  }, [selectedDate]);
 
   // Shift & booking computations
   const bigDateInfo = formatBigDate(selectedDate);
@@ -443,21 +549,21 @@ export default function AdminDashboardPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#faf8f5] bg-paper-texture text-black font-sans selection:bg-[#e60000] selection:text-white pb-36 max-w-full overflow-x-hidden">
-      {/* 1. TOP HEADER (TOUCH-ROBUST: MIN 48PX TARGETS) */}
-      <header className="border-b-2 border-black bg-[#faf8f5]/95 backdrop-blur-xs px-4 sm:px-8 py-3 sticky top-0 z-40 max-w-full overflow-hidden">
-        <div className="max-w-6xl mx-auto flex items-center justify-between gap-3">
+    <main className="min-h-screen bg-[#faf8f5] bg-paper-texture text-black font-sans selection:bg-[#e60000] selection:text-white pb-12 max-w-full overflow-x-hidden">
+      {/* 1. TOP HEADER (TOUCH-ROBUST: FIT CLEANLY ON ANY MOBILE VIEWPORT WITHOUT OVERFLOW) */}
+      <header className="border-b-2 border-black bg-[#faf8f5]/95 backdrop-blur-xs px-3 sm:px-8 py-2.5 sm:py-3 sticky top-0 z-40 max-w-full overflow-hidden">
+        <div className="max-w-6xl mx-auto flex items-center justify-between gap-2 sm:gap-3">
           {/* Left: Brand + Staff Desk Pill + Live Sync Indicator */}
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-            <Link href="/" className="font-black text-xl sm:text-2xl tracking-tight text-black hover:opacity-85 touch-manipulation select-none">
+          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+            <Link href="/" className="font-black text-lg sm:text-2xl tracking-tight text-black hover:opacity-85 touch-manipulation select-none">
               HANDA<span className="text-[#e60000]">.</span>
             </Link>
-            <span className="text-[11px] font-black uppercase tracking-wider px-2 py-0.5 bg-black text-white">
+            <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider px-1.5 sm:px-2 py-0.5 bg-black text-white">
               STAFF
             </span>
-            <div className="flex items-center gap-1.5 px-2 py-0.5 bg-neutral-100 border border-neutral-200 text-[11px] font-bold text-neutral-600">
+            <div className="flex items-center gap-1 px-1.5 py-0.5 bg-neutral-100 border border-neutral-200 text-[10px] sm:text-[11px] font-bold text-neutral-600">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span className="hidden xs:inline">LIVE SYNC</span>
+              <span className="hidden xs:inline">LIVE</span>
             </div>
             <span className="text-xs text-neutral-400 font-bold hidden lg:inline">
               Via del Portello 32, Padova
@@ -465,23 +571,23 @@ export default function AdminDashboardPage() {
           </div>
 
           {/* Right: + Nuova Prenotazione / Walk-In + Vista Cliente + Esci */}
-          <div className="flex items-center gap-2.5 sm:gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
             <button
               type="button"
               onClick={() => {
                 setWalkInDate(selectedDate || getRelativeIsoDate(0));
                 setShowWalkInModal(true);
               }}
-              className="h-12 sm:h-12 px-4 sm:px-5 bg-black text-white hover:bg-[#e60000] text-xs sm:text-sm font-black uppercase tracking-wider transition-all duration-75 cursor-pointer flex items-center gap-2 shrink-0 touch-manipulation select-none active:scale-95 shadow-sm border border-black"
+              className="h-10 sm:h-12 px-2.5 sm:px-5 bg-black text-white hover:bg-[#e60000] text-xs sm:text-sm font-black uppercase tracking-wider transition-all duration-75 cursor-pointer flex items-center gap-1.5 shrink-0 touch-manipulation select-none active:scale-95 shadow-sm border border-black"
             >
-              <span className="text-base">📞</span>
+              <span className="text-sm sm:text-base">📞</span>
               <span className="sm:hidden">+ PRENOTA</span>
               <span className="hidden sm:inline">+ NUOVA PRENOTAZIONE</span>
             </button>
 
             <Link
               href="/"
-              className="h-12 px-3.5 border-2 border-neutral-300 bg-white hover:border-black text-xs font-black uppercase hidden md:flex items-center justify-center shrink-0 touch-manipulation select-none active:scale-95 transition-all duration-75"
+              className="h-10 sm:h-12 px-3 border-2 border-neutral-300 bg-white hover:border-black text-xs font-black uppercase hidden md:flex items-center justify-center shrink-0 touch-manipulation select-none active:scale-95 transition-all duration-75"
             >
               Vista Cliente ↗
             </Link>
@@ -489,7 +595,7 @@ export default function AdminDashboardPage() {
             <button
               type="button"
               onClick={handleLogout}
-              className="h-12 px-3.5 border-2 border-neutral-200 bg-white hover:border-red-300 text-xs font-black text-neutral-500 hover:text-[#e60000] uppercase cursor-pointer shrink-0 touch-manipulation select-none active:scale-95 transition-all duration-75 flex items-center justify-center"
+              className="h-10 sm:h-12 px-2.5 sm:px-3.5 border-2 border-neutral-200 bg-white hover:border-red-300 text-xs font-black text-neutral-600 hover:text-[#e60000] uppercase cursor-pointer shrink-0 touch-manipulation select-none active:scale-95 transition-all duration-75 flex items-center justify-center"
               title="Esci dalla sessione"
             >
               Esci 🔒
@@ -520,67 +626,69 @@ export default function AdminDashboardPage() {
       )}
       <div className="max-w-6xl mx-auto px-4 sm:px-8 pt-4 sm:pt-6">
         <div className="pb-5 sm:pb-6 mb-5 sm:mb-6 border-b-2 border-black flex flex-col gap-4 sm:gap-5">
-          {/* TOP ROW: FAST DAY JUMPERS & DATE PICKER (FULL WIDTH, NEVER CLIPPED) */}
-          <div className="flex flex-wrap sm:flex-nowrap items-center gap-2">
-            <div className="flex items-center gap-1.5 sm:gap-2 flex-1 justify-between sm:justify-start">
-              <button
-                type="button"
-                onClick={() => changeDateByDays(-1)}
-                className="h-11 w-11 sm:h-12 sm:w-12 border-2 border-neutral-300 hover:border-black bg-white flex items-center justify-center font-black text-lg cursor-pointer transition-all duration-75 shrink-0 touch-manipulation select-none active:scale-95"
-                title="Giorno precedente"
-              >
-                ←
-              </button>
+          {/* TOP ROW: DYNAMIC DATE CAROUSEL WITH PREV/NEXT ARROWS & CALENDAR PICKER */}
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <button
+              type="button"
+              onClick={() => changeDateByDays(-1)}
+              className="h-12 w-10 sm:w-12 border-2 border-neutral-300 hover:border-black bg-white flex items-center justify-center font-black text-lg cursor-pointer transition-all duration-75 shrink-0 touch-manipulation select-none active:scale-95"
+              title="Giorno precedente"
+            >
+              ←
+            </button>
 
-              <button
-                type="button"
-                onClick={() => setSelectedDate(getRelativeIsoDate(0))}
-                className={`h-11 sm:h-12 px-3 sm:px-4 text-xs sm:text-sm font-black uppercase tracking-wider border-2 transition-all duration-75 cursor-pointer shrink-0 touch-manipulation select-none active:scale-95 ${
-                  selectedDate === getRelativeIsoDate(0)
-                    ? 'border-2 border-black bg-noren-active text-black shadow-xs ring-1 ring-black'
-                    : 'border-neutral-300 bg-white text-neutral-700 hover:border-black hover:text-black'
-                }`}
-              >
-                Oggi
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setSelectedDate(getRelativeIsoDate(1))}
-                className={`h-11 sm:h-12 px-3 sm:px-4 text-xs sm:text-sm font-black uppercase tracking-wider border-2 transition-all duration-75 cursor-pointer shrink-0 touch-manipulation select-none active:scale-95 ${
-                  selectedDate === getRelativeIsoDate(1)
-                    ? 'border-2 border-black bg-noren-active text-black shadow-xs ring-1 ring-black'
-                    : 'border-neutral-300 bg-white text-neutral-700 hover:border-black hover:text-black'
-                }`}
-              >
-                Domani
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setSelectedDate(getRelativeIsoDate(2))}
-                className={`h-11 sm:h-12 px-3 sm:px-4 text-xs sm:text-sm font-black uppercase tracking-wider border-2 transition-all duration-75 cursor-pointer shrink-0 touch-manipulation select-none active:scale-95 hidden xs:inline-flex items-center justify-center ${
-                  selectedDate === getRelativeIsoDate(2)
-                    ? 'border-2 border-black bg-noren-active text-black shadow-xs ring-1 ring-black'
-                    : 'border-neutral-300 bg-white text-neutral-700 hover:border-black hover:text-black'
-                }`}
-              >
-                +2 gg
-              </button>
-
-              <button
-                type="button"
-                onClick={() => changeDateByDays(1)}
-                className="h-11 w-11 sm:h-12 sm:w-12 border-2 border-neutral-300 hover:border-black bg-white flex items-center justify-center font-black text-lg cursor-pointer transition-all duration-75 shrink-0 touch-manipulation select-none active:scale-95"
-                title="Giorno successivo"
-              >
-                →
-              </button>
+            {/* Scrollable Carousel Track */}
+            <div
+              ref={carouselContainerRef}
+              className="flex-1 flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar scroll-smooth py-1 px-0.5"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
+              {carouselDates.map((item) => {
+                const isSelected = selectedDate === item.iso;
+                return (
+                  <button
+                    key={item.iso}
+                    type="button"
+                    data-date={item.iso}
+                    onClick={() => setSelectedDate(item.iso)}
+                    className={`h-12 px-2.5 sm:px-3.5 flex flex-col items-center justify-center border-2 transition-all duration-75 cursor-pointer shrink-0 touch-manipulation select-none active:scale-95 min-w-[72px] sm:min-w-[84px] ${
+                      isSelected
+                        ? 'border-2 border-black bg-noren-active text-black shadow-xs ring-1 ring-black'
+                        : 'border-neutral-300 bg-white text-neutral-700 hover:border-black hover:text-black'
+                    }`}
+                  >
+                    <span
+                      className={`text-[10px] sm:text-[11px] font-black uppercase tracking-wider leading-tight ${
+                        isSelected
+                          ? 'text-black'
+                          : item.isToday
+                          ? 'text-[#e60000]'
+                          : 'text-neutral-500'
+                      }`}
+                    >
+                      {item.isToday ? 'OGGI' : item.isTomorrow ? 'DOMANI' : item.dayName}
+                    </span>
+                    <span className="text-xs sm:text-sm font-black tracking-tight leading-tight mt-0.5">
+                      {item.dayNum} {item.monthShort}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
 
+            <button
+              type="button"
+              onClick={() => changeDateByDays(1)}
+              className="h-12 w-10 sm:w-12 border-2 border-neutral-300 hover:border-black bg-white flex items-center justify-center font-black text-lg cursor-pointer transition-all duration-75 shrink-0 touch-manipulation select-none active:scale-95"
+              title="Giorno successivo"
+            >
+              →
+            </button>
+
             {/* Styled Date Picker Button */}
-            <label className="relative h-11 sm:h-12 px-3.5 sm:px-4 border-2 border-neutral-300 hover:border-black bg-white flex items-center justify-center gap-2 cursor-pointer text-xs sm:text-sm font-black text-neutral-800 transition-all duration-75 shrink-0 touch-manipulation select-none active:scale-95 whitespace-nowrap w-full sm:w-auto">
-              <span>📅 Data</span>
+            <label className="relative h-12 px-3 border-2 border-neutral-300 hover:border-black bg-white flex items-center justify-center gap-1.5 cursor-pointer text-xs font-black text-neutral-800 transition-all duration-75 shrink-0 touch-manipulation select-none active:scale-95 whitespace-nowrap">
+              <span>📅</span>
+              <span className="hidden sm:inline">Data</span>
               <input
                 type="date"
                 value={selectedDate}
@@ -719,7 +827,7 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* 3. SHIFT SEGMENTED TABS */}
-      <div className="grid grid-cols-3 border-2 border-black bg-neutral-100 p-1.5 sm:p-2 gap-1.5 sm:gap-2 mb-4 select-none">
+      <div className="grid grid-cols-3 border-2 border-black bg-neutral-100 p-1.5 sm:p-2 gap-1.5 sm:gap-2 mb-3 select-none">
         {shiftsList.map((shift) => {
           const isSelected = activeTab === shift.id;
           const shiftBookings = bookings.filter(
@@ -755,8 +863,8 @@ export default function AdminDashboardPage() {
 
               <div className="flex items-center gap-1">
                 {isLocked && (
-                  <span className="text-[9px] sm:text-[10px] font-black uppercase text-[#e60000] bg-red-50 border border-red-300 px-1 py-0.2">
-                    LOCK
+                  <span className="text-[9px] sm:text-[10px] font-black uppercase text-white bg-[#e60000] px-1.5 py-0.5 border border-red-700 animate-pulse">
+                    STOP
                   </span>
                 )}
                 <span className="text-[11px] sm:text-sm font-black text-black px-1.5 sm:px-2 py-0.5 bg-neutral-100 border border-neutral-200">
@@ -768,9 +876,59 @@ export default function AdminDashboardPage() {
         })}
       </div>
 
-      {/* 4. UTILITY STRIP: CAPACITY BREAKDOWN + LOCK SHIFT + SEARCH & STATUS FILTER */}
+      {/* CENTRAL WORKFLOW: HIGH-VISIBILITY SHIFT ONLINE BOOKING CONTROL CARD */}
+      <div
+        className={`border-2 p-3 sm:p-4 mb-4 transition-all duration-150 flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
+          isShiftLocked
+            ? 'border-red-600 bg-red-50/95 text-red-950 shadow-xs'
+            : 'border-emerald-600 bg-emerald-50/80 text-emerald-950'
+        }`}
+      >
+        <div className="flex items-center gap-3">
+          <span className="text-2xl sm:text-3xl leading-none shrink-0" aria-hidden="true">
+            {isShiftLocked ? '⛔' : '🟢'}
+          </span>
+          <div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <span
+                className={`font-black text-sm sm:text-base uppercase tracking-wider ${
+                  isShiftLocked ? 'text-red-700' : 'text-emerald-900'
+                }`}
+              >
+                {isShiftLocked ? 'PRENOTAZIONI ONLINE BLOCCATE' : 'PRENOTAZIONI ONLINE ATTIVE'}
+              </span>
+              <span className="text-xs font-bold text-neutral-600">
+                • {shiftsList.find((s) => s.id === activeTab)?.label}
+              </span>
+            </div>
+            <p className="text-xs font-semibold text-neutral-600 mt-0.5">
+              {isShiftLocked
+                ? 'Nessun nuovo cliente può prenotare questo turno online (Turno chiuso / Sold Out).'
+                : 'I clienti possono prenotare normalmente questo turno dal sito web.'}
+            </p>
+          </div>
+        </div>
+
+        {/* Central High-Visibility Shift Lock Button */}
+        <button
+          type="button"
+          onClick={() => handleToggleLock(activeTab)}
+          className={`h-11 sm:h-12 px-4 sm:px-6 font-black text-xs sm:text-sm uppercase tracking-wider transition-all duration-75 cursor-pointer flex items-center justify-center gap-2 shrink-0 touch-manipulation select-none active:scale-95 shadow-sm border-2 ${
+            isShiftLocked
+              ? 'border-emerald-800 bg-emerald-600 hover:bg-emerald-700 text-white'
+              : 'border-red-700 bg-red-600 hover:bg-red-700 text-white'
+          }`}
+        >
+          <span>{isShiftLocked ? '✅' : '⛔'}</span>
+          <span>
+            {isShiftLocked ? 'RIAPRI PRENOTAZIONI TURNO' : 'BLOCCA PRENOTAZIONI TURNO'}
+          </span>
+        </button>
+      </div>
+
+      {/* 4. UTILITY STRIP: CAPACITY BREAKDOWN + SEARCH & STATUS FILTER */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-4 mb-4 border-b-2 border-black">
-        {/* Capacity Breakdown & Lock Toggle */}
+        {/* Capacity Breakdown */}
         <div className="flex items-center justify-between sm:justify-start gap-2 sm:gap-3 text-xs font-bold text-neutral-700 flex-wrap">
           <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white border border-neutral-300">
             <span className="text-neutral-400 uppercase text-[10px] sm:text-[11px] tracking-wider font-bold">Sala:</span>
@@ -800,18 +958,6 @@ export default function AdminDashboardPage() {
             <span className="text-[#e60000] font-black text-sm sm:text-base">{shiftTotalSeatedPax}</span>
             <span className="text-neutral-400 text-xs">pax</span>
           </div>
-
-          <button
-            type="button"
-            onClick={() => handleToggleLock(activeTab)}
-            className={`h-10 sm:h-11 px-3 text-xs font-black uppercase tracking-wider border-2 transition-all duration-75 cursor-pointer touch-manipulation select-none active:scale-95 ml-auto sm:ml-0 ${
-              isShiftLocked
-                ? 'border-[#e60000] bg-red-50 text-[#e60000] hover:bg-[#e60000] hover:text-white'
-                : 'border-neutral-300 bg-white text-neutral-800 hover:border-black hover:text-black'
-            }`}
-          >
-            {isShiftLocked ? '🔴 Bloccato' : '🔒 Blocca'}
-          </button>
         </div>
 
         {/* Status Filter & Fast Search */}
@@ -1673,64 +1819,7 @@ export default function AdminDashboardPage() {
         </div>
       )}
 
-      {/* 8. PERSISTENT ERGONOMIC TOUCH DOCK (OPTIMIZED FOR LARGE TOUCH MONITORS & TABLETS) */}
-      <aside className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t-2 border-black px-4 py-3 shadow-[0_-4px_24px_rgba(0,0,0,0.14)] select-none">
-        <div className="max-w-6xl mx-auto flex items-center justify-between gap-3 sm:gap-4">
-          {/* Left: Glanceable Live Shift Metrics */}
-          <div className="hidden sm:flex items-center gap-4 text-xs font-black uppercase tracking-wider">
-            <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-neutral-500">Turno:</span>
-              <span className="text-black font-black">
-                {activeTab === 'lunch' ? 'Pranzo' : activeTab === 'dinner_1' ? '1° Turno Cena' : '2° Turno Cena'}
-              </span>
-            </div>
-            <div className="h-4 w-px bg-neutral-300" />
-            <div>
-              <span className="text-neutral-500">Prenotati:</span>{' '}
-              <span className="text-black font-black">
-                {currentTabBookings.reduce((sum: number, b: Booking) => sum + b.guestCount, 0)} PAX
-              </span>
-              <span className="text-neutral-400 font-bold ml-1">
-                ({currentTabBookings.length} tav.)
-              </span>
-            </div>
-            <div className="h-4 w-px bg-neutral-300" />
-            <div>
-              <span className="text-neutral-500">Seduti:</span>{' '}
-              <span className="text-emerald-700 font-black">
-                {currentTabBookings.filter((b: Booking) => b.status === 'SEATED').reduce((sum: number, b: Booking) => sum + b.guestCount, 0)} PAX
-              </span>
-            </div>
-          </div>
-
-          {/* Mobile Glance */}
-          <div className="sm:hidden flex flex-col">
-            <span className="text-[10px] font-black uppercase tracking-widest text-neutral-500">
-              {activeTab === 'lunch' ? 'PRANZO' : activeTab === 'dinner_1' ? '1° CENA' : '2° CENA'}
-            </span>
-            <span className="text-xs font-black text-black">
-              {currentTabBookings.reduce((sum: number, b: Booking) => sum + b.guestCount, 0)} PAX ({currentTabBookings.length} tav.)
-            </span>
-          </div>
-
-          {/* Right: Prominent 48px-56px POS Quick Booking Action */}
-          <button
-            type="button"
-            onClick={() => {
-              setWalkInDate(selectedDate || getRelativeIsoDate(0));
-              setWalkInShift(activeTab);
-              setWalkInTime(activeTab === 'lunch' ? '13:00' : activeTab === 'dinner_1' ? '19:30' : '21:30');
-              setShowWalkInModal(true);
-            }}
-            className="h-12 sm:h-14 px-3.5 sm:px-8 bg-[#e60000] hover:bg-black text-white text-xs sm:text-base font-black uppercase tracking-wider transition-all duration-75 cursor-pointer flex items-center justify-center gap-2 shadow-md shrink-0 touch-manipulation select-none active:scale-95 border-2 border-black"
-          >
-            <span className="text-base sm:text-xl leading-none">📞</span>
-            <span className="sm:hidden">+ PRENOTA</span>
-            <span className="hidden sm:inline">+ NUOVA PRENOTAZIONE / WALK-IN</span>
-          </button>
-        </div>
-      </aside>
+      {/* Modals and panels rendered above */}
     </main>
   );
 }
