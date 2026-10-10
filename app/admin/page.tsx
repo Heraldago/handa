@@ -37,6 +37,15 @@ export default function AdminDashboardPage() {
   const knownBookingIdsRef = useRef<Set<string>>(new Set());
   const initialLoadDoneRef = useRef<boolean>(false);
 
+  // Debounce & Concurrency Mutex for instant toggles (prevents double-tap race conditions)
+  const isTogglingOutdoorRef = useRef<boolean>(false);
+  const lastOutdoorToggleTimeRef = useRef<number>(0);
+  const [isOutdoorButtonLocked, setIsOutdoorButtonLocked] = useState<boolean>(false);
+
+  const isTogglingLockRef = useRef<boolean>(false);
+  const lastShiftLockTimeRef = useRef<number>(0);
+  const [isShiftLockButtonLocked, setIsShiftLockButtonLocked] = useState<boolean>(false);
+
   const playNotificationChime = () => {
     try {
       const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
@@ -230,6 +239,15 @@ export default function AdminDashboardPage() {
   };
 
   const handleToggleLock = async (shiftId: ShiftId) => {
+    const now = Date.now();
+    // Guard against rapid double taps or inflight concurrency
+    if (isTogglingLockRef.current || now - lastShiftLockTimeRef.current < 450) {
+      return;
+    }
+    isTogglingLockRef.current = true;
+    lastShiftLockTimeRef.current = now;
+    setIsShiftLockButtonLocked(true);
+
     // 1. Optimistic instant UI update (0ms feedback)
     const previousLocked: ShiftId[] = stats?.lockedShifts || [];
     const isCurrentlyLocked = previousLocked.includes(shiftId);
@@ -271,10 +289,24 @@ export default function AdminDashboardPage() {
       console.error(err);
       // Revert on error
       setStats((prev: any) => ({ ...prev, lockedShifts: previousLocked }));
+    } finally {
+      setTimeout(() => {
+        isTogglingLockRef.current = false;
+        setIsShiftLockButtonLocked(false);
+      }, 350);
     }
   };
 
   const handleToggleOutdoor = async () => {
+    const now = Date.now();
+    // Guard against rapid double taps or inflight concurrency
+    if (isTogglingOutdoorRef.current || now - lastOutdoorToggleTimeRef.current < 450) {
+      return;
+    }
+    isTogglingOutdoorRef.current = true;
+    lastOutdoorToggleTimeRef.current = now;
+    setIsOutdoorButtonLocked(true);
+
     // 1. Optimistic instant UI update (0ms feedback)
     const current = Boolean(stats?.isOutdoorActive);
     const nextActive = !current;
@@ -301,6 +333,11 @@ export default function AdminDashboardPage() {
       console.error(err);
       // Revert on error
       setStats((prev: any) => ({ ...prev, isOutdoorActive: current }));
+    } finally {
+      setTimeout(() => {
+        isTogglingOutdoorRef.current = false;
+        setIsOutdoorButtonLocked(false);
+      }, 350);
     }
   };
 
@@ -778,12 +815,13 @@ export default function AdminDashboardPage() {
               role="switch"
               aria-checked={Boolean(stats?.isOutdoorActive)}
               aria-label="Interruttore stato tavoli esterni sotto il portico"
+              disabled={isOutdoorButtonLocked}
               onClick={handleToggleOutdoor}
               className={`w-full lg:w-auto min-h-[56px] p-4 sm:px-6 sm:py-4 border-2 transition-all duration-75 cursor-pointer flex items-center justify-between sm:justify-start gap-5 text-left select-none touch-manipulation active:scale-[0.98] ${
                 stats?.isOutdoorActive
                   ? 'border-emerald-600 bg-emerald-50/80 hover:bg-emerald-100/80 text-emerald-950 shadow-xs'
                   : 'border-red-600 bg-red-50/90 hover:bg-red-100/90 text-red-950'
-              }`}
+              } ${isOutdoorButtonLocked ? 'opacity-90 pointer-events-none' : ''}`}
               title={
                 stats?.isOutdoorActive
                   ? "Esterno aperto: Clicca per chiudere i tavoli esterni per pioggia o freddo"
@@ -912,12 +950,13 @@ export default function AdminDashboardPage() {
         {/* Central High-Visibility Shift Lock Button */}
         <button
           type="button"
+          disabled={isShiftLockButtonLocked}
           onClick={() => handleToggleLock(activeTab)}
           className={`h-11 sm:h-12 px-4 sm:px-6 font-black text-xs sm:text-sm uppercase tracking-wider transition-all duration-75 cursor-pointer flex items-center justify-center gap-2 shrink-0 touch-manipulation select-none active:scale-95 shadow-sm border-2 ${
             isShiftLocked
               ? 'border-emerald-800 bg-emerald-600 hover:bg-emerald-700 text-white'
               : 'border-red-700 bg-red-600 hover:bg-red-700 text-white'
-          }`}
+          } ${isShiftLockButtonLocked ? 'opacity-90 pointer-events-none' : ''}`}
         >
           <span>{isShiftLocked ? '✅' : '⛔'}</span>
           <span>

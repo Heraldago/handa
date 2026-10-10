@@ -2,14 +2,25 @@ import type { Metadata, Viewport } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'HANDA. — Prenotazioni Tavolo',
+  title: 'HANDA. — Prenotazioni & Staff Desk',
   description: 'Cicchetteria asiatica e street food. Via del Portello 32, Padova.',
+  applicationName: 'HANDĀ',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'HANDĀ',
+  },
+  icons: {
+    icon: '/handa-logo.png',
+    apple: '/handa-logo.png',
+  },
 };
 
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
+  userScalable: false,
   themeColor: '#faf8f5',
 };
 
