@@ -592,8 +592,15 @@ export default function AdminDashboardPage() {
         <div className="max-w-6xl mx-auto flex items-center justify-between gap-2 sm:gap-3">
           {/* Left: Brand + Staff Desk Pill + Live Sync Indicator */}
           <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
-            <Link href="/" className="font-black text-lg sm:text-2xl tracking-tight text-black hover:opacity-85 touch-manipulation select-none">
-              HANDA<span className="text-[#e60000]">.</span>
+            <Link href="/" className="flex items-center gap-2 font-black text-lg sm:text-2xl tracking-tight text-black hover:opacity-85 touch-manipulation select-none">
+              <img
+                src="/handaadminlogo.png"
+                alt="HANDĀ Staff"
+                className="w-7 h-7 sm:w-8 sm:h-8 object-contain rounded-md"
+              />
+              <span>
+                HANDA<span className="text-[#e60000]">.</span>
+              </span>
             </Link>
             <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider px-1.5 sm:px-2 py-0.5 bg-black text-white">
               STAFF

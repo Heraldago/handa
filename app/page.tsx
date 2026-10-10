@@ -387,7 +387,12 @@ export default function BookingPage() {
       {/* Top Header */}
       <header className="px-5 sm:px-10 md:px-14 lg:px-16 py-3.5 border-b-2 border-black sticky top-0 bg-[#faf8f5]/95 backdrop-blur-xs z-30 max-w-full">
         <div className="max-w-4xl mx-auto flex items-center justify-between gap-2 sm:gap-4">
-          <div className="flex items-baseline gap-2 sm:gap-3 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            <img
+              src="/handaprenotalogo.png"
+              alt="HANDĀ"
+              className="w-8 h-8 sm:w-9 sm:h-9 object-contain rounded-md"
+            />
             <span className="font-black text-2xl sm:text-4xl tracking-tighter text-black">
               HANDA<span className="text-[#e60000]">.</span>
             </span>
