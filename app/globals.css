@@ -41,6 +41,45 @@ button:focus-visible, input:focus-visible {
   outline-offset: 2px;
 }
 
+/* ============================================================
+   HEADER OVERFLOW SHIELD — PERMANENT RULE
+   Prevents ANY element inside a <header> from escaping the
+   viewport horizontally. Applies to both /admin and / headers.
+   - min-width:0 on flex children prevents them from overflowing
+   - overflow:hidden clips anything that somehow still escapes
+   ============================================================ */
+header {
+  max-width: 100vw;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+header * {
+  min-width: 0;
+  box-sizing: border-box;
+}
+header > div {
+  min-width: 0;
+  width: 100%;
+}
+/* Flex children inside header never force the bar wider */
+header div[class*="flex"] {
+  min-width: 0;
+}
+/* Text inside header truncates rather than overflowing */
+header span,
+header a {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* BUT brand text is always shown fully — no truncation */
+header span[class*="font-black"],
+header a[class*="font-black"] {
+  overflow: visible;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
 /* Japanese Noren / Washi micro-hatching pattern for tactile active states */
 .bg-noren-active {
   background-color: #ffffff;
