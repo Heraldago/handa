@@ -186,7 +186,7 @@ export default function TrovaPrenotazionePage() {
                       </div>
                       <p className="text-sm font-black text-neutral-800">{b.customerName}</p>
                       <p className="text-xs text-neutral-600 font-bold mt-0.5">
-                        📅 {b.date} • ⏰ {b.time} ({b.shiftName}) • 👥 {b.guestCount} PAX •{' '}
+                        📅 {b.date} - ⏰ {b.time} ({b.shiftName}) - 👥 {b.guestCount} PAX -{' '}
                         {b.seatingArea === 'outdoor' ? '🌿 Portico Esterno' : '🏠 Sala Interna'}
                       </p>
                     </div>
@@ -225,7 +225,7 @@ export default function TrovaPrenotazionePage() {
                   <div>
                     <div className="font-black text-base text-black">#{b.code}</div>
                     <div className="text-xs font-bold text-neutral-600">
-                      {b.customerName} • {b.date} alle {b.time} ({b.guestCount} PAX)
+                      {b.customerName}, {b.date} alle {b.time} ({b.guestCount} PAX)
                     </div>
                   </div>
                   <Link
@@ -243,7 +243,7 @@ export default function TrovaPrenotazionePage() {
 
       {/* Footer */}
       <footer className="border-t-2 border-black py-6 px-4 text-center text-xs text-neutral-500 font-sans">
-        HANDĀ • Via del Portello 32, Padova • 349 233 0492
+        HANDĀ, Via del Portello 32, Padova - 349 233 0492
       </footer>
     </main>
   );

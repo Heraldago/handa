@@ -229,7 +229,7 @@ export default function BookingDetailPage({
             </div>
             <div className="flex justify-between border-b border-neutral-200 pb-2">
               <span className="text-neutral-500 uppercase font-medium">{t.dateTime}:</span>
-              <span className="font-black text-[#e60000]">{booking.date} • {booking.time}</span>
+              <span className="font-black text-[#e60000]">{booking.date} - {booking.time}</span>
             </div>
             <div className="flex justify-between border-b border-neutral-200 pb-2">
               <span className="text-neutral-500 uppercase font-medium">{t.service}:</span>
@@ -289,7 +289,7 @@ export default function BookingDetailPage({
 
       {/* Footer */}
       <footer className="border-t-2 border-black py-6 px-5 sm:px-10 md:px-14 lg:px-16 text-center text-xs text-neutral-500 font-sans">
-        HANDA. • Via del Portello 32, Padova • 349 233 0492
+        HANDA., Via del Portello 32, Padova - 349 233 0492
       </footer>
     </main>
   );

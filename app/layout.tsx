@@ -3,7 +3,7 @@ import './globals.css';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://handa-rose.vercel.app'),
-  title: 'HANDA. — Prenotazioni Tavolo',
+  title: 'HANDA. - Prenotazioni Tavolo',
   description: 'Cicchetteria asiatica e street food. Via del Portello 32, Padova.',
   applicationName: 'HANDĀ',
   appleWebApp: {
@@ -21,8 +21,8 @@ export const metadata: Metadata = {
     ],
   },
   openGraph: {
-    title: 'HANDA. — Prenotazione Tavoli Online',
-    description: 'Cicchetteria Asiatica • Made in Portello. Prenota online il tuo tavolo da HANDĀ.',
+    title: 'HANDA. - Prenotazione Tavoli Online',
+    description: 'Cicchetteria Asiatica, Made in Portello. Prenota online il tuo tavolo da HANDĀ.',
     url: 'https://handa-rose.vercel.app',
     siteName: 'HANDĀ Cicchetteria Asiatica',
     images: [
@@ -38,8 +38,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary',
-    title: 'HANDA. — Prenotazione Tavoli Online',
-    description: 'Cicchetteria Asiatica • Made in Portello. Prenota online il tuo tavolo da HANDĀ.',
+    title: 'HANDA. - Prenotazione Tavoli Online',
+    description: 'Cicchetteria Asiatica, Made in Portello. Prenota online il tuo tavolo da HANDĀ.',
     images: ['/handaprenotalogo.png'],
   },
 };

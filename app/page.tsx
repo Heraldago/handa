@@ -481,11 +481,8 @@ export default function BookingPage() {
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tighter uppercase text-black leading-none">
             {t.heroTitle}<span className="text-[#e60000]">.</span>
           </h1>
-          <div className="text-xs sm:text-base text-neutral-600 mt-2.5 space-y-1">
+          <div className="text-xs sm:text-base text-neutral-600 mt-2.5">
             <p className="font-semibold">{t.heroHours}</p>
-            <p className="text-neutral-400 text-xs sm:text-sm">
-              {t.heroTagline}
-            </p>
           </div>
         </div>
 
@@ -610,7 +607,7 @@ export default function BookingPage() {
                   <div className="flex justify-between border-b-2 border-neutral-200 pb-2.5">
                     <span className="text-neutral-500 uppercase font-medium">{t.dateTime}</span>
                     <strong className="text-[#e60000] font-black text-base sm:text-lg">
-                      {successBooking.date} • {t.atHour} {successBooking.time}
+                      {successBooking.date} - {t.atHour} {successBooking.time}
                     </strong>
                   </div>
 
@@ -1321,7 +1318,7 @@ export default function BookingPage() {
       <footer className="border-t-2 border-black py-8 px-5 sm:px-10 md:px-14 lg:px-16 text-xs sm:text-sm text-neutral-600">
         <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
-            <strong className="text-black font-black text-sm sm:text-base">HANDA.</strong> — Via del Portello 32, 35131 Padova
+            <strong className="text-black font-black text-sm sm:text-base">HANDA.</strong>, Via del Portello 32, 35131 Padova
             <div className="text-[11px] text-neutral-500 mt-0.5 font-medium">
               {t.footerOpening}
             </div>

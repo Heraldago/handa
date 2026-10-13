@@ -3,14 +3,14 @@ export type Language = 'it' | 'en';
 export const translations = {
   it: {
     // Header
-    brandSubtitle: '慕食 • PORTELLO',
+    brandSubtitle: '慕食 PORTELLO',
     instaLink: '@handa_mushi ↗',
 
     // Hero
     heroBadge: 'PRENOTAZIONI TAVOLO ONLINE',
     heroTitle: 'BLOCCA IL TAVOLO',
-    heroHours: 'Lun–Sab 12:00–15:00 / 19:00–23:00 • Dom 19:00–23:00 (Solo Cena)',
-    heroTagline: 'Non aver paura di sembrare strano perchè forse forse lo sei per davvero.',
+    heroHours: 'Lun-Sab 12:00-15:00 / 19:00-23:00, Dom 19:00-23:00 (Solo Cena)',
+    heroTagline: '',
 
     // Step 1: Persone
     step1Title: '1. Numero persone',
@@ -37,15 +37,15 @@ export const translations = {
     liveAvailability: 'Disponibilità live',
     checkingAvailability: 'Controllo...',
     lunchTitle: 'PRANZO',
-    lunchTime: '12:00 – 15:00',
+    lunchTime: '12:00 - 15:00',
     lunchDesc: 'Servizio dinamico, rapido & cicchetti (~45 min).',
     lunchNotice: '💡 Pranzo informale e veloce: permanenza media consigliata ~45 minuti per garantire i posti a tutti.',
     dinner1Title: '1° TURNO CENA',
-    dinner1Time: '19:15 – 20:00',
+    dinner1Time: '19:15 - 20:00',
     dinner1Desc: 'Tavolo da liberare categoricamente entro le 21:15.',
     dinner1Notice: '⚠️ Nota bene: questo tavolo è prenotato per il 2° turno alle 21:30, andrà liberato alle',
     dinner2Title: '2° TURNO CENA',
-    dinner2Time: '21:30 – 23:00',
+    dinner2Time: '21:30 - 23:00',
     dinner2Desc: 'Dalle 21:30 fino a chiusura del locale (23:00).',
     statusClosed: 'CHIUSO',
     statusFull: 'PIENO',
@@ -85,7 +85,7 @@ export const translations = {
     // Submit
     submitButton: 'CONFERMA PRENOTAZIONE TAVOLO →',
     submittingButton: 'CONFERMA IN CORSO...',
-    guaranteeText: 'Tavolo garantito per 15 min oltre l’orario • Cancellazione gratuita',
+    guaranteeText: 'Tavolo garantito per 15 min oltre l’orario / Cancellazione gratuita',
 
     // Validation
     errorSelectDateTime: 'Seleziona data, turno e orario di arrivo.',
@@ -127,7 +127,7 @@ export const translations = {
       code: string;
     }) => {
       const area = booking.seatingArea === 'outdoor' ? 'Esterno (sotto il portico)' : 'Sala interna';
-      return `🥢 Ho prenotato il tavolo da HANDĀ (Padova, Portello)!\n📅 Data: ${booking.date}\n⏰ Turno: ${booking.time} (${booking.shiftName})\n📍 Dove: ${area} • Via del Portello 32\n👥 Per: ${booking.guestCount} persone\nCodice prenotazione: #${booking.code}\n\nCi vediamo lì puntuali! 🙋`;
+      return `🥢 Ho prenotato il tavolo da HANDĀ (Padova, Portello)!\n📅 Data: ${booking.date}\n⏰ Turno: ${booking.time} (${booking.shiftName})\n📍 Dove: ${area}, Via del Portello 32\n👥 Per: ${booking.guestCount} persone\nCodice prenotazione: #${booking.code}\n\nCi vediamo lì puntuali! 🙋`;
     },
 
     calendarTitle: 'Cena da HANDA - Cicchetteria Asiatica',
@@ -135,19 +135,19 @@ export const translations = {
       `Prenotazione tavolo per ${booking.guestCount} persone. Codice #${booking.code}. Tolleranza 15 min. Telefono: 349 233 0492.`,
 
     // Footer
-    footerOpening: 'Mer–Mar 12:00–15:00 / 19:00–23:00 • Dom 19:00–23:00',
+    footerOpening: 'Mer-Mar 12:00-15:00 / 19:00-23:00, Dom 19:00-23:00',
   },
 
   en: {
     // Header
-    brandSubtitle: '慕食 • PORTELLO',
+    brandSubtitle: '慕食 PORTELLO',
     instaLink: '@handa_mushi ↗',
 
     // Hero
     heroBadge: 'ONLINE TABLE RESERVATION',
     heroTitle: 'BOOK YOUR TABLE',
-    heroHours: 'Mon–Sat 12:00–15:00 / 19:00–23:00 • Sun 19:00–23:00 (Dinner Only)',
-    heroTagline: 'Don’t be afraid to seem weird because maybe you really are.',
+    heroHours: 'Mon-Sat 12:00-15:00 / 19:00-23:00, Sun 19:00-23:00 (Dinner Only)',
+    heroTagline: '',
 
     // Step 1: Persone
     step1Title: '1. Number of guests',
@@ -174,15 +174,15 @@ export const translations = {
     liveAvailability: 'Live availability',
     checkingAvailability: 'Checking...',
     lunchTitle: 'LUNCH',
-    lunchTime: '12:00 – 15:00',
+    lunchTime: '12:00 - 15:00',
     lunchDesc: 'Fast-casual service & Asian cicchetti (~45 min stay).',
     lunchNotice: '💡 Fast-casual lunch: recommended stay ~45 min to accommodate all diners.',
     dinner1Title: '1ST DINNER SHIFT',
-    dinner1Time: '19:15 – 20:00',
+    dinner1Time: '19:15 - 20:00',
     dinner1Desc: 'Table must be vacated strictly by 21:15 for the next shift.',
     dinner1Notice: '⚠️ Please note: this table is reserved for 2nd shift at 21:30, it must be vacated by',
     dinner2Title: '2ND DINNER SHIFT',
-    dinner2Time: '21:30 – 23:00',
+    dinner2Time: '21:30 - 23:00',
     dinner2Desc: 'From 21:30 until closing time (23:00).',
     statusClosed: 'CLOSED',
     statusFull: 'FULL',
@@ -222,7 +222,7 @@ export const translations = {
     // Submit
     submitButton: 'CONFIRM TABLE RESERVATION →',
     submittingButton: 'CONFIRMING RESERVATION...',
-    guaranteeText: 'Table held for 15 min past booking time • Free cancellation',
+    guaranteeText: 'Table held for 15 min past booking time / Free cancellation',
 
     // Validation
     errorSelectDateTime: 'Please select date, service shift, and arrival time.',
@@ -264,7 +264,7 @@ export const translations = {
       code: string;
     }) => {
       const area = booking.seatingArea === 'outdoor' ? 'Outdoor (under the portico)' : 'Indoor dining';
-      return `🥢 I booked a table at HANDĀ (Padua, Portello)!\n📅 Date: ${booking.date}\n⏰ Time: ${booking.time} (${booking.shiftName})\n📍 Location: ${area} • Via del Portello 32\n👥 Party of: ${booking.guestCount} guests\nBooking code: #${booking.code}\n\nSee you there on time! 🙋`;
+      return `🥢 I booked a table at HANDĀ (Padua, Portello)!\n📅 Date: ${booking.date}\n⏰ Time: ${booking.time} (${booking.shiftName})\n📍 Location: ${area}, Via del Portello 32\n👥 Party of: ${booking.guestCount} guests\nBooking code: #${booking.code}\n\nSee you there on time! 🙋`;
     },
 
     calendarTitle: 'Dinner at HANDA - Asian Izakaya',
@@ -272,6 +272,6 @@ export const translations = {
       `Table reservation for ${booking.guestCount} guests. Code #${booking.code}. 15 min grace period. Phone: +39 349 233 0492.`,
 
     // Footer
-    footerOpening: 'Wed–Tue 12:00–15:00 / 19:00–23:00 • Sun 19:00–23:00',
+    footerOpening: 'Wed-Tue 12:00-15:00 / 19:00-23:00, Sun 19:00-23:00',
   },
 };
